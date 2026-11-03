@@ -145,7 +145,7 @@ The GitHub Actions validation workflow also extracts the inline application scri
 - [Deployment](docs/DEPLOYMENT.md): GitHub Pages, Supabase and the maintenance workflows.
 - [Security](docs/SECURITY.md): what is public, what is private, how to report a problem.
 - [Roadmap](docs/ROADMAP.md): committed work, ideas and known gaps.
-- [Design direction](docs/DESIGN.md): the proposed visual identity (not applied yet).
+- [Design direction](docs/DESIGN.md): the Home-aligned visual system.
 - [Versioning](VERSIONING.md), [releasing](docs/RELEASING.md) and the [changelog](CHANGELOG.md).
 - [Contributing](CONTRIBUTING.md): commits, branches, benchmark and scoring changes.
 
