@@ -2,7 +2,7 @@
 
 ## Overview
 
-Scam or Steal is a client-rendered static web application with an optional Supabase backend. It has no frontend framework, bundler, server-side runtime, or package dependency installation step. GitHub Pages hosts the app, and GitHub Actions performs validation and maintenance tasks.
+Assay is a client-rendered static web application with an optional Supabase backend. It has no frontend framework, bundler, server-side runtime, or package dependency installation step. GitHub Pages hosts the app, and GitHub Actions performs validation and maintenance tasks.
 
 ```text
 Browser
@@ -51,7 +51,7 @@ The implementation returns component percentages, the blended workload index, be
 
 ### `config.js` and `setup.sql`
 
-`config.js` holds the public Supabase URL and publishable/anon key. `setup.sql` provisions shared parts, app settings, an admin-secret hash, the private user-listings table, row-level security policies, and administrative RPC functions. See [Deployment](DEPLOYMENT.md) and [Security](../SECURITY.md) before modifying either.
+`config.js` holds the public Supabase URL and publishable/anon key. `setup.sql` provisions shared parts, app settings, an admin-secret hash, the private user-listings table, row-level security policies, and administrative RPC functions. See [Deployment](DEPLOYMENT.md) and [Security](SECURITY.md) before modifying either.
 
 ## Persistence and cross-device merge
 
@@ -71,7 +71,7 @@ The project deliberately separates three concepts:
 - **Value index:** a component-cost-share model reflecting CPU, GPU, RAM and storage, optionally adjusted by appearance.
 - **Performance/value per currency:** a ratio against the listing's effective price, after any entered setup deduction.
 
-The UI's normalized Value / 100 is relative to the current collection. It is not the same as a fixed benchmark percentage. Full formulas, weights, data sources, fallback rules, confidence levels and estimate limitations are documented in [SCORING-MODEL.md](../SCORING-MODEL.md).
+The UI's normalized Value / 100 is relative to the current collection. It is not the same as a fixed benchmark percentage. Full formulas, weights, data sources, fallback rules, confidence levels and estimate limitations are documented in [SCORING-MODEL.md](SCORING_MODEL.md).
 
 ## Automated checks and maintenance
 
@@ -81,6 +81,8 @@ The UI's normalized Value / 100 is relative to the current collection. It is not
 | `check-benchmark-data.js` | Flags invalid scores/dates, missing HTTPS sources, empty suites, and alias collisions |
 | `update-parts.yml` + `update-parts.mjs` | Refreshes the broad PassMark parts list weekly with safety checks |
 | `supabase-keepalive.yml` + `supabase-keepalive.mjs` | Periodically checks the configured Supabase project and may restore it if configured to do so |
+| `conventions.yml` + `check-commit-message.mjs` | Checks Conventional Commit subjects, branch names and release metadata on pull requests and pushes to `main` |
+| `release.yml` + `validate-release.mjs` | On a `v*` tag, validates `VERSION`, the changelog and CI status, then publishes the GitHub Release |
 
 ## Extension guidelines
 
@@ -90,3 +92,12 @@ The UI's normalized Value / 100 is relative to the current collection. It is not
 - If benchmark coverage is missing, retain the fallback and indicate its evidence quality; never fabricate a suite result.
 - Avoid destructive data migrations. Preserve IDs, timestamps, and tombstones when changing account sync.
 - Keep secrets out of static client files and preserve row-level security for private account data.
+
+## Names you will see in the code
+
+The project was first called PC Value Lab, and some identifiers still say so. They are left alone on purpose:
+
+- `window.PVL_CONFIG`, `window.PVL_BENCHMARKS` and `window.PVL_SCORING` are internal globals shared between the script files. Renaming them would touch every file and the tests for no visible benefit.
+- The browser-storage keys (`pcvaluelab_items`, `pvl_prefs`, `pvl_tombs`, `pvl_remote`, `pvl_session`, and the others starting with `pcvaluelab_` or `pvl_`) hold people's saved listings and preferences. Renaming a key would make the app look empty to everyone who already has data, and nothing would migrate it.
+
+If the keys ever do change, that is a MAJOR-level change to saved data: it needs a migration that reads the old key, writes the new one and keeps the old one until the new one is confirmed ([VERSIONING.md](../VERSIONING.md)).

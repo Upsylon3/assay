@@ -1,12 +1,16 @@
 # Project description
 
-## Scam or Steal
+## Assay
 
-Scam or Steal is a free, browser-based tool for comparing second-hand desktop PC listings. It helps buyers distinguish a genuinely strong deal from a listing that is simply cheap or has impressive-sounding specifications.
+Assay is a free, browser-based tool for comparing second-hand desktop PC listings. It helps buyers distinguish a genuinely strong deal from a listing that is simply cheap or has impressive-sounding specifications.
 
 A user records a listing's CPU, GPU, price, and optional memory, storage, setup and appearance details. The app then compares relative CPU/GPU performance against a chosen reference PC, estimates component-cost-based value, and ranks saved listings for a selected workload. The sortable comparison table, direct Versus view, filters, and CSV export support more detailed evaluation.
 
 The tool is designed to be transparent about its evidence: curated benchmark suites are used only when the hardware is covered by a compatible suite, fallback methods are identified, and unsupported GPU-suite FPS estimates are omitted rather than fabricated. It is a comparison aid, not an automated marketplace scraper, fraud detector, or substitute for inspecting the hardware and seller.
+
+### The name
+
+An assay is a test of what something is really made of, which is the question the app puts to a listing: scam or steal. "Scam or Steal" was the project's name until 0.8.0 and remains the question it answers. The project was first called PC Value Lab, and that name survives only inside the code (see [ARCHITECTURE.md](ARCHITECTURE.md#names-you-will-see-in-the-code)).
 
 ### Intended audience
 
@@ -25,8 +29,7 @@ The tool is designed to be transparent about its evidence: curated benchmark sui
 
 ### Scope and non-goals
 
-Scam or Steal currently compares details entered by the user. It does not automatically fetch marketplace ads, validate a seller's claims, inspect a PC, test component health, guarantee availability, or calculate exact game-specific FPS. Users should independently verify listing details, PSU quality, temperatures, hardware condition, warranty, peripherals, and seller reliability.
-
+Assay currently compares details entered by the user. It does not automatically fetch marketplace ads, validate a seller's claims, inspect a PC, test component health, guarantee availability, or calculate exact game-specific FPS. Users should independently verify listing details, PSU quality, temperatures, hardware condition, warranty, peripherals, and seller reliability.
 
 ### Suggested GitHub repository description
 
@@ -40,5 +43,5 @@ Scam or Steal currently compares details entered by the user. It does not automa
 - **Broad part lookup:** PassMark CPU Mark and G3D Mark values.
 - **Curated evidence:** PassMark CPU single-thread data and Tom's Hardware CPU/GPU suite records where available.
 - **Local development:** open `index.html`; Node.js is needed for validation tests and maintenance scripts.
-- **Live site:** https://upsylon3.github.io/scam-or-steal/
-- **Source:** https://github.com/Upsylon3/scam-or-steal
+- **Live site:** https://upsylon3.github.io/assay/
+- **Source:** https://github.com/Upsylon3/assay
