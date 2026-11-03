@@ -1,4 +1,4 @@
--- Scam or Steal shared backend (Supabase, free tier)
+-- Assay shared backend (Supabase, free tier)
 -- 1. supabase.com > New project.  2. SQL Editor > paste this whole file > change YOUR_PASSPHRASE > Run.
 -- 3. Project Settings > API: copy the Project URL + the publishable/anon key into config.js.
 -- 4. Optional, for accounts: Authentication > Sign In / Providers > Email: switch "Confirm email" OFF (no email is ever sent).

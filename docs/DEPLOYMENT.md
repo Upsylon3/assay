@@ -7,7 +7,7 @@ This project is a static site. The application does not need a build step, packa
 1. Push the project files to the `main` branch.
 2. In GitHub, open **Settings → Pages**.
 3. Confirm that Pages is configured to publish from the repository's `main` branch and repository root (the `/(root)` folder), unless the repository has deliberately been switched to a different publishing source.
-4. Wait for the Pages deployment to finish, then open [the live site](https://upsylon3.github.io/scam-or-steal/).
+4. Wait for the Pages deployment to finish, then open [the live site](https://upsylon3.github.io/assay/).
 
 The app is static: the browser loads `index.html` and the referenced JavaScript files directly. Updating those files on the published branch updates what visitors receive after the Pages build completes. Browser caching may briefly preserve an older copy.
 
@@ -16,8 +16,8 @@ The app is static: the browser loads `index.html` and the referenced JavaScript 
 Clone the repository and open `index.html` in a modern browser:
 
 ```bash
-git clone https://github.com/Upsylon3/scam-or-steal.git
-cd scam-or-steal
+git clone https://github.com/Upsylon3/assay.git
+cd assay
 ```
 
 For fully local-only use, set both fields in `config.js` to empty strings:
@@ -67,7 +67,7 @@ The app does not send confirmation or password-reset emails. A password-reset fl
 
 GitHub Pages delivers `config.js` to every visitor, so everything in it must be treated as public. A Supabase publishable/anon key is intended for client use only with appropriate database policies and privileges. Never put a Supabase `service_role` key, secret key, personal access token, or admin passphrase in the frontend.
 
-`setup.sql` enables row-level security on the account listing table and intends to restrict each signed-in user to their own row. Shared part data and the public reference settings are intentionally readable by visitors. Review [SECURITY.md](../SECURITY.md) before changing policies or exposing new database functions.
+`setup.sql` enables row-level security on the account listing table and intends to restrict each signed-in user to their own row. Shared part data and the public reference settings are intentionally readable by visitors. Review [SECURITY.md](SECURITY.md) before changing policies or exposing new database functions.
 
 ## 4. GitHub Actions
 

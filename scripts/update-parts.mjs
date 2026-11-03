@@ -1,4 +1,4 @@
-// Weekly PassMark sync for PC Value Lab.
+// Weekly PassMark sync for Assay.
 //
 // Makes exactly ONE request to each PassMark page, then rebuilds builtin-parts.js
 // from them. If ANYTHING looks wrong, it stops and leaves builtin-parts.js untouched.
@@ -60,7 +60,7 @@ async function getPage(src) {
   try {
     const res = await fetch(src.url, {
       headers: {
-        "User-Agent": "pc-value-lab weekly sync (https://github.com/upsylon3/pc-value-lab)",
+        "User-Agent": "assay weekly sync (https://github.com/Upsylon3/assay)",
         Accept: "text/html",
       },
       redirect: "follow",

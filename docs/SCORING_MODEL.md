@@ -1,4 +1,4 @@
-# Scam or Steal scoring model
+# Assay scoring model
 
 **Current performance model:** `performance-v2.4`
 

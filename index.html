@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Scam or Steal</title><meta name="description" content="Find the best-value used PC: compare listings by performance and price.">
+<title>Assay</title><meta name="description" content="Find the best-value used PC: compare listings by performance and price.">
 <link rel="icon" href="favicon.png" type="image/png">
 <style>
 :root{--bg:#f6f7f9;--panel:#fff;--soft:#f3f5f8;--text:#161c26;--muted:#6b7686;--line:#e2e6ec;--acc:#1f6feb;--good:#178a57;--bad:#c0392b;--warn:#b7791f}
@@ -36,7 +36,7 @@ footer{color:var(--muted);font-size:.75rem;margin-top:26px;text-align:center}foo
 @media(max-width:700px){.g{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.item{grid-template-columns:28px 1fr 74px}.item .pf{grid-column:2/-1;grid-row:2}.item .pr{display:none}.act,.det{grid-column:1/-1}}
 </style></head><body>
 <div class="wrap">
-<header><div class="top"><div class="brand">Scam or Steal<small>Used-PC value comparison · FPS suite estimates v2.4</small></div>
+<header><div class="top"><div class="brand">Assay<small>Used-PC value comparison · FPS suite estimates v2.4</small></div>
 <div class="row"><button class="btn gh" data-act="help">? How it works</button><button class="btn gh" data-act="theme">◐</button></div></div>
 <nav id="nav"><button data-tab="compare">Compare</button><button data-tab="table">Table</button><button data-tab="versus">Versus</button><button data-tab="add">Add a PC</button><button data-tab="settings">Settings</button><button data-tab="admin" id="adminTab" hidden>Admin</button></nav></header>
 
@@ -402,7 +402,7 @@ function exportTableCsv(){
  const lines=[TABLE_COLUMNS.filter(c=>c.key!=="actions").map(c=>quote(c.label)).join(",")].concat(rows.map(r=>TABLE_COLUMNS.filter(c=>c.key!=="actions").map(c=>quote(c.csv(r,best))).join(",")));
  const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8;"});
  const url=URL.createObjectURL(blob),a=document.createElement("a");
- a.href=url;a.download="scam-or-steal-listings.csv";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+ a.href=url;a.download="assay-listings.csv";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
  toast("CSV export ready");
 }
 function renderVersus(){const ref=refNow(),aSel=$("versusA"),bSel=$("versusB");if(!aSel||!bSel)return;const list=ranked(ref);if(!list.length){aSel.innerHTML=bSel.innerHTML='<option value="">No listings yet</option>';$("versusBody").innerHTML='<div class="empty">Add PCs to compare them.</div>';return}const opts=list.map(r=>'<option value="'+esc(r.id)+'">'+esc(r.name||r.cpuName+" + "+r.gpuName)+' · '+money(r.price)+'</option>').join("");aSel.innerHTML=bSel.innerHTML=opts;if(!list.some(r=>r.id===P.versusA))P.versusA=list[0].id;if(!list.some(r=>r.id===P.versusB))P.versusB=(list[1]||list[0]).id;aSel.value=P.versusA;bSel.value=P.versusB;const a=list.find(r=>r.id===aSel.value),b=list.find(r=>r.id===bSel.value);if(!a||!b||a.id===b.id){$("versusBody").innerHTML='<div class="empty">Choose two different listings to compare them.</div>';return}const gl={drive:"daily-driver value",flip:"resale value",both:"overall value"}[P.goal],delta=(a.raw/b.raw-1)*100,abs=Math.abs(delta),winner=abs<=5?"About equal":delta>0?"PC A is the better deal ("+gl+")":"PC B is the better deal ("+gl+")";$("versusBody").innerHTML='<div class="g"><div class="card"><h3>PC A · '+title(a)+'</h3><p>'+esc(a.cpuName)+' · '+esc(a.gpuName)+'</p><h2>'+money(a.net)+'</h2><p>'+a.idx.toFixed(1)+'% workload index</p></div><div class="card"><h3>PC B · '+title(b)+'</h3><p>'+esc(b.cpuName)+' · '+esc(b.gpuName)+'</p><h2>'+money(b.net)+'</h2><p>'+b.idx.toFixed(1)+'% workload index</p></div></div><div class="card"><h2>'+winner+'</h2><p class="lead">Daily-driver score: A '+a.drv.toFixed(0)+' · B '+b.drv.toFixed(0)+'. Resale score: A '+a.flp.toFixed(0)+' · B '+b.flp.toFixed(0)+'. Difference in '+gl+': '+(delta>0?"+":"")+delta.toFixed(1)+'%. Differences within ±5% are considered roughly equal; condition, PSU, warranty and noise may matter more.</p><p>Price-share value indices: '+a.valueIdx.toFixed(1)+' vs '+b.valueIdx.toFixed(1)+'.</p></div>'}
@@ -444,7 +444,7 @@ const A={...A_rv,review:rvStart,help:()=>$("help").showModal(),theme:()=>{P.them
  fav:i=>{items[i].favorite=!items[i].favorite;items[i].updatedAt=Date.now();saveI();renderAll()},chooseVersus:i=>{const id=items[i]&&items[i].id;if(!id)return;if(!P.versusA||P.versusA===id){P.versusA=id;P.versusB=items.find(x=>x.id!==id)?.id||id}else P.versusB=id;saveP();go("versus");renderVersus()},avail:i=>{items[i].available=items[i].available===false;items[i].updatedAt=Date.now();saveI();renderAll()},
  signup:()=>authSubmit("up"),syncNow:()=>cloudSync(),signout:signOut,edit,det:i=>{$("det"+i).hidden=!$("det"+i).hidden},
  del:i=>{if(confirm("Delete this PC?")){tomb(items[i]);items.splice(i,1);saveI();renderAll()}},clear:()=>{if(items.length&&confirm("Delete all "+items.length+" listings?")){items.forEach(tomb);items=[];saveI();renderAll()}},
- export:()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({version:4,exportedAt:new Date().toISOString(),items,customCPUs:localParts.cpu,customGPUs:localParts.gpu,settings:{setupDefault:P.setup,aestheticWeight:P.aes,refCpuScore:refNow().cpu,refGpuScore:refNow().gpu}},null,2)],{type:"application/json"}));a.download="pc-value-lab-backup.json";a.click()},
+ export:()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({version:4,exportedAt:new Date().toISOString(),items,customCPUs:localParts.cpu,customGPUs:localParts.gpu,settings:{setupDefault:P.setup,aestheticWeight:P.aes,refCpuScore:refNow().cpu,refGpuScore:refNow().gpu}},null,2)],{type:"application/json"}));a.download="assay-backup.json";a.click()},
  import:()=>$("impFile").click(),tableExport:exportTableCsv,
  unlock:async()=>{const p=$("adPass").value;if(!ON)return toast("Connect Supabase first (config.js)");if(!p)return toast("Enter the passphrase");
   const x=await adminRpc("admin_check",{p});if(!x.ok)return toast(x.why);
@@ -473,7 +473,7 @@ $("impFile").onchange=e=>{const f=e.target.files[0];e.target.value="";if(!f)retu
  const before=items.length,ids=new Set(inc.map(x=>x.id));tombs=tombs.filter(t=>!ids.has(t.id)); // a backup restores a listing you deleted earlier
  const m=mergeAll(items,tombs,inc);items=m.live;tombs=m.tombs;jset("pvl_tombs",tombs);saveI();
  const s=d.settings||{};if(Number.isFinite(s.setupDefault))P.setup=s.setupDefault;saveP();build();renderAll();
- toast("Backup imported ✓ "+(items.length-before)+" added"+(bad?", "+bad+" skipped":""))}catch(x){toast("That file isn't a Scam or Steal backup")}};r.readAsText(f)};
+ toast("Backup imported ✓ "+(items.length-before)+" added"+(bad?", "+bad+" skipped":""))}catch(x){toast("That file isn't an Assay backup")}};r.readAsText(f)};
 if(P.theme)document.documentElement.dataset.theme=P.theme;
 build();renderAll();go(["compare","table","versus","add","settings","admin"].includes(location.hash.slice(1))?location.hash.slice(1):"compare");sync();
 jset("pcvaluelab_items",items); // saves the ids given to listings from before accounts existed, so they stay the same on the next load

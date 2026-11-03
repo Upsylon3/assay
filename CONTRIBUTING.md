@@ -1,31 +1,49 @@
 # Contributing
 
-Thanks for helping improve Scam or Steal. The most useful contributions improve ranking correctness, benchmark evidence, accessibility, reliability, or the clarity of the interface.
+Thanks for helping improve Assay. The most useful contributions improve ranking correctness, benchmark evidence, accessibility, reliability, or the clarity of the interface.
+
+This is a personal project and the code is not licensed for reuse ([LICENSE](LICENSE)), so please open an issue to discuss a change before sending a pull request.
 
 ## Development setup
 
-1. Install Node.js 22 or a compatible recent Node release.
-2. Clone the repository.
-3. Open `index.html` directly in a browser. No npm install or build step is needed.
-4. For local-only work, clear the Supabase URL and key in `config.js` to prevent requests to the configured shared project.
+[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) has the full workflow. The short version:
 
 ```bash
-git clone https://github.com/Upsylon3/scam-or-steal.git
-cd scam-or-steal
+git clone https://github.com/Upsylon3/assay.git
+cd assay
+git config core.hooksPath .githooks      # enable the commit-message hook, once per clone
 node scripts/check-benchmark-data.js
 node tests/scoring-engine.test.js
+node tests/conventions.test.js
 ```
 
-The automated validation workflow also extracts and syntax-checks the inline JavaScript in `index.html`.
+Open `index.html` directly in a browser. No npm install or build step is needed. For local-only work, clear the Supabase URL and key in `config.js` to prevent requests to the configured shared project, and do not commit that edit.
+
+## Commits, branches and merging
+
+Use [Conventional Commits](https://www.conventionalcommits.org/): `<type>(<scope>): <imperative summary>`, for example `fix(table): keep the sort column after a filter change`.
+
+- Types: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `ci`, `build`, `perf`, `revert`.
+- Scope is optional, lowercase, kebab-case. A trailing `!` marks a breaking change.
+- Start the summary with a lowercase letter or a digit and do not end it with a period.
+- Branch names are `<type>/<kebab-case-name>`, for example `feat/goal-toggle` or `docs/release-guide`.
+- Prefer one squash commit per reviewed pull request, using its title as the commit subject. The pull-request title is checked too.
+
+The `commit-msg` hook and the `Repository conventions` workflow run `scripts/check-commit-message.mjs`. Commits before 0.8.0 predate the convention and are left as they are.
+
+## Comments
+
+Comment *why*, not what. A good comment explains a decision, a trade-off or something that would look wrong but is deliberate: why a benchmark ratio is only used inside one suite, why a storage key still says `pvl_`, why a deletion is kept as a tombstone. If the code needs a comment to say what it does, rename or restructure it first.
 
 ## Before opening a pull request
 
 - Describe the user-visible problem and expected behavior.
 - Keep the change focused and explain any trade-off that affects ranking or saved data.
-- Run the benchmark validator and scoring regression tests.
+- Run the benchmark validator and both test files.
 - Check the site in a browser at a narrow/mobile and desktop viewport when UI is affected.
 - Do not commit personal listing backups, credentials, tokens, admin passphrases, or environment-specific secrets.
-- Update documentation whenever a feature, configuration step, score definition, or maintenance workflow changes.
+- Update documentation in the same change whenever a feature, configuration step, score definition, or maintenance workflow changes, and add user-visible changes to `[Unreleased]` in [CHANGELOG.md](CHANGELOG.md).
+- Do not bump `VERSION` unless the pull request is a deliberate release ([docs/RELEASING.md](docs/RELEASING.md)).
 
 ## Benchmark-data changes
 
@@ -66,9 +84,13 @@ Changes to `setup.sql`, account synchronization, listing IDs, merge timestamps, 
 
 ## Pull request checklist
 
+The [pull-request template](.github/PULL_REQUEST_TEMPLATE.md) carries the same list.
+
 - [ ] The purpose and expected behavior are explained.
 - [ ] `node scripts/check-benchmark-data.js` passes.
 - [ ] `node tests/scoring-engine.test.js` passes.
+- [ ] `node tests/conventions.test.js` passes.
 - [ ] Browser behavior was checked if the UI changed.
-- [ ] Documentation is updated where relevant.
+- [ ] Documentation and `CHANGELOG.md` are updated where relevant.
+- [ ] The title, branch name and commits follow the conventions above.
 - [ ] No private data or secrets are included.
