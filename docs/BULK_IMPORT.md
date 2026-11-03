@@ -65,8 +65,8 @@ the supplied snapshots; it is not a live check.
 
 ## Data and proof
 
-Parsing runs locally. Raw source excerpts and drafts stay in local storage, are
-included in JSON backups, and are not part of account sync. Once added, listing
+Parsing runs locally. Raw source excerpts and drafts are stored locally,
+included in JSON backups, and synced when signed in. Once added, listing
 specifications, advert URL and inspection notes follow the existing sync model.
 Do not import account/network exports containing secrets.
 
@@ -114,3 +114,25 @@ their specs and notes. New reviewed imports inherit the unavailable status, incl
 when opened in the PC form. Missing evidence never reactivates saved listings.
 Replace the collector bookmark before collecting again: old exports containing only
 descriptions cannot reveal missing seller activity or purchase labels.
+
+## Account sync for drafts
+
+Import drafts now sync alongside saved listings in the existing private
+`user_listings.items` JSON array, using separate `import-draft` entries. No SQL
+migration is needed. Draft entries never enter the ranked listing list.
+Existing local drafts upload on the next account sync; incomplete hardware and
+full descriptions are preserved. Local edits schedule sync automatically.
+
+Drafts merge by advert URL (or draft ID without a URL), with the newest version
+winning. Dismissal and promotion to a saved listing leave deletion markers, so a
+stale device cannot resurrect them. Explicitly importing the advert again can
+restore it. These markers are retained to cover devices offline for long periods.
+The account's existing 4 MB payload limit still applies; sync failures remain
+visible in the account panel, with local drafts and backups retained.
+
+Refresh Assay on every device before syncing: older app versions do not understand
+draft entries. Export backup still includes drafts. Signing out and choosing to
+remove local data clears local drafts without deleting them from the account.
+
+Validation: `node tests/draft-sync.test.js` covers draft migration, removal,
+restoration, cross-device duplicates, conflicts, and the actual account payload.

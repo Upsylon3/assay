@@ -113,8 +113,10 @@ If the keys ever do change, that is a MAJOR-level change to saved data: it needs
 `browser-collector.js` exposes a user-triggered loaded-document exporter; it never
 requests remote data. `listing-workflow.js` owns the local draft queue and reviewed
 commit into the existing listing collection. It loads after the main app script.
-Drafts use `assay_import_drafts` in local storage and are backed up separately;
-raw draft text is not synced. Added records retain optional `sourceUrl`, `notes`,
+Drafts use `assay_import_drafts` locally and are backed up separately. `draft-sync.js`
+merges typed draft entries and deletion markers in the existing account JSON array;
+`assay_draft_sync` stores their local revisions. Draft source text syncs when signed in.
+Added records retain optional `sourceUrl`, `notes`,
 `setupKnown` and `ramTypeUnknown` fields without changing the backup envelope version.
 See [BULK_IMPORT.md](BULK_IMPORT.md) for capabilities and access limitations.
 

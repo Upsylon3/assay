@@ -70,7 +70,7 @@
 <dialog id="review"><h2>Review links</h2><p class="hint">Review stale links below, or analyze explicit status from a saved collector export. Missing favourites are never treated as removed.</p><details class="form-disclosure"><summary>Batch-check saved evidence</summary><label for="rvEvidence">Collector JSON from checked advert pages</label><textarea id="rvEvidence" rows="4"></textarea><div class="row"><label class="btn">Load status files<input id="rvFiles" type="file" accept=".json" multiple hidden></label><button class="btn" data-act="reviewEvidence">Analyze availability</button></div><div id="rvUpdates" role="status"></div></details><div id="rvBody"></div></dialog>
 <dialog id="help"><h2>How scoring works</h2><p class="lead"><b>Performance</b> compares a PC's CPU and GPU with the yardstick PC for the workload you picked in Settings. <b>Value</b> is separate: CPU, GPU, RAM and storage are weighted by what a typical 2026 build spends on each (DDR5 counts for more than DDR4 because it costs more), then divided by the price minus an included setup, so a cheaper PC can beat a stronger one. On the Compare tab, <b>Daily driver</b> ranks by performance per euro for your workload, <b>Resale profit</b> by how much hardware (at market part prices) each euro buys, and <b>Both</b> by a mix that only rewards listings good at both. Assumed RAM/SSD values are marked with <span class="est">~</span>.</p><button class="btn pri" onclick="this.closest('dialog').close()">Got it</button></dialog>
 <div class="toast" id="toast" role="status"></div>
-<script src="listing-import.js"></script><script src="browser-collector.js"></script><script src="builtin-parts.js"></script><script src="config.js"></script>
+<script src="listing-import.js"></script><script src="draft-sync.js"></script><script src="browser-collector.js"></script><script src="builtin-parts.js"></script><script src="config.js"></script>
 <script src="benchmark-data.js?v=20261016-fps24"></script>
 <script src="scoring-engine.js?v=20261016-fps24"></script>
 <script>
@@ -162,18 +162,18 @@ async function why(r){let m="";try{const d=await r.json();m=d.message||d.msg||d.
  if(r.status==403||/permission denied/i.test(m))return"Supabase blocked access to the account table. Run setup.sql again, it grants it.";
  return"Error "+r.status+(m?": "+m:"")}
 function scheduleSync(){if(!ON||!sess)return;clearTimeout(sy.timer);sy.timer=setTimeout(cloudSync,1500)}
-async function cloudSync(){if(!ON||!sess)return;if(sy.busy){sy.queued=true;return}
+async function cloudSync(){if(!ON||!sess)return;if(!window.AssayWorkflow){scheduleSync();return}if(sy.busy){sy.queued=true;return}
  sy.busy=true;sy.err="";renderAccount();
  try{
   for(let n=0;n<4;n++){ // retried because another device may save between our read and our write
    const r=await userApi("user_listings?select=items,rev&limit=1");if(!r.ok)throw new Error(await why(r));
    const row=(await r.json())[0]||null,
-    remote=row&&Array.isArray(row.items)?row.items.filter(sane).map(e=>e.deleted?{id:e.id,deleted:true,updatedAt:num(e.updatedAt)?e.updatedAt:0}:norm(e)):[],
-    m=mergeAll(items,tombs,remote);
+    remote=row&&Array.isArray(row.items)?row.items.filter(e=>!window.AssayDraftSync.valid(e)&&sane(e)).map(e=>e.deleted?{id:e.id,deleted:true,updatedAt:num(e.updatedAt)?e.updatedAt:0}:norm(e)):[],
+    m=mergeAll(items,tombs,remote),draftMerge=window.AssayWorkflow.mergeCloud(row&&Array.isArray(row.items)?row.items:[]);
    items=m.live;tombs=m.tombs;jset("pcvaluelab_items",items);jset("pvl_tombs",tombs);
    if(editId)editIdx=items.findIndex(x=>x.id==editId); // the list may have been reshuffled under an open edit form
-   if(!m.remoteStale){sy.at=Date.now();break}
-   const body=JSON.stringify({items:m.entries,rev:(row?row.rev:0)+1,updated_at:new Date().toISOString()}),
+   if(!m.remoteStale&&!draftMerge.remoteStale){sy.at=Date.now();break}
+   const body=JSON.stringify({items:[...m.entries,...draftMerge.entries],rev:(row?row.rev:0)+1,updated_at:new Date().toISOString()}),
     h={Prefer:"return=representation"},
     // rev=eq.<what we read> makes the save atomic: if someone else saved in between, it matches no row and we merge again
     w=row?await userApi("user_listings?rev=eq."+row.rev,{method:"PATCH",headers:h,body}):await userApi("user_listings",{method:"POST",headers:h,body});
@@ -197,11 +197,11 @@ async function authSubmit(mode){const email=$("acEmail").value.trim(),password=$
  sy.err="";setSession(d);renderAccount();toast("Signed in ✓");cloudSync()}
 async function signOut(){const t=sess&&sess.access;try{if(t)await authFetch("/logout?scope=local",{},t)}catch(e){} // scope=local: end this device only, not every session
  dropSession("");sy.at=0;renderAccount();
- if(items.length&&confirm("Signed out. Remove your listings from this device too? They stay in your account.")){items=[];tombs=[];jset("pcvaluelab_items",items);jset("pvl_tombs",tombs);renderAll()}} // no tombstones here: this is "forget on this device", not "delete"
+ if((items.length||window.AssayWorkflow?.getDrafts().length)&&confirm("Signed out. Remove listings and import drafts from this device too? They stay in your account.")){items=[];tombs=[];jset("pcvaluelab_items",items);jset("pvl_tombs",tombs);window.AssayWorkflow?.forgetLocal();renderAll()}} // no tombstones here: this is "forget on this device", not "delete"
 function renderAccount(){const c=$("acCard");c.hidden=!ON;if(!ON)return;
  if(sess){const st=sy.busy?"Syncing…":sy.err?`<span style="color:var(--bad)">${esc(sy.err)}</span>`:sy.at?"Synced "+new Date(sy.at).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):"Not synced yet";
-  $("acBody").innerHTML=`<p class="lead">Signed in as <b>${esc(sess.email)}</b>. Your listings sync between your devices.</p><div class="row"><button class="btn pri" data-act="syncNow">Sync now</button><button class="btn" data-act="signout">Sign out</button><span class="sp">${st}</span></div>`}
- else $("acBody").innerHTML=`<p class="lead">Sign in to keep your listings in sync between your devices. Without an account everything stays on this device, and Export / Import backup still work.</p><form id="acForm"><div class="g"><div><label>Email</label><input id="acEmail" type="email" autocomplete="username"></div><div><label>Password</label><input id="acPass" type="password" autocomplete="current-password" placeholder="6+ characters"></div></div><div class="row" style="margin-top:12px"><button class="btn pri" type="submit">Sign in</button><button class="btn" type="button" data-act="signup">Create account</button></div></form><div class="err">${esc(sy.err)}</div><p class="hint">Listings already on this device are added to your account the first time you sign in.</p>`}
+  $("acBody").innerHTML=`<p class="lead">Signed in as <b>${esc(sess.email)}</b>. Your listings and import drafts sync between your devices.</p><div class="row"><button class="btn pri" data-act="syncNow">Sync now</button><button class="btn" data-act="signout">Sign out</button><span class="sp">${st}</span></div>`}
+ else $("acBody").innerHTML=`<p class="lead">Sign in to keep your listings and import drafts in sync between your devices. Without an account everything stays on this device, and Export / Import backup still work.</p><form id="acForm"><div class="g"><div><label>Email</label><input id="acEmail" type="email" autocomplete="username"></div><div><label>Password</label><input id="acPass" type="password" autocomplete="current-password" placeholder="6+ characters"></div></div><div class="row" style="margin-top:12px"><button class="btn pri" type="submit">Sign in</button><button class="btn" type="button" data-act="signup">Create account</button></div></form><div class="err">${esc(sy.err)}</div><p class="hint">Listings and import drafts already on this device are added to your account the first time you sign in.</p>`}
 
 async function sync(){if(!ON)return;try{
  const[s,pp]=await Promise.all([api("app_settings?key=eq.reference&select=value").then(r=>r.json()),api("parts?select=kind,name,score&order=id&limit=1000").then(r=>r.json())]);
