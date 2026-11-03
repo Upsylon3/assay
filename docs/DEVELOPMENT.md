@@ -34,7 +34,7 @@ git config core.hooksPath .githooks
 |---|---|
 | `node scripts/check-benchmark-data.js` | The curated benchmark data: missing fields, invalid values, alias collisions. It does not prove a source page is accurate. |
 | `node tests/scoring-engine.test.js` | The scoring engine: profiles, fallbacks, GPU suites, coverage minimums, aggregate FPS and the unsupported-GPU path. |
-| `node tests/conventions.test.js` | The repository's own tooling: the commit and branch rules and the release validator (26 checks). |
+| `node tests/conventions.test.js` | The repository's own tooling: the commit and branch rules and the release validator (29 checks). |
 | `node scripts/validate-release.mjs vX.Y.Z .` | That `VERSION`, the tag and the newest changelog heading agree. Prints the release notes. |
 
 CI runs the first three, plus a syntax check of the inline script in
