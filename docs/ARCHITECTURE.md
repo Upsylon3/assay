@@ -117,3 +117,6 @@ Drafts use `assay_import_drafts` in local storage and are backed up separately;
 raw draft text is not synced. Added records retain optional `sourceUrl`, `notes`,
 `setupKnown` and `ramTypeUnknown` fields without changing the backup envelope version.
 See [BULK_IMPORT.md](BULK_IMPORT.md) for capabilities and access limitations.
+
+Optional saved `description` and `descriptionSource` fields travel with listings.
+Product JSON-LD takes priority over generic page state during saved-HTML intake.
