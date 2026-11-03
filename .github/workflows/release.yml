@@ -1,0 +1,75 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing annotated vX.Y.Z tag to validate and publish
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: release-${{ github.event.inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Validate and publish release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      RELEASE_TAG: ${{ github.event.inputs.tag || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Validate annotated tag, main ancestry and release metadata
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          test "$(git cat-file -t "refs/tags/$RELEASE_TAG")" = "tag" || {
+            echo "Release tags must be annotated Git tags." >&2
+            exit 1
+          }
+          git fetch origin +refs/heads/main:refs/remotes/origin/main
+          git merge-base --is-ancestor "$RELEASE_TAG^{commit}" origin/main || {
+            echo "The release tag must point to a commit reachable from main." >&2
+            exit 1
+          }
+          node scripts/validate-release.mjs "$RELEASE_TAG" . > "$RUNNER_TEMP/release-notes.md"
+          RELEASE_SHA="$(git rev-parse "$RELEASE_TAG^{commit}")"
+          RUNS="$(gh run list --workflow validate-static-app.yml --branch main --commit "$RELEASE_SHA" --json status,conclusion --limit 20)"
+          node -e 'const runs=JSON.parse(process.argv[1]); const latest=runs[0]; if (!latest || latest.status !== "completed" || latest.conclusion !== "success") { console.error("The latest Validate static app run for this exact main commit must have succeeded before release."); process.exit(1); }' "$RUNS"
+
+      - name: Repeat the checks on the tagged commit
+        run: |
+          node scripts/check-benchmark-data.js
+          node tests/scoring-engine.test.js
+          node tests/conventions.test.js
+
+      - name: Create the GitHub Release from CHANGELOG.md
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "GitHub Release $RELEASE_TAG already exists; leaving it unchanged."
+            exit 0
+          fi
+          gh release create "$RELEASE_TAG" \
+            --verify-tag \
+            --title "Assay $RELEASE_TAG" \
+            --notes-file "$RUNNER_TEMP/release-notes.md"
