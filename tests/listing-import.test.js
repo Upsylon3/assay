@@ -28,3 +28,6 @@ const context={location:{hostname:'www.leboncoin.fr',href:'https://www.leboncoin
 vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'../browser-collector.js'),'utf8')+';collectLoadedListings();',context);
 const result=JSON.parse(payload);assert.equal(result.listings.length,1);assert.equal(result.scope,'loaded-page');assert.equal(result.listings[0].availability,undefined,'Loaded favourite alone is not availability evidence');
 console.log('Collector test passed: visible cards, duplicate anchors, no automatic status inference.');
+
+assert.equal(imp.parse({title:'PC gamer',text:'2x16 Go DDR4'},catalog).ram,32);
+assert.equal(imp.parse({title:'PC gamer',text:'RAM 2 × 8 Go'},catalog).ram,16);

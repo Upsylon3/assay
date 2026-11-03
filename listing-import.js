@@ -19,7 +19,8 @@
   const rawPrice=Array.isArray(record.price)?record.price[0]:record.price;
   const price=rawPrice!=null&&clean(rawPrice)!==''?Number(clean(rawPrice).replace(/\s/g,'').replace(',','.')):new Set(euros).size===1?euros[0]:null;
   const ramMatches=[...text.matchAll(/(?:\b(?:ram|memoire(?: vive)?)\s*[:=]?\s*(\d+)\s*(?:go|gb)|\b(\d+)\s*(?:go|gb)\s*(?:de\s+)?(?:ram|ddr[345]|memoire vive))/gi)];
-  const ramValues=[...new Set(ramMatches.map(m=>+(m[1]||m[2])))];
+  const ramKits=[...text.matchAll(/(?:(\d+)\s*[x×]\s*(\d+)\s*(?:go|gb)\s*(?:de\s+)?(?:ram|ddr[345])|(?:ram|memoire vive)\s*[:=]?\s*(\d+)\s*[x×]\s*(\d+)\s*(?:go|gb))/gi)].map(m=>({module:+(m[2]||m[4]),total:+(m[1]||m[3])*+(m[2]||m[4])}));
+  const ramValues=[...new Set([...ramMatches.map(m=>{const n=+(m[1]||m[2]);return ramKits.find(k=>k.module===n)?.total||n}),...ramKits.map(k=>k.total)])];
   const ramType=[...new Set((text.match(/\bddr[345]\b/gi)||[]).map(v=>v.toUpperCase()))];
   const drives=[];const driveRe=/\b(?:(ssd|nvme|hdd|disque dur)\s*[:=]?\s*(\d+(?:[.,]\d+)?)\s*(to|tb|go|gb)|(\d+(?:[.,]\d+)?)\s*(to|tb|go|gb)\s*(ssd|nvme|hdd|disque dur))\b/gi;
   for(const m of text.matchAll(driveRe)){const type=(m[1]||m[6]).toLowerCase(),value=Number((m[2]||m[4]).replace(',','.'))*(/t/i.test(m[3]||m[5])?1000:1);if(!drives.some(d=>d.type===(/hdd|disque/.test(type)?'hdd':'ssd')&&d.value===value))drives.push({type:/hdd|disque/.test(type)?'hdd':'ssd',value,evidence:m[0]})}
