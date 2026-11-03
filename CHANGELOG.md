@@ -23,6 +23,7 @@ tagged; see [VERSIONING.md](VERSIONING.md) for which commit each one stands for.
 - Align the interface with Home: warm paper/green-black themes, bench-green console controls, bundled Inter/Fredoka/IBM Plex Mono fonts, sage-to-forest stripe header, clearer panel hierarchy, and responsive forms, tables and dialogs. Scoring, content and saved data are unchanged.
 
 ### Fixed
+- Saved Leboncoin adverts now prefer Product structured data, retain the advert URL from the offer, and preserve the full embedded description even when Show more is closed. Ignore unrelated application messages; fix generic Pro GPU matches and storage warnings triggered by non-storage alternatives. Full-description imports can enrich drafts or explicitly update a saved description without overwriting specifications or notes.
 - The conventions check no longer fails a pull request or a push to `main` for the old `Weekly PassMark sync` commit subject. The weekly sync used that subject before the convention existed, and two such commits reached the 0.8.0 pull request. Only that exact subject is tolerated, and only inside a commit range; new messages, branch names and pull-request titles are still checked.
 
 ## [0.8.0] — A name, a release process and a documentation set

@@ -74,3 +74,29 @@ Run `node tests/listing-import.test.js` and `node tests/ui-entry.test.js`.
 The tests cover 65-ad batches, ambiguity, French specifications, URL duplicates,
 inert HTML, visible-card collection and explicit status handling. Browser checks
 cover reviewed batch addition, repeat-import deduplication and confirmed archival.
+
+## Full descriptions and saved advert pages
+
+Saved individual Leboncoin HTML now prefers `application/ld+json` Product data.
+The offer URL is retained, and the full embedded description is used even when
+Show more is visually closed. Only product data is retained; unrelated application
+translations and account/page state are ignored. A sanitized product-only regression
+fixture comes from the owner's supplied 4070 SUPER / 7800X3D advert, not the full
+saved page.
+
+The collector on an already-open advert also reads that Product description, price
+and URL. Favourites cards still cannot provide descriptions absent from the page.
+To collect those, each advert must be opened or saved normally. Multiple saved
+HTML files can be selected together in Load files; no copy/paste is required.
+A slower unattended browser queue is not included.
+
+Re-importing a full advert enriches an existing draft with the same URL. If the
+advert is already a saved listing, the import offers Update saved description only;
+this requires an explicit click and preserves specifications and inspection notes.
+Saved descriptions appear under Inspect listing, can be edited in the PC form,
+and follow the existing backup and optional account-sync behavior. Keep sensitive
+seller details out of descriptions you choose to sync.
+
+After a collector update, delete the old collector bookmark and drag the updated
+Collect loaded listings link into your bookmarks bar again. Existing bookmarks
+contain their own older copy of the code.

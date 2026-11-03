@@ -31,3 +31,18 @@ console.log('Collector test passed: visible cards, duplicate anchors, no automat
 
 assert.equal(imp.parse({title:'PC gamer',text:'2x16 Go DDR4'},catalog).ram,32);
 assert.equal(imp.parse({title:'PC gamer',text:'RAM 2 × 8 Go'},catalog).ram,16);
+// Sanitized product data from the user's saved advert; no page/account state retained.
+const sample=JSON.parse(fs.readFileSync(require('node:path').join(__dirname,'fixtures/leboncoin-product.json'),'utf8'));
+const sourceHtml='<link rel="canonical" href="'+sample.offers.url+'"><script type="application/ld+json">'+JSON.stringify(sample)+'</script><script id="__NEXT_DATA__" type="application/json">'+JSON.stringify({messages:{dialog:{title:'Account message',body:'Unrelated application text'}}})+'</script>';
+const actualCatalog={window:{}};vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'../builtin-parts.js'),'utf8'),actualCatalog);
+const actual=imp.batch(sourceHtml,{cpu:actualCatalog.window.BUILTIN.cpus,gpu:actualCatalog.window.BUILTIN.gpus});
+assert.equal(actual.length,1,'Ignore application translations and unrelated page state');
+assert.equal(actual[0].sourceUrl,sample.offers.url);assert.equal(actual[0].price,1650);
+assert.equal(actual[0].cpu[0],'AMD Ryzen 7 7800X3D');assert.equal(actual[0].gpu[0],'GeForce RTX 4070 SUPER');
+assert.equal(actual[0].ram,32);assert.equal(actual[0].ramType,'DDR5');assert.equal(actual[0].ssd,2000);
+assert.match(actual[0].description,/Pure Power 12 M 850W/);assert.match(actual[0].description,/négociable raisonnablement/);
+assert.doesNotMatch(actual[0].description,/<p>/);assert.equal(actual[0].descriptionSource,'structured-product');
+let singlePayload;const singleContext={...context,location:{hostname:'www.leboncoin.fr',href:sample.offers.url},document:{title:sample.name,querySelectorAll:selector=>selector.startsWith('script')?[{textContent:JSON.stringify(sample)}]:[],querySelector:selector=>selector==='h1'?{innerText:sample.name}:null,createElement:()=>({click(){}})},URL:class extends URL{static createObjectURL(blob){singlePayload=blob.text;return 'blob:sample'}static revokeObjectURL(){}}};
+vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'../browser-collector.js'),'utf8')+';collectLoadedListings();',singleContext);
+const single=JSON.parse(singlePayload).listings[0];assert.equal(single.url,sample.offers.url);assert.equal(single.price,1650);assert.match(single.description,/Pure Power 12 M 850W/);assert.equal(single.descriptionSource,'structured-product');
+console.log('Saved advert regression passed: URL, full hidden description, correct hardware, price, storage, and focused collector.');

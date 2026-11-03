@@ -1,0 +1,13 @@
+{
+  "@type": "Product",
+  "name": "Pc gamer rtx 4070 super / ryzen 7 7800x3d / 32 go ddr5 / 2 to ssd",
+  "description": "<p>🖥️ **PC GAMER RTX 4070 SUPER / RYZEN 7 7800X3D / 32 GO DDR5 / SSD 2 TO** Je mets en vente mon PC gaming haut de gamme, acheté et assemblé par LDLC en août 2024 pour une valeur totale de **2 292,52 €**. Le PC est en très bon état, idéal pour jouer en 1080p compétitif avec un maximum de FPS ou en 1440p avec une excellente qualité graphique. **⚙️ Configuration complète :** - **Processeur :** AMD Ryzen 7 7800X3D - **Carte graphique :** ASUS Dual RTX 4070 SUPER EVO OC 12 Go - **Carte mère :** Gigabyte B650 EAGLE AX - **RAM :** 32 Go G.Skill Trident Z5 Neo RGB DDR5 6000 MHz CL30 - **Stockage :** SSD Crucial P3 2 To - **Refroidissement :** Watercooling Antec Vortex 360 ARGB - **Alimentation :** be quiet! Pure Power 12 M 850W 80+ Gold - **Boîtier :** Xigmatek Gaming Z Pro - **Système :** Windows 11 **✅ Informations supplémentaires :** - PC assemblé par des professionnels chez LDLC - Facture d'achat disponible - Configuration puissante et équilibrée négociable raisonnablement.</p>",
+  "offers": {
+    "@type": "Offer",
+    "price": 1650,
+    "priceCurrency": "EUR",
+    "url": "https://www.leboncoin.fr/ad/ordinateurs/3298304244",
+    "itemCondition": "http://schema.org/UsedCondition",
+    "availability": "http://schema.org/InStock"
+  }
+}
