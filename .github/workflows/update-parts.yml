@@ -43,7 +43,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add builtin-parts.js
-          git commit -m "Weekly PassMark sync"
+          git commit -m "chore(parts): weekly PassMark sync"
           git push
 
       - name: Ask GitHub Pages to publish the new version

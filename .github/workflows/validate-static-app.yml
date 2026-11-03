@@ -28,13 +28,15 @@ jobs:
                   scripts.append(match.group(2))
           if not scripts:
               raise SystemExit("No inline JavaScript application script found")
-          Path("/tmp/scam-or-steal-app.js").write_text(scripts[-1], encoding="utf-8")
+          Path("/tmp/assay-app.js").write_text(scripts[-1], encoding="utf-8")
           print(f"Extracted inline script ({len(scripts[-1])} characters)")
           PY
       - name: Check JavaScript syntax
-        run: node --check /tmp/scam-or-steal-app.js
+        run: node --check /tmp/assay-app.js
 
       - name: Validate curated benchmark data
         run: node scripts/check-benchmark-data.js
       - name: Run scoring engine regression tests
         run: node tests/scoring-engine.test.js
+      - name: Run repository tooling tests
+        run: node tests/conventions.test.js

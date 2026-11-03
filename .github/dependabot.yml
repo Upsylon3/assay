@@ -1,0 +1,20 @@
+version: 2
+
+updates:
+  # The app has no npm packages on purpose (no build step, no install step),
+  # so the only thing here that goes out of date is the GitHub Actions the
+  # workflows use. One weekly PR, patch and minor bumps batched together.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    # Dependabot's default PR titles ("Bump x from 1 to 2") fail the
+    # Conventional Commits check in .github/workflows/conventions.yml, so
+    # give them the type and scope up front: "chore(deps): bump x ...".
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      routine-updates:
+        update-types: ["minor", "patch"]
