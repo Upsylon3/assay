@@ -46,3 +46,34 @@ let singlePayload;const singleContext={...context,location:{hostname:'www.lebonc
 vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'../browser-collector.js'),'utf8')+';collectLoadedListings();',singleContext);
 const single=JSON.parse(singlePayload).listings[0];assert.equal(single.url,sample.offers.url);assert.equal(single.price,1650);assert.match(single.description,/Pure Power 12 M 850W/);assert.equal(single.descriptionSource,'structured-product');
 console.log('Saved advert regression passed: URL, full hidden description, correct hardware, price, storage, and focused collector.');
+
+// Availability uses captured page labels, never description keywords or missing data.
+for(const label of ['Achat en cours','Buy en cours','Dernière activité : il y a 31 jours','Dernière activité il y a plus de 30 jours','Dernière connexion il y a 2 mois',"Dernière activité il y a plus d’un mois"]){
+ const record={...ads[0],availability:'available',availabilityText:label};
+ assert.equal(imp.status(record).availability,'unavailable',label);
+ assert.equal(imp.batch({listings:[record]},catalog)[0].availability,'unavailable');
+ assert.equal(imp.availability({listings:[record]},[{sourceUrl:record.url}])[0].state,'unavailable');
+}
+for(const label of ['', 'Dernière activité il y a 30 jours','Dernière activité il y a 1 mois','Dernière activité il y a 4 semaines','Dernière activité il y a 2 heures','Aucun achat en cours']){
+ assert.equal(imp.status({availabilityText:label}).availability,'unknown',label);
+}
+assert.equal(imp.status({description:'Achat en cours'}).availability,'unknown');
+// Bookmark serializes both functions: exercise that exact standalone form.
+singleContext.document.querySelector=selector=>selector==='main'?{innerText:'PC gamer\nAchat en cours\nDernière activité il y a 2 heures'}:selector==='h1'?{innerText:sample.name}:null;
+vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname,'../browser-collector.js'),'utf8')+';collectLoadedListings('+imp.status.toString()+');',singleContext);
+const unavailable=JSON.parse(singlePayload).listings[0];
+assert.equal(unavailable.availability,'unavailable');
+assert.equal(unavailable.availabilityReason,'Purchase in progress');
+assert.equal(unavailable.description,single.description);
+assert.equal(imp.batch(sourceHtml+'<p>Dernière activité il y a 45 jours</p>',catalog)[0].availability,'unavailable');
+console.log('Availability rules passed: purchase status, strict 30-day boundary, missing evidence and serialized bookmark.');
+
+const workflow=fs.readFileSync(require('node:path').join(__dirname,'../listing-workflow.js'),'utf8');
+const analyzeCode=workflow.slice(workflow.indexOf(' function analyze(text){'),workflow.indexOf(' function fillDraft(id)'));
+const saved={sourceUrl:ads[0].url,available:true,notes:'Keep my notes',cpuName:'Manual CPU'};
+const workflowContext={imp,parts:catalog,items:[saved],drafts:[],uid:()=> 'test-draft',store(){},render(){},saveI(){},renderAll(){},document:{getElementById:()=>({textContent:''})}};
+vm.runInNewContext(analyzeCode+';analyze('+JSON.stringify(JSON.stringify({listings:[{...ads[0],availabilityText:'Achat en cours'}]}))+');',workflowContext);
+assert.equal(saved.available,false);assert.equal(saved.notes,'Keep my notes');assert.equal(saved.cpuName,'Manual CPU');
+vm.runInNewContext('analyze('+JSON.stringify(JSON.stringify({listings:[ads[0]]}))+');',workflowContext);
+assert.equal(saved.available,false,'Missing evidence must not reactivate a saved listing');
+console.log('Import integration passed: automatic archival preserves specs and notes.');

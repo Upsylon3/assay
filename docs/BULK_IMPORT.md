@@ -100,3 +100,17 @@ seller details out of descriptions you choose to sync.
 After a collector update, delete the old collector bookmark and drag the updated
 Collect loaded listings link into your bookmarks bar again. Existing bookmarks
 contain their own older copy of the code.
+
+## Automatic unavailable status
+
+The refreshed collector captures purchase-in-progress labels and seller last-activity
+labels from the loaded individual advert. Import marks a listing unavailable when
+its purchase is in progress or seller inactivity explicitly exceeds 30 days.
+Exactly 30 days, one month, missing activity, and description keywords do not trigger
+this rule. Two months or more and “plus de 30 jours” do.
+
+Loading this evidence also archives matching saved listings automatically, preserving
+their specs and notes. New reviewed imports inherit the unavailable status, including
+when opened in the PC form. Missing evidence never reactivates saved listings.
+Replace the collector bookmark before collecting again: old exports containing only
+descriptions cannot reveal missing seller activity or purchase labels.
