@@ -1,5 +1,5 @@
 /* User-triggered collector: reads the loaded document only. No fetches, cookies or private APIs. */
-function collectLoadedListings(){
+function collectLoadedListings(classify=globalThis.AssayImport?.status){
  if(!/(^|\.)leboncoin\.fr$/.test(location.hostname)){alert('Open your Leboncoin favourites or a listing first.');return}
  const listings=new Map();
  const canonical=value=>{try{const u=new URL(value,location.href);if(!/(^|\.)leboncoin\.fr$/.test(u.hostname))return '';return /\/(?:ad\/[^/]+\/)?\d{6,}(?:\.htm)?(?:$|[?#])/.test(u.pathname)?u.origin+u.pathname:''}catch{return ''}};
@@ -17,6 +17,7 @@ function collectLoadedListings(){
  else document.querySelectorAll('a[href]').forEach(a=>{const url=canonical(a.href);if(!url)return;const card=a.closest('article')||a.closest('li')||a;const text=card.innerText||a.innerText;add(url,(card.querySelector('h2,h3,[data-test-id="adcard-title"]')?.innerText||a.innerText||'').split('\n').find(Boolean)||'Listing',text)});
  if(!listings.size){alert('No loaded listing cards found. Scroll to load favourites, or use a saved HTML/JSON file in Assay.');return}
  if(current&&listings.has(current)){const r=listings.get(current),t=r.text.toLowerCase();r.availability=/cette annonce (?:n.est plus disponible|a ete supprimee|a été supprimée)|annonce supprimée/.test(t)?'unavailable':document.querySelector('h1')&&/\d\s*€/.test(t)?'available':'unknown'}
+ if(current&&listings.has(current)&&classify){const r=listings.get(current);Object.assign(r,classify({...r,availabilityText:document.querySelector('main')?.innerText||document.body?.innerText||''}))}
  const payload={format:'assay-visible-listings-v1',scope:current?'listing':'loaded-page',capturedAt:new Date().toISOString(),listings:[...listings.values()]};
  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='assay-leboncoin-loaded.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
  alert('Exported '+listings.size+' loaded listings. Import this JSON in Assay. Full descriptions are captured from structured data on individual adverts when present. Favourites cards do not load those descriptions.');
