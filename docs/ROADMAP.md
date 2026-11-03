@@ -16,10 +16,8 @@ explicitly **not** committed, and the gaps the project already knows about.
 
 ## Ideas, not committed
 
-- **Import listings from pasted advert links or text**, filling price, link
-  and any CPU, GPU, RAM or storage found in the title or description, and
-  leaving a field blank when it is unsure. The app does not scrape
-  marketplaces today and this would not change that for logged-in pages.
+- **Automatic marketplace synchronization** remains uncommitted. Local saved-input
+  intake and a loaded-page collector now exist; see [BULK_IMPORT.md](BULK_IMPORT.md).
 - **Move the application script out of `index.html`.** Most of the logic is
   inline today. CI checks syntax and the entry handler; extracting modules
   could extend coverage without relying on HTML extraction.

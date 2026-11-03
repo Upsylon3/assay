@@ -23,6 +23,9 @@ Current release: **0.8.0** (see [VERSIONING.md](VERSIONING.md)). The project was
 
 ## Features
 
+- **Bulk intake.** Import saved listing text, HTML or JSON into reviewed drafts; collect already-loaded Leboncoin cards in one export. See [the batch workflow and its limits](docs/BULK_IMPORT.md).
+- **Review availability.** Archive confirmed removals, keep inconclusive checks unresolved, and preserve inspection notes and advert URLs.
+
 - **Rank listings.** Sort PCs by performance, value, price, CPU, GPU, RAM, or storage.
 - **Choose a workload.** Compare balanced use, gaming, CPU-heavy/competitive gaming, GPU-heavy workloads, or CPU-heavy productivity.
 - **Choose a goal.** Daily driver, resale profit, or both. The ranking, the top-pick banner and the goal score follow it.
@@ -36,7 +39,7 @@ Current release: **0.8.0** (see [VERSIONING.md](VERSIONING.md)). The project was
 - **Back up your data.** Export and import JSON backups. Import adds listings to the current collection; it does not replace or wipe it.
 - **Keep data across devices (optional).** A Supabase account can sync your own listings. Shared component data and the default reference PC are also backed by Supabase when configured.
 
-The listing-name field can hold an advert URL for your own reference, but the app does **not** currently scrape marketplace pages or import listings directly from adverts.
+Advert URLs can be kept separately from listing names. Local intake parses supplied text/HTML/JSON; Assay does not fetch marketplace pages or synchronize Leboncoin favourites automatically.
 
 ## Understanding the scores
 
@@ -133,6 +136,7 @@ node scripts/check-benchmark-data.js
 node tests/scoring-engine.test.js
 node tests/conventions.test.js
 node tests/ui-entry.test.js
+node tests/listing-import.test.js
 ```
 
 The GitHub Actions validation workflow also extracts the inline application script from `index.html` and checks its JavaScript syntax. It runs on pushes and pull requests targeting `main`. [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) explains what each check covers and what nothing covers.

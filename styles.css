@@ -263,3 +263,13 @@ footer a { color: inherit; }
 @media(prefers-reduced-motion:reduce) {
  *,*::before,*::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+/* Intake and inspection extend the existing console controls. */
+.workflow-tools { margin-bottom: 20px; }
+textarea { width:100%; padding:12px; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--text); font:13px/1.6 var(--font-sans); resize:vertical; }
+textarea:focus-visible { outline:2px solid var(--acc); outline-offset:2px; }
+#bulkImport { max-width:1000px; }
+.import-draft { padding:20px 0; border-top:1px solid var(--line); }
+.import-draft pre { white-space:pre-wrap; overflow-wrap:anywhere; max-height:240px; overflow:auto; font:11px/1.7 var(--font-mono); color:var(--muted); }
+.inspection-note { white-space:pre-wrap; border-left:3px solid var(--acc); padding-left:12px; }
+.decision-reason { color:var(--acc); font-size:12px; max-width:65ch; }
+#collectorBookmark { font-weight:600; text-decoration:underline; }

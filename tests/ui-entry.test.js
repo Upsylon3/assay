@@ -16,7 +16,7 @@ function submit(values = {}, existing = null) {
   };
   let saved = 0;
   const context = {
-    $, pk: {cpu: {val: ['Test CPU', 21000]}, gpu: {val: ['Test GPU', 17000]}},
+    window: {AssayImport: require('../listing-import.js')}, $, pk: {cpu: {val: ['Test CPU', 21000]}, gpu: {val: ['Test GPU', 17000]}},
     items: existing ? [existing] : [], editIdx: existing ? 0 : -1, uid: () => 'new-id',
     saveI: () => saved++, resetForm() {}, renderAll() {}, go() {}, toast() {},
   };
