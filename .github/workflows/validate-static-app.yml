@@ -43,7 +43,9 @@ jobs:
           node --check listing-import.js
           node --check listing-workflow.js
           node --check browser-collector.js
+          node --check draft-sync.js
           node tests/listing-import.test.js
+          node tests/draft-sync.test.js
       - name: Run listing entry regression tests
         run: node tests/ui-entry.test.js
       - name: Run repository tooling tests

@@ -1,4 +1,4 @@
-/* Integration stays local until the user explicitly adds selected reviewed drafts. */
+/* Drafts sync with accounts; only reviewed additions enter the comparison. */
 (function(){
  const imp=window.AssayImport,dlg=document.createElement('dialog');dlg.id='bulkImport';
  dlg.innerHTML=`<div class="table-title-row"><div><p class="eyebrow">Intake station</p><h2>Import listings</h2></div><button class="btn gh" data-import="close">Close</button></div><p class="lead">Paste one advert or a batch, or load saved JSON/HTML. New listings are added after review. Captured unavailable status automatically archives matching saved listings.</p>
@@ -9,14 +9,16 @@
  dlg.querySelector('#collectorBookmark').href='javascript:'+encodeURIComponent(code);
  dlg.querySelector('#collectorCode').value=code;
  let drafts=jget('assay_import_drafts',[]);if(!Array.isArray(drafts))drafts=[];
- drafts=drafts.filter(d=>d&&typeof d.name==='string'&&typeof d.sourceText==='string').slice(0,1000);
+ drafts=drafts.filter(d=>d&&typeof d.name==='string'&&typeof d.sourceText==='string').map(d=>({...d,draftId:d.draftId||uid()}));
  let selected=new Set(),activeDraft=null;
- const store=()=>{jset('assay_import_drafts',drafts);document.querySelectorAll('[data-act=bulkImport]').forEach(b=>b.textContent='↓ Import listings'+(drafts.length?' ('+drafts.length+(drafts.length===1?' draft)':' drafts)'):''))};store();
+ let draftEntries=jget('assay_draft_sync',[]);if(!Array.isArray(draftEntries))draftEntries=[];
+ const persistDrafts=(changed=true)=>{if(changed)draftEntries=window.AssayDraftSync.track(draftEntries,drafts);jset('assay_draft_sync',draftEntries);jset('assay_import_drafts',drafts)};
+ const store=(changed=true)=>{persistDrafts(changed);if(changed)scheduleSync();document.querySelectorAll('[data-act=bulkImport]').forEach(b=>b.textContent='↓ Import listings'+(drafts.length?' ('+drafts.length+(drafts.length===1?' draft)':' drafts)'):''))};store();
  const ready=d=>d.kind!=='skip'&&d.cpu?.length===2&&d.gpu?.length===2&&d.price>0;
  const duplicate=d=>!!imp.key(d)&&items.some(it=>imp.key(it)===imp.key(d));
  function render(){
   document.getElementById('bulkRows').innerHTML=drafts.map(d=>`<article class="import-draft"><div class="row"><label class="chk"><input type="checkbox" data-draft-select="${esc(d.draftId)}" ${selected.has(d.draftId)?'checked':''} ${!ready(d)||duplicate(d)?'disabled':''}> ${esc(d.name)}</label><span class="bd">${duplicate(d)?'Already saved':d.kind==='skip'?'Not a desktop PC':ready(d)?'Ready to review':'Needs details'}</span></div><p class="hint">${d.sourceUrl?`<a href="${esc(d.sourceUrl)}" target="_blank" rel="noopener">${esc(d.sourceUrl)}</a>`:'No advert URL found — add it in the PC form.'}</p><p class="sp">CPU: ${esc(d.cpu?.[0]||'Unknown / ambiguous')} · GPU: ${esc(d.gpu?.[0]||'Unknown / ambiguous')} · Price: ${d.price?money(d.price):'Unknown'}</p><p class="sp">RAM: ${d.ram?esc(d.ram+' GB '+(d.ramType||'(type unknown)')):'Unknown'} · SSD: ${d.ssd??'Unknown'} GB · HDD: ${d.hdd||0} GB · Setup: ${esc(d.setup)}</p><p class="hint">${esc([d.availability==='unavailable'?'Unavailable: '+(d.availabilityReason||'source status'):'',...(d.warnings||[])].filter(Boolean).join(' · '))}</p><details><summary>Source &amp; detected phrases</summary><pre>${esc(d.sourceText)}</pre><p class="hint">RAM: ${esc(d.evidence?.ram||'No explicit RAM phrase')}<br>Storage: ${esc(d.evidence?.storage||'No explicit storage phrase')}</p></details><div class="row secondary-actions"><button class="btn" data-draft-edit="${esc(d.draftId)}">Review in PC form</button>${duplicate(d)&&d.descriptionSource==='structured-product'?`<button class="btn" data-draft-description="${esc(d.draftId)}">Update saved description only</button>`:''}<button class="btn gh" data-draft-drop="${esc(d.draftId)}">Dismiss draft</button>${d.sourceUrl?`<a href="${esc(d.sourceUrl)}" target="_blank" rel="noopener">Open advert ↗</a>`:''}</div></article>`).join('');
-  document.getElementById('bulkStatus').textContent=drafts.length+(drafts.length===1?' draft · ':' drafts · ')+drafts.filter(d=>ready(d)&&!duplicate(d)).length+' complete · '+selected.size+' selected. Drafts stay on this device; use Settings → Export backup to preserve them.';
+  document.getElementById('bulkStatus').textContent=drafts.length+(drafts.length===1?' draft · ':' drafts · ')+drafts.filter(d=>ready(d)&&!duplicate(d)).length+' complete · '+selected.size+' selected. Drafts sync when signed in. Settings → Export backup also preserves them.';
  }
  function analyze(text){
   if(text.length>10*1024*1024)throw new Error('Input is too large (10 MB maximum).');
@@ -51,7 +53,7 @@
   }
  });
  $('bulkFiles').onchange=async e=>{try{for(const file of e.target.files){if(file.size>10*1024*1024)throw new Error('File is too large (10 MB maximum).');analyze(await file.text())}}catch(err){$('bulkStatus').textContent=err.message}e.target.value=''};
- window.AssayWorkflow={open:()=>{activeDraft=null;render();dlg.showModal()},getDrafts:()=>drafts,restoreDrafts:values=>{if(!Array.isArray(values))return;for(const d of values){if(d&&typeof d.name==='string'&&typeof d.sourceText==='string'&&!drafts.some(x=>imp.key(d)&&imp.key(x)===imp.key(d))&&drafts.length<1000){const p=imp.parse({title:d.name,description:d.description||d.sourceText,descriptionSource:d.descriptionSource,url:d.sourceUrl,price:d.price,availability:d.availability,availabilityReason:d.availabilityReason,availabilityText:d.availabilityText},parts);drafts.push({...p,draftId:uid()})}}store()},cancelDraft:()=>{activeDraft=null},finishDraft:()=>{if(activeDraft){drafts=drafts.filter(d=>d.draftId!==activeDraft);selected.delete(activeDraft);activeDraft=null;store()}}};
+ window.AssayWorkflow={mergeCloud:remote=>{const merged=window.AssayDraftSync.merge(draftEntries,remote);draftEntries=merged.entries;drafts=merged.drafts;selected=new Set([...selected].filter(id=>drafts.some(d=>d.draftId===id)));store(false);if(dlg.open)render();return merged},forgetLocal:()=>{drafts=[];draftEntries=[];selected.clear();activeDraft=null;store(false);render()},open:()=>{activeDraft=null;render();dlg.showModal()},getDrafts:()=>drafts,restoreDrafts:values=>{if(!Array.isArray(values))return;for(const d of values){if(d&&typeof d.name==='string'&&typeof d.sourceText==='string'&&!drafts.some(x=>imp.key(d)&&imp.key(x)===imp.key(d))&&drafts.length<1000){const p=imp.parse({title:d.name,description:d.description||d.sourceText,descriptionSource:d.descriptionSource,url:d.sourceUrl,price:d.price,availability:d.availability,availabilityReason:d.availabilityReason,availabilityText:d.availabilityText},parts);drafts.push({...p,draftId:uid()})}}store()},cancelDraft:()=>{activeDraft=null},finishDraft:()=>{if(activeDraft){drafts=drafts.filter(d=>d.draftId!==activeDraft);selected.delete(activeDraft);activeDraft=null;store()}}};
 })();
 // Batch status updates require explicit per-advert evidence and user confirmation.
 (function(){
