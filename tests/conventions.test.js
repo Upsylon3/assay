@@ -40,6 +40,20 @@ for (const bad of ["main", "my-fix", "Feat/Thing", "feat/Two_Words"]) {
   assert.equal(run("check-commit-message.mjs", ["--branch", bad]).status, 1, `should reject branch: ${bad}`);
 }
 
+// --- Ranges: the legacy bot subject is tolerated, nothing else is --------------
+const { execFileSync } = require("node:child_process");
+const repoDir = mkdtempSync(join(tmpdir(), "assay-range-"));
+const git = (...a) => execFileSync("git", ["-c", "user.name=t", "-c", "user.email=t@t", ...a], { cwd: repoDir, encoding: "utf8" });
+git("init", "-q");
+git("commit", "-q", "--allow-empty", "-m", "chore: base");
+const base = git("rev-parse", "HEAD").trim();
+git("commit", "-q", "--allow-empty", "-m", "Weekly PassMark sync");
+git("commit", "-q", "--allow-empty", "-m", "fix: keep the sort column");
+assert.equal(run("check-commit-message.mjs", ["--range", `${base}..HEAD`], repoDir).status, 0, "the legacy sync subject must not fail a range");
+git("commit", "-q", "--allow-empty", "-m", "update stuff");
+assert.equal(run("check-commit-message.mjs", ["--range", `${base}..HEAD`], repoDir).status, 1, "any other bad subject in the range must still fail");
+assert.equal(run("check-commit-message.mjs", ["--message", "Weekly PassMark sync"]).status, 1, "the legacy subject is still refused as a new message");
+
 // --- Release validator, against the real repository -----------------------
 const version = readFileSync(join(repo, "VERSION"), "utf8").trim();
 const real = run("validate-release.mjs", [`v${version}`, repo]);

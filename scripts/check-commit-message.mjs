@@ -7,6 +7,15 @@ const HEADER = new RegExp(
   `^(?:${TYPES})(?:\\([a-z0-9]+(?:-[a-z0-9]+)*\\))?!?: [a-z0-9][^\\r\\n]*$`
 );
 const BRANCH = /^(feat|fix|docs|chore|refactor|test|ci|build|perf)\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
+// The weekly PassMark sync used to commit with this exact subject, before the
+// Conventional Commits rule existed (0.8.0). Those commits are already in
+// history, and a branch that was opened before the rule can still carry one,
+// which would turn every such pull request and push red for a message nobody
+// can fix without rewriting main. The workflow now commits as
+// "chore(parts): weekly PassMark sync". Only this exact string is tolerated,
+// and only when checking a range: new commits, branch names and PR titles are
+// still held to the rule.
+const LEGACY_SUBJECTS = new Set(["Weekly PassMark sync"]);
 const args = process.argv.slice(2);
 
 function usage() {
@@ -65,6 +74,7 @@ try {
     const entries = output.split(/\r?\n/).filter(Boolean);
     for (const entry of entries) {
       const [sha, subject] = entry.split("\x1f", 2);
+      if (LEGACY_SUBJECTS.has(subject)) continue;
       if (!validateMessage(subject ?? "", sha?.slice(0, 8) ?? "commit")) ok = false;
     }
     if (entries.length === 0) console.log("No non-merge commits in the selected range.");
