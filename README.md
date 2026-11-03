@@ -16,7 +16,7 @@ Current release: **0.8.0** (see [VERSIONING.md](VERSIONING.md)). The project was
 |---|---|---|
 | Scoring engine | Workload-aware CPU/GPU performance, kept separate from value | Covered by regression tests; the model is versioned (`performance-v2.4`) |
 | Benchmark data | Curated, sourced CPU and GPU suite records | Validated for structure; a human has to check each source and its methodology |
-| Interface | Compare, Table and Versus views, filters, goal toggle, link review, CSV and JSON export | Syntax-checked in CI only; no automated UI tests, check in a browser |
+| Interface | Compare, Table and Versus views, filters, goal toggle, link review, CSV and JSON export | Syntax and entry-handler regression checks in CI; rendering and navigation checked in a browser |
 | Accounts and sync | Optional cross-device sync of your own listings through Supabase | Row-level security is intended to isolate each account; no automated tests for merge behaviour, and no independent review on record |
 | Weekly PassMark sync | Refreshes the broad part list every Monday, with safety checks | Runs on a schedule; leaves the file untouched if anything looks wrong |
 | Release process | One version, a changelog, tagged releases, enforced commit conventions | New in 0.8.0; the workflows have not run on GitHub yet |
@@ -132,6 +132,7 @@ Install Node.js (22 is used by the validation workflow). There are no npm packag
 node scripts/check-benchmark-data.js
 node tests/scoring-engine.test.js
 node tests/conventions.test.js
+node tests/ui-entry.test.js
 ```
 
 The GitHub Actions validation workflow also extracts the inline application script from `index.html` and checks its JavaScript syntax. It runs on pushes and pull requests targeting `main`. [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) explains what each check covers and what nothing covers.

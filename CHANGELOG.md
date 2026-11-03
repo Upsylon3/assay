@@ -12,6 +12,8 @@ tagged; see [VERSIONING.md](VERSIONING.md) for which commit each one stands for.
 ## [Unreleased]
 
 ### Changed
+- Make the comparison bench more expressive with an illustrated laboratory welcome panel and a deal-index dial. Simplify listing actions and benchmark explanations with expandable details, keep prices visible on mobile, and wrap mobile navigation.
+- Streamline PC entry to CPU, GPU and price; blank memory/storage use marked assumptions. Add keyboard navigation to hardware pickers. Consolidate the stylesheet, remove obsolete UI code, and render only the active view. Reduce default table columns while retaining full details and CSV exports.
 - Align the interface with Home: warm paper/green-black themes, bench-green console controls, bundled Inter/Fredoka/IBM Plex Mono fonts, sage-to-forest stripe header, clearer panel hierarchy, and responsive forms, tables and dialogs. Scoring, content and saved data are unchanged.
 
 ### Fixed

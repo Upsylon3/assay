@@ -5,35 +5,41 @@
 <link rel="icon" href="favicon.png" type="image/png">
 <link rel="stylesheet" href="styles.css"></head><body>
 <div class="wrap">
-<header><div class="top"><div class="brand"><span class="brand-mark" aria-hidden="true">a</span><span>Assay<small>Used-PC value comparison · FPS suite estimates v2.4</small></span></div>
+<header><div class="top"><div class="brand"><span class="brand-mark" aria-hidden="true">a</span><span>Assay<small>Used PCs. Put to the test.</small></span></div>
 <div class="row"><button class="btn gh" data-act="help">? How it works</button><button class="btn gh" data-act="theme" aria-label="Toggle light and dark theme" title="Toggle light and dark theme">◐</button></div></div>
-<nav id="nav" aria-label="Main navigation"><button data-tab="compare">Compare</button><button data-tab="table">Table</button><button data-tab="versus">Versus</button><button data-tab="add">Add a PC</button><button data-tab="settings">Settings</button><button data-tab="admin" id="adminTab" hidden>Admin</button></nav></header>
+<nav id="nav" aria-label="Main navigation"><button data-tab="compare">Compare</button><button data-tab="table">Table</button><button data-tab="versus">Versus</button><button data-tab="add" class="nav-add">+ Add a PC</button><button data-tab="settings">Settings</button><button data-tab="admin" id="adminTab" hidden>Admin</button></nav></header>
 
 <section id="t-compare" hidden>
- <div id="welcome" class="card empty" hidden><h2>Welcome 👋</h2><p class="lead">Rank used-PC listings by real performance per euro. Three steps:</p>
-  <div class="steps"><div><b>1 · Add a PC</b>Pick its CPU and GPU, enter the price.</div><div><b>2 · Add more</b>Unknown RAM or SSD? Tick “I don't know” and we assume a typical amount.</div><div><b>3 · Compare</b>The best deal rises to the top.</div></div>
-  <div class="row" style="justify-content:center"><button class="btn pri" data-act="goadd">Add my first PC</button><button class="btn" data-act="sample">Try with examples</button></div></div>
+ <div class="bench-heading"><div><p class="eyebrow">The comparison bench</p><h1>Find the keeper.</h1><p class="lead" id="benchStatus">A little evidence. A better buying decision.</p></div><span class="bench-label"><i aria-hidden="true"></i> Local-first · benchmark-backed</span></div>
+ <div id="welcome" class="card welcome" hidden>
+  <div class="welcome-copy"><p class="eyebrow">Ready for your first specimen</p><h2>Big claims.<br>Meet small print.</h2><p class="lead">Put used-PC listings side by side. See what the hardware delivers, what the price buys, and which one deserves a closer look.</p>
+  <div class="row"><button class="btn pri" data-act="goadd">+ Add your first PC</button><button class="btn" data-act="sample">Explore with 3 examples</button></div><p class="hint">Start with a CPU, a GPU and a price. Your listings stay on this device unless you choose account sync.</p></div>
+  <div class="instrument-art" aria-hidden="true"><div class="instrument-plate"><span>ASSAY / FIELD UNIT 01</span><span class="status-dot"></span></div><div class="scope"><svg viewBox="0 0 320 180" fill="none"><path class="scope-grid" d="M0 45H320M0 90H320M0 135H320M80 0V180M160 0V180M240 0V180"/><path class="scope-line" d="M0 130H40L60 110H85L105 125L130 65L155 100L180 48L200 80H235L260 30L280 52H320"/><circle cx="260" cy="30" r="5"/></svg><span>PERFORMANCE / PRICE</span></div><div class="instrument-bottom"><div><i></i><i></i><i></i><i></i><i></i></div><span>Evidence in. Clarity out.</span><b>◎</b></div></div>
+  <div class="welcome-steps"><span><b>01</b> Log the hardware</span><span><b>02</b> Compare the evidence</span><span><b>03</b> Keep the shortlist</span></div>
+ </div>
  <div id="cmp" hidden>
-  <div class="row" style="margin-top:16px;gap:10px"><label style="margin:0">I'm looking for</label><div class="seg" id="goal"><button data-g="drive">Daily driver</button><button data-g="flip">Resale profit</button><button data-g="both">Both</button></div><button class="btn gh" data-act="review" id="reviewBtn" style="margin-left:auto" hidden></button></div>
+  <div class="goal-toolbar"><span class="control-label">Buying for</span><div class="seg" id="goal"><button data-g="drive">Daily driver</button><button data-g="flip">Resale profit</button><button data-g="both">Both</button></div><button class="btn gh" data-act="review" id="reviewBtn" style="margin-left:auto" hidden></button></div>
   <div id="hero" class="card hero"></div>
-  <div class="card"><div class="row" style="justify-content:space-between;margin-bottom:6px">
+  <div class="card results-card"><div class="results-heading"><div><p class="eyebrow">The shortlist</p><h2>Your specimens <span id="resultCount" class="count-tag"></span></h2></div><button class="btn" data-act="goadd">+ Add a PC</button></div><div class="results-toolbar">
    <div class="seg" id="filt"><button data-f="all" class="on">All</button><button data-f="fav">★ Favourites</button><button data-f="ddr5">DDR5 only</button></div>
    <div class="row"><label style="margin:0">Sort by</label><select id="sortMode" style="width:auto"><option value="value">Best for my goal</option><option value="perf">Most powerful</option><option value="priceAsc">Cheapest</option><option value="gpu">GPU power</option><option value="cpu">CPU power</option><option value="ram">RAM</option><option value="sto">Storage</option></select></div></div>
-   <div class="row" style="gap:4px 22px;margin:2px 0 2px"><label class="chk"><input type="checkbox" id="optAvail"> Available only</label><label class="chk" title="Hides any listing that costs more than a more powerful one (same price stays)"><input type="checkbox" id="optWorth"> Logically worth only</label></div><div class="hint" id="viewNote" style="margin:2px 0 6px"></div><div id="list"></div><p class="hint">Performance = % of your yardstick PC (see Settings). Value = how good the deal is, 100 = best among the available listings. Prices are net of any included setup.</p></div>
+   <div class="row" style="gap:4px 22px;margin:2px 0 2px"><label class="chk"><input type="checkbox" id="optAvail"> Available only</label><label class="chk" title="Hides any listing that costs more than a more powerful one (same price stays)"><input type="checkbox" id="optWorth"> Hide overpriced alternatives</label></div><div class="hint" id="viewNote" style="margin:2px 0 6px"></div><div id="list"></div><details class="explanation"><summary>What do the scores mean?</summary><p class="hint">Performance compares CPU/GPU power with your reference PC in Settings (100% = equal). The deal score ranks value within your available listings (100 = best for your goal). Prices deduct any included setup. Scores help compare listings; check condition and seller details before buying.</p></details></div>
  </div></section>
 
-<section id="t-table" hidden><div class="card table-card"><div class="table-title-row"><div><h2>Listing spreadsheet</h2><p class="lead">A full, sortable data grid for every saved PC. Click any column heading to sort; scroll horizontally for the full hardware and scoring breakdown.</p></div><button class="btn" data-act="tableExport">Export visible rows to CSV</button></div><div class="table-toolbar"><div class="table-search"><label for="tableSearch">Search listings</label><input id="tableSearch" type="search" placeholder="Name, CPU, GPU, RAM, price…"></div><div class="table-filter"><label for="tableFilter">Show</label><select id="tableFilter"><option value="all">All listings</option><option value="available">Available only</option><option value="unavailable">Unavailable only</option><option value="favorites">Favourites only</option></select></div><div class="table-filter"><label><input type="checkbox" id="tableAll"> Show all columns</label></div><div id="tableCount" class="hint" aria-live="polite"></div></div><p class="hint">CPU percentages are relative to your yardstick and use PassMark single-/multi-thread evidence. Gaming profiles use resolution- and graphics-mode-specific GPU game-suite indices where available; PassMark is shown separately. GPU suite FPS is an estimated multi-game geometric mean, not an individual-game prediction. “Proxy” means no curated CPU single-thread score is available, so the model falls back to CPU Mark. Evidence quality is shown per row. Value / 100 is normalized against the best available listing.</p><div id="tableBody" class="table-viewport"></div></div></section>
+<section id="t-table" hidden><div class="card table-card"><div class="table-title-row"><div><h2>Listing spreadsheet</h2><p class="lead">All your listings, side by side. Click a heading to sort. Scroll the table for more detail.</p></div><button class="btn" data-act="tableExport">Export CSV</button></div><div class="table-toolbar"><div class="table-search"><label for="tableSearch">Search listings</label><input id="tableSearch" type="search" placeholder="Name, CPU, GPU, RAM, price…"></div><div class="table-filter"><label for="tableFilter">Show</label><select id="tableFilter"><option value="all">All listings</option><option value="available">Available only</option><option value="unavailable">Unavailable only</option><option value="favorites">Favourites only</option></select></div><div class="table-filter"><label><input type="checkbox" id="tableAll"> Detailed columns</label></div><div id="tableCount" class="hint" aria-live="polite"></div></div><details class="explanation table-method"><summary>Benchmark notes &amp; score definitions</summary><p class="hint">CPU percentages are relative to your yardstick and use PassMark single-/multi-thread evidence. Gaming profiles use resolution- and graphics-mode-specific GPU game-suite indices where available; PassMark is shown separately. GPU suite FPS is an estimated multi-game geometric mean, not an individual-game prediction. “Proxy” means no curated CPU single-thread score is available, so the model falls back to CPU Mark. Evidence quality is shown per row. Value / 100 is normalized against the best available listing.</p></details><div id="tableBody" class="table-viewport"></div></div></section>
 <section id="t-versus" hidden><div class="card"><h2>Versus</h2><p class="lead">Compare two saved PCs by performance, effective price and performance per euro. Differences within ±5% are treated as roughly equal.</p><div class="g"><div><label for="versusA">First PC</label><select id="versusA"></select></div><div><label for="versusB">Second PC</label><select id="versusB"></select></div></div><div id="versusBody" style="margin-top:14px"></div></div></section>
-<section id="t-add" hidden><div class="card"><h2 id="fTitle">Add a PC</h2><p class="lead">Only CPU, GPU and price are needed. Everything else is optional.</p>
+<section id="t-add" hidden><div class="card"><h2 id="fTitle">Add a PC</h2><p class="lead">CPU, GPU, price. That’s your starting point. Add the finer details when you know them.</p>
  <form id="form" novalidate><div class="g">
-  <div class="full"><label>Listing name or link <span style="font-weight:400">(optional)</span></label><input id="f_name" placeholder="Paste the ad link or type a name"></div>
-  <div><label>CPU</label><div id="pkCpu"></div></div><div><label>Graphics card (GPU)</label><div id="pkGpu"></div></div>
-  <div><label>RAM (GB)</label><div class="row" style="flex-wrap:nowrap"><input id="f_ram" type="number" min="1" placeholder="16"><select id="f_ramType" style="width:110px"><option>DDR3</option><option selected>DDR4</option><option>DDR5</option></select></div><label class="chk"><input type="checkbox" id="f_ramU"> I don't know (assume 16 GB DDR4)</label></div>
-  <div><label>SSD (GB)</label><input id="f_ssd" type="number" min="0" placeholder="1000"><label class="chk"><input type="checkbox" id="f_ssdU"> I don't know (assume 1000 GB)</label></div>
-  <div class="full"><label>Price (<span class="cur">€</span>)</label><input id="f_price" type="number" min="1" step="any" placeholder="850"><label class="chk"><input type="checkbox" id="f_setup"> Setup included (screen, keyboard, mouse…)</label><div id="setupBox" hidden style="margin-top:8px"><label>Setup is worth (<span class="cur">€</span>), taken off the price</label><input id="f_setupAmt" type="number" min="0" step="any" style="max-width:180px"><p class="hint" id="setupHint"></p></div></div>
+  <div class="full"><label for="f_name">Listing name or link <span style="font-weight:400">(optional)</span></label><input id="f_name" placeholder="Paste the ad link or type a name"></div>
+  <div><label for="pkCpuInput">CPU</label><div id="pkCpu"></div></div><div><label for="pkGpuInput">Graphics card (GPU)</label><div id="pkGpu"></div></div>
+  <div class="full"><label for="f_price">Price (<span class="cur">€</span>)</label><input id="f_price" type="number" min="1" step="any" placeholder="850"><label class="chk"><input type="checkbox" id="f_setup"> Setup included (screen, keyboard, mouse…)</label><div id="setupBox" hidden style="margin-top:8px"><label for="f_setupAmt">Setup is worth (<span class="cur">€</span>), taken off the price</label><input id="f_setupAmt" type="number" min="0" step="any" style="max-width:180px"><p class="hint" id="setupHint"></p></div></div>
  </div>
- <details><summary>More details (hard drive, looks)</summary><div class="g" style="margin-top:12px"><div><label>HDD (GB)</label><input id="f_hdd" type="number" min="0" placeholder="0"></div><div><label>Looks</label><select id="f_look"><option value="neutral">Neutral</option><option value="pretty">Pretty</option><option value="ugly">Not pretty</option></select></div><div><label class="chk" style="margin-top:0"><input type="checkbox" id="f_avail" checked> Still available</label></div></div></details>
- <div class="err" id="formErr"></div>
+ <details id="memoryDetails" class="form-disclosure"><summary>Memory &amp; storage <span class="hint">Optional</span></summary><p class="hint">Leave blank to assume 16 GB DDR4 and a 1 TB SSD. Assumptions are marked ~ in your results.</p><div class="g">  <div><label for="f_ram">RAM (GB)</label><div class="row" style="flex-wrap:nowrap"><input id="f_ram" type="number" min="1" placeholder="16"><select id="f_ramType" style="width:110px"><option>DDR3</option><option selected>DDR4</option><option>DDR5</option></select></div><label class="chk"><input type="checkbox" id="f_ramU"> I don't know (assume 16 GB DDR4)</label></div>
+  <div><label for="f_ssd">SSD (GB)</label><input id="f_ssd" type="number" min="0" placeholder="1000"><label class="chk"><input type="checkbox" id="f_ssdU"> I don't know (assume 1000 GB)</label></div>
+
+ </div></details>
+ <details><summary>Extras &amp; availability</summary><div class="g" style="margin-top:12px"><div><label for="f_hdd">HDD (GB)</label><input id="f_hdd" type="number" min="0" placeholder="0"></div><div><label for="f_look">Looks</label><select id="f_look"><option value="neutral">Neutral</option><option value="pretty">Pretty</option><option value="ugly">Not pretty</option></select></div><div><label class="chk" style="margin-top:0"><input type="checkbox" id="f_avail" checked> Still available</label></div></div></details>
+ <div class="err" id="formErr" role="alert"></div>
  <div class="row"><button class="btn pri" id="addBtn" type="submit">Add to comparison</button><button class="btn gh" type="button" id="cancelBtn" hidden data-act="cancel">Cancel edit</button></div></form></div></section>
 
 <section id="t-settings" hidden>
@@ -60,7 +66,7 @@
 <footer id="foot"></footer></div>
 <dialog id="review"><h2>Review links</h2><div id="rvBody"></div></dialog>
 <dialog id="help"><h2>How scoring works</h2><p class="lead"><b>Performance</b> compares a PC's CPU and GPU with the yardstick PC for the workload you picked in Settings. <b>Value</b> is separate: CPU, GPU, RAM and storage are weighted by what a typical 2026 build spends on each (DDR5 counts for more than DDR4 because it costs more), then divided by the price minus an included setup, so a cheaper PC can beat a stronger one. On the Compare tab, <b>Daily driver</b> ranks by performance per euro for your workload, <b>Resale profit</b> by how much hardware (at market part prices) each euro buys, and <b>Both</b> by a mix that only rewards listings good at both. Assumed RAM/SSD values are marked with <span class="est">~</span>.</p><button class="btn pri" onclick="this.closest('dialog').close()">Got it</button></dialog>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status"></div>
 <script src="builtin-parts.js"></script><script src="config.js"></script>
 <script src="benchmark-data.js?v=20261016-fps24"></script>
 <script src="scoring-engine.js?v=20261016-fps24"></script>
@@ -210,16 +216,43 @@ async function addPart(kind,name,score){name=name.trim();if(!(score>=100&&score<
  build();toast(ON?"Added for everyone ✓":"Saved on this device ✓");return[name,score]}
 const isPassmark=(k,n)=>BUILTIN[k+"s"].some(x=>x[0].toLowerCase()==n.toLowerCase());
 /* ---------- part picker ---------- */
-function picker(box,kind,ph,onPick,canAdd){box.className="pk";box.innerHTML=`<input placeholder="${ph}" autocomplete="off"><ul class="dd" hidden></ul><div class="chip" hidden></div><div class="newp" hidden></div>`;
- const[inp,dd,chip,np]=["input","ul",".chip",".newp"].map(s=>box.querySelector(s));const o={val:null};
- o.set=p=>{o.val=p;inp.hidden=!!p;chip.hidden=!p;np.hidden=true;dd.hidden=true;if(p){chip.innerHTML=`<span><b>${esc(p[0])}</b> · ${fmt(p[1])}</span><button type="button" title="Change">×</button>`;chip.querySelector("button").onclick=()=>{o.set(null);inp.focus()}}onPick&&onPick(p)};
- const show=()=>{const q=inp.value.toLowerCase().split(/\s+/).filter(Boolean);if(!q.length){dd.hidden=true;return}
-  const r=parts[kind].filter(p=>q.every(t=>p[0].toLowerCase().includes(t))).sort((a,b)=>b[1]-a[1]).slice(0,7);
+function picker(box,kind,ph,onPick,canAdd){
+ box.className="pk";
+ const inputId=box.id+"Input",listId=box.id+"Options";
+ box.innerHTML=`<input id="${inputId}" role="combobox" aria-label="${ph}" aria-autocomplete="list" aria-expanded="false" aria-controls="${listId}" placeholder="${ph}" autocomplete="off"><ul id="${listId}" class="dd" role="listbox" aria-label="Hardware matches" hidden></ul><div class="chip" hidden></div><div class="newp" hidden></div>`;
+ const [inp,dd,chip,np]=["input","ul",".chip",".newp"].map(s=>box.querySelector(s));
+ const o={val:null};let matches=[],active=-1;
+ const close=()=>{dd.hidden=true;inp.setAttribute("aria-expanded","false");inp.removeAttribute("aria-activedescendant");active=-1};
+ o.set=p=>{o.val=p;inp.hidden=!!p;chip.hidden=!p;np.hidden=true;close();
+  if(p){chip.innerHTML=`<span><b>${esc(p[0])}</b> · ${fmt(p[1])}</span><button type="button" aria-label="Change ${kind.toUpperCase()}">×</button>`;chip.querySelector("button").onclick=()=>{o.set(null);inp.focus()}}
+  onPick&&onPick(p)
+ };
+ const choose=li=>{if(!li)return;
+  if(li.dataset.new){close();np.hidden=false;
+   np.innerHTML=`<label for="${box.id}Score">PassMark score for “${esc(inp.value.trim())}”</label><div class="row"><input id="${box.id}Score" type="number" placeholder="e.g. 19256" style="max-width:150px"><button type="button" class="btn pri">${ON?"Add for everyone":"Save"}</button></div><p class="hint">Look it up on cpubenchmark.net / videocardbenchmark.net (CPU Mark / G3D Mark).</p>`;
+   np.querySelector("button").onclick=async()=>{const p=await addPart(kind,inp.value,+np.querySelector("input").value);if(p)o.set(p)};
+   np.querySelector("input").focus();
+  }else if(li.dataset.i!==undefined)o.set(matches[+li.dataset.i]);
+ };
+ const show=()=>{const q=inp.value.toLowerCase().split(/\s+/).filter(Boolean);active=-1;
+  if(!q.length){close();return}
+  matches=parts[kind].filter(p=>q.every(t=>p[0].toLowerCase().includes(t))).sort((a,b)=>b[1]-a[1]).slice(0,7);
   const exact=parts[kind].some(p=>p[0].toLowerCase()==inp.value.trim().toLowerCase());
-  dd.innerHTML=r.map((p,i)=>`<li data-i="${i}">${esc(p[0])}<small>${fmt(p[1])}</small></li>`).join("")+(canAdd&&!exact?`<li data-new="1">+ Add “${esc(inp.value.trim())}” as a new part</li>`:r.length?"":"<li>No match in PassMark's list</li>");dd.hidden=false;
-  dd.onmousedown=e=>{const li=e.target.closest("li");if(!li)return;e.preventDefault();if(!li.dataset.new&&li.dataset.i===undefined)return;if(li.dataset.new){dd.hidden=true;np.hidden=false;np.innerHTML=`<label>PassMark score for “${esc(inp.value.trim())}”</label><div class="row"><input type="number" placeholder="e.g. 19256" style="max-width:150px"><button type="button" class="btn pri">${ON?"Add for everyone":"Save"}</button></div><p class="hint">Look it up on cpubenchmark.net / videocardbenchmark.net (CPU Mark / G3D Mark).</p>`;
-   np.querySelector("button").onclick=async()=>{const p=await addPart(kind,inp.value,+np.querySelector("input").value);if(p)o.set(p)}}else o.set(r[+li.dataset.i])}};
- inp.oninput=show;inp.onfocus=show;inp.onblur=()=>setTimeout(()=>dd.hidden=true,150);return o}
+  dd.innerHTML=matches.map((p,i)=>`<li id="${listId}-${i}" role="option" aria-selected="false" data-i="${i}">${esc(p[0])}<small>${fmt(p[1])}</small></li>`).join("")+(canAdd&&!exact?`<li id="${listId}-new" role="option" aria-selected="false" data-new="1">+ Add “${esc(inp.value.trim())}” as a new part</li>`:matches.length?"":"<li>No match in PassMark's list</li>");
+  dd.hidden=false;inp.setAttribute("aria-expanded","true");inp.removeAttribute("aria-activedescendant");
+ };
+ dd.onmousedown=e=>{const li=e.target.closest("li");if(li){e.preventDefault();choose(li)}};
+ inp.onkeydown=e=>{
+  if(e.key==="Escape"){close();return}
+  if(e.key==="ArrowDown"||e.key==="ArrowUp"){
+   e.preventDefault();if(dd.hidden)show();const options=[...dd.querySelectorAll('[role="option"]')];if(!options.length)return;
+   active=(active+(e.key==="ArrowDown"?1:active<0?0:-1)+options.length)%options.length;
+   options.forEach((li,i)=>li.setAttribute("aria-selected",String(i===active)));
+   inp.setAttribute("aria-activedescendant",options[active].id);options[active].scrollIntoView({block:"nearest"});
+  }else if(e.key==="Enter"&&!dd.hidden){e.preventDefault();if(active>=0)choose(dd.querySelectorAll('[role="option"]')[active])}
+ };
+ inp.oninput=show;inp.onfocus=show;inp.onblur=()=>setTimeout(close,150);return o;
+}
 const pk={cpu:picker($("pkCpu"),"cpu","Search e.g. Ryzen 5 5600",null,true),gpu:picker($("pkGpu"),"gpu","Search e.g. RTX 3060",null,true),
  rc:picker($("pkRefCpu"),"cpu","Search a CPU…",p=>{if(p){P.ref={...refNow(),cpuName:p[0],cpu:p[1]};saveP();renderAll();pk.rc.set(null)}}),
  rg:picker($("pkRefGpu"),"gpu","Search a GPU…",p=>{if(p){P.ref={...refNow(),gpuName:p[0],gpu:p[1]};saveP();renderAll();pk.rg.set(null)}}),
@@ -245,7 +278,7 @@ function score(it,ref){const M=MARKET,W=COST.w,profile=WORKLOADS[P.workload]||WO
 /* ---------- render ---------- */
 const stor=(n)=>n>=1000?(n/1000).toString().replace(/\.0$/,"")+" TB":n+" GB";
 const isAvail=it=>it.available!==false;
-/* "Logically worth only": drop a listing when a strictly cheaper one is at least as powerful. Same price always stays.
+/* "Hide overpriced alternatives": drop a listing when a strictly cheaper one is at least as powerful. Same price always stays.
    Prices are sorted ascending; "best" is the most power seen at strictly lower prices, so a listing survives only if it beats it. */
 function worthOnly(rows){const s=rows.slice().sort((a,b)=>a.net-b.net||b.idx-a.idx),keep=new Set();let best=-Infinity,k=0;
  while(k<s.length){let j=k;while(j<s.length&&s[j].net==s[k].net)j++;
@@ -281,18 +314,22 @@ function renderList(){const ref=refNow(),mode=$("sortMode").value;
  let rows=pool.filter(r=>filt=="all"||(filt=="fav"?r.favorite:r.ramType=="DDR5"));const n0=rows.length;
  if(P.worth)rows=worthOnly(rows);
  const key={value:r=>r.gs,perf:r=>r.idx,priceAsc:r=>-r.net,gpu:r=>r.gpuPct,cpu:r=>r.cpuPct,ram:r=>r.ramPct,sto:r=>r.stoPct}[mode];rows.sort((a,b)=>key(b)-key(a));
- $("welcome").hidden=items.length>0;$("cmp").hidden=!items.length;if(!items.length)return;
+ $("welcome").hidden=items.length>0;$("cmp").hidden=!items.length;
+ $("benchStatus").textContent=items.length?items.length+" listing"+(items.length===1?"":"s")+" on the bench. Compare, shortlist, inspect.":"A little evidence. A better buying decision.";
+ if(!items.length)return;
+ $("resultCount").textContent=rows.length;
  const notes=[];if(P.avail&&hidden)notes.push(hidden+" unavailable listing"+(hidden>1?"s":"")+" hidden");if(P.worth&&n0>rows.length)notes.push((n0-rows.length)+" hidden: pricier than a more powerful one");$("viewNote").textContent=notes.join(" · ");
  const top=rows.filter(isAvail).sort((a,b)=>b.gs-a.gs)[0];$("hero").style.display=top?"":"none";
- $("hero").innerHTML=top?`<div><div class="k">${GOALTXT[P.goal]}</div><div class="nm" style="font-size:1.1rem">${title(top)}</div><div class="sp">${esc(top.cpuName)} · ${esc(top.gpuName)}</div></div><div style="text-align:right"><div class="num" style="font-size:1.4rem">${money(top.net)}</div><div class="sp">${top.idx.toFixed(0)}% performance</div></div>`:"";
+ $("hero").innerHTML=top?`<div class="hero-copy"><p class="eyebrow"><span class="status-dot"></span> ${GOALTXT[P.goal]}</p><h2>${title(top)}</h2><p class="sp">${esc(top.cpuName)} · ${esc(top.gpuName)}</p><div class="hero-readouts"><div><span class="control-label">Effective price</span><strong>${money(top.net)}</strong></div><div><span class="control-label">Performance</span><strong>${top.idx.toFixed(0)}<small>%</small></strong></div></div><button class="btn" data-act="chooseVersus" data-i="${top.i}">Compare head to head ↗</button></div><div class="score-instrument"><div class="instrument-plate"><span>DEAL INDEX</span><span>01 / ${String(rows.length).padStart(2,"0")}</span></div><div class="score-dial" style="--score:${Math.min(100,Math.max(0,top.gs))}" role="img" aria-label="Deal score ${Math.round(top.gs)} out of 100"><div><strong>${Math.round(top.gs)}</strong><span>/ 100</span></div></div><p class="hint">Relative to your available listings.<br>Best for your selected goal.</p></div>`:"";
  $("list").innerHTML=rows.length?rows.map((r,n)=>{const est=(t,a)=>a?`<span class="est" title="Assumed: you marked this as unknown">~${t}</span>`:t,av=isAvail(r);
-  return`<div class="item${av?"":" off"}"><div class="rk">${n+1}</div><div><div class="nm">${title(r)}${av&&r.gs==best?'<span class="bd">Best deal</span>':""}${av?"":'<span class="bd no">Unavailable</span>'}${r.setup?'<span class="bd su">Setup incl.</span>':""}${r.favorite?' <span class="fav">★</span>':""}</div>
+  return`<article class="item${av?"":" off"}"><div class="rk">${String(n+1).padStart(2,"0")}</div><div><div class="nm">${title(r)}${av&&r.gs==best?'<span class="bd">Best deal</span>':""}${av?"":'<span class="bd no">Unavailable</span>'}${r.setup?'<span class="bd su">Setup incl.</span>':""}${r.favorite?' <span class="fav">★</span>':""}</div>
   <div class="sp">${esc(r.cpuName)} · ${esc(r.gpuName)} · ${est(r.ram+" GB "+r.ramType,r.ramUnknown)} · ${est(stor(r.ssd)+" SSD",r.ssdUnknown)}${r.hdd?" + "+stor(r.hdd)+" HDD":""}</div><div class="sp">Daily driver <b>${r.drv.toFixed(0)}</b> · Resale <b>${r.flp.toFixed(0)}</b></div>${r.gpuSuiteFps!=null?`<div class="sp" title="Tom’s Hardware multi-game GPU suite estimate; not a per-game or full-PC guarantee"><b>~${Math.round(r.gpuSuiteFps)} suite FPS</b> · ${esc(r.gpuResolution)} ${P.graphicsMode==="rayTracing"?"ray tracing":"raster"}</div>`:""}</div>
   <div class="pf"><div class="num">${r.idx.toFixed(0)}%</div><div class="k">performance</div><div class="bar"><i style="width:${Math.min(100,r.idx)}%"></i></div></div>
-  <div class="pr"><div class="num">${money(r.net)}</div><div class="k">${r.cut>0?"−"+money(r.cut)+" setup":"price"}</div></div><div><div class="num">${Math.round(r.gs)}</div><div class="k">${GOALK[P.goal]}</div></div>
-  <div class="act"><button class="btn" data-act="fav" data-i="${r.i}">${r.favorite?"★ Saved":"☆ Save"}</button><button class="btn" data-act="avail" data-i="${r.i}">${av?"Mark unavailable":"Mark available"}</button><button class="btn" data-act="edit" data-i="${r.i}">Edit</button><button class="btn" data-act="det" data-i="${r.i}">Details</button><button class="btn dng" data-act="del" data-i="${r.i}">Delete</button></div>
-  <div class="det" id="det${r.i}" hidden>CPU ${r.cpuPct.toFixed(0)}% (${fmt(r.cpuScore)}) · GPU ${r.gpuPct.toFixed(0)}% (${fmt(r.gpuScore)})${r.gpuSuiteFps!=null?` · ~${Math.round(r.gpuSuiteFps)} aggregate suite FPS`:" · FPS estimate unavailable for this GPU"} · RAM ${r.ramPct.toFixed(0)}% (${r.ram} GB ${r.ramType}) · Storage ${r.stoPct.toFixed(0)}% · ${(r.perfPerEuro*100).toFixed(1)} performance points per ${P.cur=="EUR"?"€":"$"}100${linkOf(r)?` · link checked ${ago(r.checkedAt)}`:""}${r.cut>0?`<br>Listed ${money(r.price)} − ${money(r.cut)} setup = ${money(r.net)} for the PC itself`:""}</div></div>`}).join(""):`<div class="empty">Nothing matches this filter.</div>`}
-function title(r){const n=r.name||"Untitled PC";if(/^https?:\/\//i.test(n)){let h="listing";try{h=new URL(n).hostname.replace(/^www\./,"")}catch(e){}return`<a href="${esc(n)}" target="_blank" rel="noopener" style="color:var(--acc)">${esc(h)} ↗</a>`}return esc(n)}
+  <div class="pr"><div class="num">${money(r.net)}</div><div class="k">${r.cut>0?"−"+money(r.cut)+" setup":"price"}</div></div><div class="listing-score"><div class="num">${Math.round(r.gs)}<small>/100</small></div><div class="k">${GOALK[P.goal]} deal</div></div>
+  <div class="act"><button class="btn" data-act="fav" data-i="${r.i}" aria-pressed="${r.favorite}">${r.favorite?"★ Saved":"☆ Save"}</button><button class="btn" data-act="chooseVersus" data-i="${r.i}">Versus ↗</button><button class="btn gh" data-act="edit" data-i="${r.i}">Edit</button></div>
+  <details class="listing-details"><summary>Inspect listing</summary><div class="row secondary-actions"><button class="btn" data-act="avail" data-i="${r.i}">${av?"Mark unavailable":"Mark available"}</button><button class="btn dng" data-act="del" data-i="${r.i}">Delete listing</button></div>
+  <div class="det">CPU ${r.cpuPct.toFixed(0)}% (${fmt(r.cpuScore)}) · GPU ${r.gpuPct.toFixed(0)}% (${fmt(r.gpuScore)})${r.gpuSuiteFps!=null?` · ~${Math.round(r.gpuSuiteFps)} aggregate suite FPS`:" · FPS estimate unavailable for this GPU"} · RAM ${r.ramPct.toFixed(0)}% (${r.ram} GB ${r.ramType}) · Storage ${r.stoPct.toFixed(0)}% · ${(r.perfPerEuro*100).toFixed(1)} performance points per ${P.cur=="EUR"?"€":"$"}100${linkOf(r)?` · link checked ${ago(r.checkedAt)}`:""}${r.cut>0?`<br>Listed ${money(r.price)} − ${money(r.cut)} setup = ${money(r.net)} for the PC itself`:""}</div></details></article>`}).join(""):`<div class="empty">Nothing matches these filters. Try All or turn off a filter.</div>`}
+function title(r){const n=r.name||[r.cpuName,r.gpuName].filter(Boolean).join(" + ")||"Untitled PC";if(/^https?:\/\//i.test(n)){let h="listing";try{h=new URL(n).hostname.replace(/^www\./,"")}catch(e){}return`<a href="${esc(n)}" target="_blank" rel="noopener" style="color:var(--acc)">${esc(h)} ↗</a>`}return esc(n)}
 const TABLE_COLUMNS=[
  {key:"name",group:"Listing",label:"PC / listing",numeric:false,sort:r=>(r.name||r.cpuName+" + "+r.gpuName).toLowerCase(),csv:r=>r.name||r.cpuName+" + "+r.gpuName,cell:r=>title(r)},
  {key:"status",group:"Listing",label:"Availability",numeric:false,sort:r=>isAvail(r)?1:0,csv:r=>isAvail(r)?"Available":"Unavailable",cell:r=>isAvail(r)?'<span class="bd">Available</span>':'<span class="bd no">Unavailable</span>'},
@@ -349,11 +386,11 @@ function tableRows(){
  });
  return rows;
 }
-/* The table shows the columns you actually decide with; "Show all columns" reveals the full benchmark detail. CSV export always has everything. */
-const BASIC_COLS=new Set(["name","status","favorite","price","net","cpuName","gpuName","ram","ssd","idx","value","drv","flp","actions"]);
+/* The table shows the columns you actually decide with; "Detailed columns" reveals the full benchmark detail. CSV export always has everything. */
+const BASIC_COLS=new Set(["name","status","favorite","net","cpuName","gpuName","ram","ssd","idx","value","actions"]);
 const visCols=()=>P.allCols?TABLE_COLUMNS:TABLE_COLUMNS.filter(c=>BASIC_COLS.has(c.key));
 function renderTable(){
- const best=0,rows=tableRows(),cols=visCols();
+ const rows=tableRows(),cols=visCols();
  $("tableCount").textContent=rows.length+" of "+items.length+" listings";
  if(!items.length){$("tableBody").innerHTML='<div class="table-empty">No listings yet. Add a PC to get started.</div>';return}
  if(!rows.length){$("tableBody").innerHTML='<div class="table-empty">No listings match this search or filter.</div>';return}
@@ -361,14 +398,14 @@ function renderTable(){
  cols.forEach(c=>{const last=groups[groups.length-1];if(last&&last.group===c.group)last.span++;else groups.push({group:c.group,span:1})});
  const groupHead=groups.map(g=>'<th colspan="'+g.span+'">'+esc(g.group)+'</th>').join("");
  const colHead=cols.map(c=>'<th class="'+(c.numeric?"numeric":"")+'" aria-sort="'+(tableSortKey===c.key?(tableSortDir===1?"ascending":"descending"):"none")+'"><button type="button" class="table-sort" data-table-sort="'+c.key+'">'+esc(c.label)+(tableSortKey===c.key?(tableSortDir===1?" ↑":" ↓"):"")+'</button></th>').join("");
- const body=rows.map(r=>'<tr>'+cols.map(c=>'<td class="'+(c.numeric?"numeric":"")+'">'+c.cell(r,best)+'</td>').join("")+'</tr>').join("");
+ const body=rows.map(r=>'<tr>'+cols.map(c=>'<td class="'+(c.numeric?"numeric":"")+'">'+c.cell(r)+'</td>').join("")+'</tr>').join("");
  $("tableBody").innerHTML='<table class="data-grid"><thead><tr class="group-row">'+groupHead+'</tr><tr>'+colHead+'</tr></thead><tbody>'+body+'</tbody></table>';
 }
 function exportTableCsv(){
- const rows=tableRows(),best=0;
+ const rows=tableRows();
  if(!rows.length){toast("No visible rows to export");return}
  const quote=v=>{let t=String(v??"");if(typeof v=="string"&&/^[=+\-@\t\r]/.test(t))t="'"+t;return'"'+t.replace(/"/g,'""')+'"'};
- const lines=[TABLE_COLUMNS.filter(c=>c.key!=="actions").map(c=>quote(c.label)).join(",")].concat(rows.map(r=>TABLE_COLUMNS.filter(c=>c.key!=="actions").map(c=>quote(c.csv(r,best))).join(",")));
+ const lines=[TABLE_COLUMNS.filter(c=>c.key!=="actions").map(c=>quote(c.label)).join(",")].concat(rows.map(r=>TABLE_COLUMNS.filter(c=>c.key!=="actions").map(c=>quote(c.csv(r))).join(",")));
  const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8;"});
  const url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="assay-listings.csv";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
@@ -386,10 +423,17 @@ function renderSettings(){const r=refNow();$("refNow").innerHTML=`<span><b>${esc
  if(document.activeElement!==$("setupDef"))$("setupDef").value=P.setup;
  document.querySelectorAll("#cur button").forEach(b=>b.classList.toggle("on",b.dataset.c==P.cur));
  document.querySelectorAll(".cur").forEach(e=>e.textContent=P.cur=="EUR"?"€":"$")}
+// Only build the visible view. Large tables need no work while a listing is edited.
+function renderView(){
+ if(tab==="compare")renderList();
+ else if(tab==="table")renderTable();
+ else if(tab==="versus")renderVersus();
+ else renderSettings();
+}
 function renderAll(){{const n=dueLinks().length,b=$("reviewBtn");b.hidden=!n;b.textContent="Review links ("+n+")"}
- document.querySelectorAll("#goal button").forEach(b=>b.classList.toggle("on",b.dataset.g==P.goal));$("optAvail").checked=P.avail;$("tableAll").checked=!!P.allCols;$("optWorth").checked=P.worth;renderList();renderTable();renderVersus();renderSettings();$("adminTab").hidden=!admin;$("adLock").hidden=!!admin;$("adBody").hidden=!admin;
- $("foot").innerHTML=`${sess?"Your listings sync with your account.":"Your listings stay on your device."} CPU/GPU scores come from PassMark and refresh every Monday. · <a href="#admin" data-tab="admin">Admin</a>`}
-function go(t){tab=t;document.body.dataset.view=t;["compare","table","versus","add","settings","admin"].forEach(x=>$("t-"+x).hidden=x!=t);document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.tab==t));history.replaceState(null,"","#"+t);scrollTo(0,0)}
+ document.querySelectorAll("#goal button").forEach(b=>b.classList.toggle("on",b.dataset.g==P.goal));$("optAvail").checked=P.avail;$("tableAll").checked=!!P.allCols;$("optWorth").checked=P.worth;renderView();$("adminTab").hidden=!admin;$("adLock").hidden=!!admin;$("adBody").hidden=!admin;
+ $("foot").innerHTML=`${sess?"Your listings sync with your account.":"Your listings stay on your device."} Model ${esc(window.PVL_SCORING.modelVersion)} · <button class="footer-help" data-act="help">How scoring works</button> · <a href="#admin" data-tab="admin">Admin</a>`}
+function go(t){tab=t;document.body.dataset.view=t;["compare","table","versus","add","settings","admin"].forEach(x=>$("t-"+x).hidden=x!=t);document.querySelectorAll("#nav button").forEach(b=>(b.classList.toggle("on",b.dataset.tab==t),b.setAttribute("aria-current",b.dataset.tab==t?"page":"false")));history.replaceState(null,"","#"+t);renderView();scrollTo(0,0)}
 /* ---------- form ---------- */
 function unk(cb,inp,val,sel){cb.onchange=()=>{inp.disabled=cb.checked;if(sel){sel.disabled=cb.checked;if(cb.checked)sel.value="DDR4"}inp.value=cb.checked?val:""}}
 unk($("f_ramU"),$("f_ram"),16,$("f_ramType"));unk($("f_ssdU"),$("f_ssd"),1000);
@@ -397,21 +441,21 @@ unk($("f_ramU"),$("f_ram"),16,$("f_ramType"));unk($("f_ssdU"),$("f_ssd"),1000);
 function setupHint(){const on=$("f_setup").checked,p=+$("f_price").value,a=+$("f_setupAmt").value;$("setupHint").textContent=on&&p>0&&a>=0?(a<p?`Ranked as a ${money(p-a)} PC.`:"The setup can't be worth the whole price."):""}
 $("f_setup").onchange=()=>{const on=$("f_setup").checked;$("setupBox").hidden=!on;if(on&&$("f_setupAmt").value==="")$("f_setupAmt").value=P.setup;setupHint()};
 $("f_price").addEventListener("input",setupHint);$("f_setupAmt").addEventListener("input",setupHint);
-function resetForm(){$("form").reset();$("setupBox").hidden=true;$("setupHint").textContent="";pk.cpu.set(null);pk.gpu.set(null);["f_ram","f_ssd","f_ramType"].forEach(i=>$(i).disabled=false);editIdx=-1;editId="";$("fTitle").textContent="Add a PC";$("addBtn").textContent="Add to comparison";$("cancelBtn").hidden=true;$("formErr").textContent=""}
-$("form").onsubmit=e=>{e.preventDefault();const ramU=$("f_ramU").checked,ssdU=$("f_ssdU").checked,price=+$("f_price").value,ram=ramU?16:+$("f_ram").value,ssd=ssdU?1000:+$("f_ssd").value||0,setupOn=$("f_setup").checked,setupAmt=+$("f_setupAmt").value,er=[];
+function resetForm(){$("form").reset();$("memoryDetails").open=false;$("setupBox").hidden=true;$("setupHint").textContent="";pk.cpu.set(null);pk.gpu.set(null);["f_ram","f_ssd","f_ramType"].forEach(i=>$(i).disabled=false);editIdx=-1;editId="";$("fTitle").textContent="Add a PC";$("addBtn").textContent="Add to comparison";$("cancelBtn").hidden=true;$("formErr").textContent=""}
+$("form").onsubmit=e=>{e.preventDefault();const ramU=$("f_ramU").checked||$("f_ram").value.trim()==="",ssdU=$("f_ssdU").checked||$("f_ssd").value.trim()==="",price=+$("f_price").value,ram=ramU?16:+$("f_ram").value,ssd=ssdU?1000:+$("f_ssd").value||0,setupOn=$("f_setup").checked,setupAmt=+$("f_setupAmt").value,er=[];
  if(!pk.cpu.val)er.push("choose a CPU");if(!pk.gpu.val)er.push("choose a GPU");if(!(price>0))er.push("enter the price");if(!(ram>0))er.push("enter the RAM, or tick “I don't know”");if(setupOn&&!(setupAmt>=0&&setupAmt<price))er.push("enter a setup value below the price");
- if(er.length){$("formErr").textContent="Please "+er.join(", ")+".";return}
+ if(er.length){if(!(ram>0))$("memoryDetails").open=true;$("formErr").textContent="Please "+er.join(", ")+".";return}
  const rec={name:$("f_name").value.trim(),cpuName:pk.cpu.val[0],cpuScore:pk.cpu.val[1],gpuName:pk.gpu.val[0],gpuScore:pk.gpu.val[1],ram,ramType:ramU?"DDR4":$("f_ramType").value,ssd,hdd:+$("f_hdd").value||0,price,aesthetic:$("f_look").value,ramUnknown:ramU,ssdUnknown:ssdU,setup:setupOn,setupAmt:setupOn?setupAmt:null,available:$("f_avail").checked,id:editIdx>=0?items[editIdx].id:uid(),updatedAt:Date.now(),favorite:editIdx>=0?!!items[editIdx].favorite:false};
  if(editIdx>=0)items[editIdx]=rec;else items.push(rec);saveI();resetForm();renderAll();go("compare");toast("Added — see how it ranks")};
-function edit(i){const it=items[i];go("add");resetForm();editIdx=i;editId=it.id;$("fTitle").textContent="Edit PC";$("addBtn").textContent="Save changes";$("cancelBtn").hidden=false;
+function edit(i){const it=items[i];go("add");resetForm();editIdx=i;editId=it.id;$("memoryDetails").open=true;$("fTitle").textContent="Edit PC";$("addBtn").textContent="Save changes";$("cancelBtn").hidden=false;
  $("f_name").value=it.name||"";pk.cpu.set([it.cpuName,it.cpuScore]);pk.gpu.set([it.gpuName,it.gpuScore]);$("f_ramU").checked=!!it.ramUnknown;$("f_ssdU").checked=!!it.ssdUnknown;
  $("f_ram").value=it.ram;$("f_ramType").value=it.ramType;$("f_ssd").value=it.ssd;$("f_ram").disabled=$("f_ramType").disabled=!!it.ramUnknown;$("f_ssd").disabled=!!it.ssdUnknown;$("f_hdd").value=it.hdd||"";$("f_price").value=it.price;$("f_look").value=it.aesthetic||"neutral";$("f_setup").checked=!!it.setup;$("setupBox").hidden=!it.setup;$("f_setupAmt").value=it.setup?(Number.isFinite(it.setupAmt)?it.setupAmt:P.setup):"";$("f_avail").checked=isAvail(it);setupHint()}
 /* ---------- actions ---------- */
 const A={...A_rv,review:rvStart,help:()=>$("help").showModal(),theme:()=>{P.theme=document.documentElement.dataset.theme=="dark"?"light":"dark";document.documentElement.dataset.theme=P.theme;saveP()},
  goadd:()=>go("add"),cancel:()=>{resetForm()},refReset:()=>{P.ref=null;saveP();renderAll()},
  sample:()=>{items=[["Ryzen 5 5600 + RTX 3060","AMD Ryzen 5 5600",21000,"NVIDIA GeForce RTX 3060",17000,16,"DDR4",500,450],["Core i7-12700 + RX 6700 XT","Intel Core i7-12700",30000,"Radeon RX 6700 XT",19840,32,"DDR4",1000,600],["Ryzen 7 7800X3D + RX 7800 XT","AMD Ryzen 7 7800X3D",34280,"Radeon RX 7800 XT",24226,32,"DDR5",1000,1100]].map(a=>({name:a[0],cpuName:a[1],cpuScore:a[2],gpuName:a[3],gpuScore:a[4],ram:a[5],ramType:a[6],ssd:a[7],hdd:0,price:a[8],aesthetic:"neutral",favorite:false,id:uid(),updatedAt:Date.now()}));saveI();renderAll()},
- fav:i=>{items[i].favorite=!items[i].favorite;items[i].updatedAt=Date.now();saveI();renderAll()},chooseVersus:i=>{const id=items[i]&&items[i].id;if(!id)return;if(!P.versusA||P.versusA===id){P.versusA=id;P.versusB=items.find(x=>x.id!==id)?.id||id}else P.versusB=id;saveP();go("versus");renderVersus()},avail:i=>{items[i].available=items[i].available===false;items[i].updatedAt=Date.now();saveI();renderAll()},
- signup:()=>authSubmit("up"),syncNow:()=>cloudSync(),signout:signOut,edit,det:i=>{$("det"+i).hidden=!$("det"+i).hidden},
+ fav:i=>{items[i].favorite=!items[i].favorite;items[i].updatedAt=Date.now();saveI();renderAll()},chooseVersus:i=>{const id=items[i]&&items[i].id;if(!id)return;if(!P.versusA||P.versusA===id){P.versusA=id;P.versusB=items.find(x=>x.id!==id)?.id||id}else P.versusB=id;saveP();go("versus")},avail:i=>{items[i].available=items[i].available===false;items[i].updatedAt=Date.now();saveI();renderAll()},
+ signup:()=>authSubmit("up"),syncNow:()=>cloudSync(),signout:signOut,edit,
  del:i=>{if(confirm("Delete this PC?")){tomb(items[i]);items.splice(i,1);saveI();renderAll()}},clear:()=>{if(items.length&&confirm("Delete all "+items.length+" listings?")){items.forEach(tomb);items=[];saveI();renderAll()}},
  export:()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({version:4,exportedAt:new Date().toISOString(),items,customCPUs:localParts.cpu,customGPUs:localParts.gpu,settings:{setupDefault:P.setup,aestheticWeight:P.aes,refCpuScore:refNow().cpu,refGpuScore:refNow().gpu}},null,2)],{type:"application/json"}));a.download="assay-backup.json";a.click()},
  import:()=>$("impFile").click(),tableExport:exportTableCsv,
