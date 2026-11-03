@@ -33,7 +33,12 @@ The diagram describes the current division of responsibilities, not an isolated 
 
 ### `index.html`
 
-Owns the page markup, CSS, tab and form interactions, listing persistence, table/CSV export, display rendering, and the browser-side Supabase integration. Most application logic is currently inline in the HTML; the CI validation workflow extracts that inline script for syntax checking.
+Owns the page markup, tab and form interactions, listing persistence, table/CSV export, display rendering, and the browser-side Supabase integration. Most application logic is currently inline in the HTML; the CI validation workflow extracts that inline script for syntax checking.
+
+### `styles.css`
+
+Owns theme tokens, the console shell, workbench presentation, component states and
+responsive layouts. Fonts are bundled in `assets/fonts` with their licenses.
 
 ### `builtin-parts.js`
 
