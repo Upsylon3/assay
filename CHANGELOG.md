@@ -11,6 +11,12 @@ tagged; see [VERSIONING.md](VERSIONING.md) for which commit each one stands for.
 
 ## [Unreleased]
 
+### Added
+- Local bulk intake from pasted text, JSON, saved HTML, or multiple files, with hardware matching, French RAM/storage parsing, source evidence, editable drafts, reviewed batch addition and duplicate advert detection. A user-triggered bookmarklet exports already-loaded Leboncoin cards without fetching pages or reading credentials. Missing details remain drafts; no live Leboncoin integration is claimed.
+- Availability review buttons and explicit saved-evidence status proposals. Confirmed removals are archived rather than deleted; blocked checks and absent favourites never establish unavailability.
+- Inspection notes, separate advert URLs, one-click reference-PC selection, and comparison explanations derived from existing scores. Drafts are local and included in backups; notes and URLs travel with saved listings.
+
+
 ### Changed
 - Make the comparison bench more expressive with an illustrated laboratory welcome panel and a deal-index dial. Simplify listing actions and benchmark explanations with expandable details, keep prices visible on mobile, and wrap mobile navigation.
 - Streamline PC entry to CPU, GPU and price; blank memory/storage use marked assumptions. Add keyboard navigation to hardware pickers. Consolidate the stylesheet, remove obsolete UI code, and render only the active view. Reduce default table columns while retaining full details and CSV exports.

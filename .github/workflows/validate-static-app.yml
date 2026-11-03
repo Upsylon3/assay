@@ -38,6 +38,12 @@ jobs:
         run: node scripts/check-benchmark-data.js
       - name: Run scoring engine regression tests
         run: node tests/scoring-engine.test.js
+      - name: Validate listing tools
+        run: |
+          node --check listing-import.js
+          node --check listing-workflow.js
+          node --check browser-collector.js
+          node tests/listing-import.test.js
       - name: Run listing entry regression tests
         run: node tests/ui-entry.test.js
       - name: Run repository tooling tests

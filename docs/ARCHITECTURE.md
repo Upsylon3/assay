@@ -106,3 +106,14 @@ The project was first called PC Value Lab, and some identifiers still say so. Th
 - The browser-storage keys (`pcvaluelab_items`, `pvl_prefs`, `pvl_tombs`, `pvl_remote`, `pvl_session`, and the others starting with `pcvaluelab_` or `pvl_`) hold people's saved listings and preferences. Renaming a key would make the app look empty to everyone who already has data, and nothing would migrate it.
 
 If the keys ever do change, that is a MAJOR-level change to saved data: it needs a migration that reads the old key, writes the new one and keeps the old one until the new one is confirmed ([VERSIONING.md](../VERSIONING.md)).
+
+## Listing intake modules
+
+`listing-import.js` owns pure parsing, URL identity and explicit status evidence.
+`browser-collector.js` exposes a user-triggered loaded-document exporter; it never
+requests remote data. `listing-workflow.js` owns the local draft queue and reviewed
+commit into the existing listing collection. It loads after the main app script.
+Drafts use `assay_import_drafts` in local storage and are backed up separately;
+raw draft text is not synced. Added records retain optional `sourceUrl`, `notes`,
+`setupKnown` and `ramTypeUnknown` fields without changing the backup envelope version.
+See [BULK_IMPORT.md](BULK_IMPORT.md) for capabilities and access limitations.

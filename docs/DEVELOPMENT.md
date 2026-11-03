@@ -45,7 +45,7 @@ CI runs the first four, plus a syntax check of the inline script in
 
 | Workflow | When | What it does |
 |---|---|---|
-| `validate-static-app.yml` | Pushes and pull requests to `main` | Syntax-checks the inline script, validates the benchmark data, runs all three test files |
+| `validate-static-app.yml` | Pushes and pull requests to `main` | Syntax-checks the inline script, validates the benchmark data, runs all four test files |
 | `conventions.yml` | Pull requests, pushes to `main` | Commit subjects, PR title, branch name, release metadata |
 | `release.yml` | A `v*` tag, or by hand | Validates the tag and publishes the GitHub Release ([RELEASING.md](RELEASING.md)) |
 | `update-parts.yml` | Mondays 06:00 UTC, or by hand | Rebuilds `builtin-parts.js` from PassMark and commits it if it changed |
@@ -79,3 +79,11 @@ Run `node tests/ui-entry.test.js` to check blank-field assumptions, explicit
 capacities (including no SSD), validation, and stable IDs/favourites on edit.
 This exercises the real form submit handler with lightweight DOM stand-ins;
 it does not replace desktop/mobile browser checks or cover account sync.
+
+### Listing intake checks
+
+`node tests/listing-import.test.js` covers local parsing, a synthetic 65-ad batch,
+French specification ambiguity, canonical URL deduplication, inert saved HTML,
+loaded-card collection, and explicit availability evidence. It runs in CI with
+syntax checks for all three new listing modules. Real Leboncoin layouts still
+need user-supplied exports for compatibility verification.
