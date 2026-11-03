@@ -8,9 +8,8 @@ explicitly **not** committed, and the gaps the project already knows about.
 1. **Cut the first tagged release, 0.8.0.** Rename the repository, merge the
    release process and tag it; the steps are in
    [RELEASING.md](RELEASING.md#the-first-release-080).
-2. **Apply the visual direction in [DESIGN.md](DESIGN.md)**, if it holds up
-   once it is on screen. It is a proposal today; nothing in the interface
-   uses it.
+2. **Review content and information architecture** after the Home-aligned visual
+   pass documented in [DESIGN.md](DESIGN.md).
 3. **Keep widening benchmark coverage** without presenting guesses as
    measurements. Unsupported hardware keeps its explicit fallback; missing
    FPS results are never interpolated.
