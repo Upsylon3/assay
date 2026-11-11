@@ -40,6 +40,7 @@ jobs:
         run: |
           node tests/scoring-engine.test.js
           node tests/update-parts.test.mjs
+          node tests/curated-sources.test.mjs
       - name: Validate listing tools
         run: |
           node --check listing-import.js
@@ -49,6 +50,9 @@ jobs:
           node tests/listing-import.test.js
           node tests/draft-sync.test.js
       - name: Run listing entry regression tests
-        run: node tests/ui-entry.test.js
+        run: |
+          node tests/ui-entry.test.js
+          node tests/app-logic.test.js
+          node tests/listing-validation.test.js
       - name: Run repository tooling tests
         run: node tests/conventions.test.js

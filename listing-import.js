@@ -1,5 +1,6 @@
 /* Local-only listing ingestion. No network, account access, or executable HTML. */
 (function(root){
+ const captureTime=value=>{if(value==null)return null;const time=typeof value==='number'?value:Date.parse(value);return Number.isFinite(time)&&time>0&&time<=Date.now()?time:0};
  const clean=v=>String(v??'').replace(/\u00a0|\u202f/g,' ').trim();
  function status(record){
   const text=String(record.availabilityText||'').replace(/\u00a0|\u202f/g,' ').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -12,7 +13,7 @@
   return {availability:['available','unavailable'].includes(record.availability)?record.availability:'unknown',availabilityReason:record.availabilityReason||'',availabilityText:activity?.[0]||''};
  }
  const norm=v=>clean(v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/\b(nvidia|geforce|radeon|amd|intel|processor|processeur|core)\b/g,' ').replace(/\b(rtx|gtx|rx|ryzen|i[3579])\s*-?\s*(?=\d)/g,'$1 ').replace(/(\d)(ti|super|xtx|xt|x3d|kf|k|f|g|x)\b/g,'$1 $2').replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();
- function url(value){try{const u=new URL(value);if(!['http:','https:'].includes(u.protocol))return '';if(/(^|\.)leboncoin\.fr$/.test(u.hostname)){const id=u.pathname.match(/(?:\/ad\/[^/]+\/|\/)(\d{6,})(?:\.htm)?(?:\/|$)/);if(id){u.hostname='www.leboncoin.fr';u.hash='';u.search='';return u.href}}u.hash='';u.search='';return u.href}catch{return ''}}
+ function url(value){try{const u=new URL(value);if(!['http:','https:'].includes(u.protocol))return '';if(/(^|\.)leboncoin\.fr$/.test(u.hostname)){const id=u.pathname.match(/(?:\/ad\/[^/]+\/|\/)(\d{6,})(?:\.htm)?(?:\/|$)/);if(id){u.hostname='www.leboncoin.fr';u.hash='';u.search='';return u.href}}u.hash='';for(const k of [...u.searchParams.keys()])if(/^(?:utm_.+|fbclid|gclid|msclkid)$/i.test(k))u.searchParams.delete(k);return u.href}catch{return ''}}
  const key=r=>{const value=url(r.sourceUrl||r.url||(/^https?:/.test(r.name||'')?r.name:''));try{const u=new URL(value),id=u.pathname.match(/(?:\/ad\/[^/]+\/|\/)(\d{6,})(?:\.htm)?(?:\/|$)/);return /(^|\.)leboncoin\.fr$/.test(u.hostname)&&id?'lbc:'+id[1]:value}catch{return ''}};
  function matchHardware(text,catalog){const n=' '+norm(text)+' ';
   const found=catalog.map(([name,score])=>{const token=norm(name),needle=' '+token+' ',positions=[];let i=n.indexOf(needle);while(token&&i>=0){positions.push(i);i=n.indexOf(needle,i+1)}return {name,score,token,positions}}).filter(p=>p.positions.length&&(/\d/.test(p.token)||/\btitan [vx]\b/.test(p.token)));
@@ -32,16 +33,22 @@
   const ramKits=[...text.matchAll(/(?:(\d+)\s*[x×]\s*(\d+)\s*(?:go|gb)\s*(?:de\s+)?(?:ram|ddr[345])|(?:ram|memoire vive)\s*[:=]?\s*(\d+)\s*[x×]\s*(\d+)\s*(?:go|gb))/gi)].map(m=>({module:+(m[2]||m[4]),total:+(m[1]||m[3])*+(m[2]||m[4])}));
   const ramValues=[...new Set([...ramMatches.map(m=>{const n=+(m[1]||m[2]);return ramKits.find(k=>k.module===n)?.total||n}),...ramKits.map(k=>k.total)])];
   const ramType=[...new Set((text.match(/\bddr[345]\b/gi)||[]).map(v=>v.toUpperCase()))];
-  const drives=[];const driveRe=/\b(?:(ssd|nvme|hdd|disque dur)\s*[:=]?[^\n;]{0,60}?(\d+(?:[.,]\d+)?)\s*(to|tb|go|gb)|(\d+(?:[.,]\d+)?)\s*(to|tb|go|gb)\s*(ssd|nvme|hdd|disque dur))\b/gi;
-  for(const m of text.matchAll(driveRe)){const type=(m[1]||m[6]).toLowerCase(),value=Number((m[2]||m[4]).replace(',','.'))*(/t/i.test(m[3]||m[5])?1000:1);if(!drives.some(d=>d.type===(/hdd|disque/.test(type)?'hdd':'ssd')&&d.value===value))drives.push({type:/hdd|disque/.test(type)?'hdd':'ssd',value,evidence:m[0]})}
-  const storageAmbiguous=drives.length&&/(?:\b(?:ssd|nvme|hdd|stockage)\b.{0,40}\b(?:ou|au choix)\b.{0,20}\d|\d\s*(?:to|tb|go|gb)\s*(?:ou|\/)\s*\d|\b[2-9]\s*[x×]\s*\d+(?:[.,]\d+)?\s*(?:go|gb|to|tb)\s*(?:ssd|nvme|hdd))/i.test(text);if(storageAmbiguous)warnings.push('Storage alternatives or multiple-drive quantities need manual entry');
+  const drives=[],storageText=text.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  // A missing drive must not borrow a capacity from RAM or the next drive label.
+  const noSsd=/\b(?:sans|aucun|pas de)\s+(?:disque\s+)?(?:ssd|nvme)\b|\b(?:ssd|nvme)\s*[:=]?\s*(?:aucun|absent|non fourni|non inclus|pas fourni)\b/i.test(storageText);
+  const driveRe=/\b(?:(ssd|nvme|hdd|disque dur)\s*[:=]?(?:(?!\b(?:ssd|nvme|hdd|disque dur|ram|memoire|ddr[345])\b)[^\n;]){0,60}?(\d+(?:[.,]\d+)?)\s*(to|tb|go|gb)|(\d+(?:[.,]\d+)?)\s*(to|tb|go|gb)\s*(ssd|nvme|hdd|disque dur))\b/gi;
+  for(const m of text.matchAll(driveRe)){const type=(m[1]||m[6]).toLowerCase(),value=Number((m[2]||m[4]).replace(',','.'))*(/t/i.test(m[3]||m[5])?1000:1);drives.push({type:/hdd|disque/.test(type)?'hdd':'ssd',value,evidence:m[0],start:m.index,end:m.index+m[0].length,inTitle:m.index<name.length})}
+  const repeated=drives.some((d,i)=>drives.some((p,j)=>j<i&&p.type===d.type&&p.value===d.value&&p.inTitle===d.inTitle&&/^(?:\s*(?:\+|et|,|;|[-•])\s*|\s*\n\s*)$/i.test(text.slice(p.end,d.start))));
+  const storageAmbiguous=!!(repeated||noSsd&&drives.some(d=>d.type==='ssd')||drives.length&&/(?:\b(?:ssd|nvme|hdd|stockage)\b.{0,40}\b(?:ou|au choix)\b.{0,20}\d|\d\s*(?:to|tb|go|gb)\s*(?:ou|\/)\s*\d|\b[2-9]\s*[x×]\s*\d+(?:[.,]\d+)?\s*(?:go|gb|to|tb)\s*(?:ssd|nvme|hdd))/i.test(text));
+  if(storageAmbiguous)warnings.push('Storage alternatives, repeated capacities or multiple-drive quantities need manual entry');
+  const uniqueDrives=drives.filter((d,i)=>!drives.slice(0,i).some(p=>p.type===d.type&&p.value===d.value));
   const setupPositive=/\b(?:ecran|moniteur|clavier|souris)\s+(?:inclus|incluse|fourni|fournie|compris)|\b(?:avec|vendu avec)\s+(?:un\s+)?(?:ecran|moniteur|clavier|souris)|\bsetup complet\b/i.test(norm(text));
   const setupNegative=/\b(?:sans|hors)\s+(?:ecran|moniteur|clavier|souris)|\b(?:ecran|moniteur|clavier|souris).*?(?:separement|en supplement|non inclus|pas inclus)/i.test(norm(text));
   const setup=setupPositive&&!setupNegative?'yes':setupNegative&&!setupPositive?'no':'unknown';
   if(cpu.length!==1)warnings.push(cpu.length?'Several CPUs mentioned':'CPU not identified');if(gpu.length!==1)warnings.push(gpu.length?'Several GPUs mentioned':'GPU not identified');
   if(!(price>0))warnings.push('Price missing or ambiguous');if(ramValues.length>1)warnings.push('Several RAM capacities');if(ramType.length>1)warnings.push('Several RAM types');
   if(!ramType.length)warnings.push('RAM type unknown: DDR4 will be an assumption');if(drives.length>1)warnings.push('Check multiple drives: capacities may be repeated or describe alternatives');if(setup==='unknown')warnings.push('Setup inclusion needs confirmation');
-  return {...status(record),name:name||'Imported PC',sourceUrl:url(record.url||record.sourceUrl||record.link),sourceText:text,description:strip(record.description||record.body||record.text||''),descriptionSource:record.descriptionSource||'supplied-text',kind,cpu:cpu.length===1?[cpu[0].name,cpu[0].score]:null,gpu:gpu.length===1?[gpu[0].name,gpu[0].score]:null,cpuChoices:cpu.map(p=>p.name),gpuChoices:gpu.map(p=>p.name),price:price>0?price:null,ram:ramValues.length===1?ramValues[0]:null,ramType:ramType.length===1?ramType[0]:null,ssd:storageAmbiguous?null:drives.filter(d=>d.type==='ssd').reduce((n,d)=>n+d.value,0)||null,hdd:storageAmbiguous?0:drives.filter(d=>d.type==='hdd').reduce((n,d)=>n+d.value,0)||0,setup,warnings,evidence:{ram:ramMatches.map(m=>m[0]).join('; '),storage:drives.map(d=>d.evidence).join('; ')}};
+  return {...status(record),capturedAt:captureTime(record.capturedAt),name:name||'Imported PC',sourceUrl:url(record.url||record.sourceUrl||record.link),sourceText:text,description:strip(record.description||record.body||record.text||''),descriptionSource:record.descriptionSource||'supplied-text',kind,cpu:cpu.length===1?[cpu[0].name,cpu[0].score]:null,gpu:gpu.length===1?[gpu[0].name,gpu[0].score]:null,cpuChoices:cpu.map(p=>p.name),gpuChoices:gpu.map(p=>p.name),price:price>0?price:null,ram:ramValues.length===1?ramValues[0]:null,ramType:ramType.length===1?ramType[0]:null,ssd:storageAmbiguous?null:noSsd?0:uniqueDrives.filter(d=>d.type==='ssd').reduce((n,d)=>n+d.value,0)||null,hdd:storageAmbiguous?0:uniqueDrives.filter(d=>d.type==='hdd').reduce((n,d)=>n+d.value,0)||0,setup,warnings,evidence:{ram:ramMatches.map(m=>m[0]).join('; '),storage:drives.map(d=>d.evidence).join('; ')}};
  }
  const strip=s=>clean(String(s).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,' ').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,' ').replace(/<\/(?:p|div|li|h[1-6])>|<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,' ').replace(/&nbsp;|&#160;/g,' ').replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'"));
  function records(source,productsOnly=false){
@@ -60,22 +67,23 @@
    return s.split(/\n\s*---+\s*\n/).filter(Boolean).map(text=>({title:text.split('\n').find(v=>v.trim())||'',text,url:text.match(/https?:\/\/\S+/)?.[0]||''}));
   }
   const out=[];let visited=0;
-  function walk(o,depth){if(!o||typeof o!=='object'||depth>18||++visited>50000)return;
-   if(Array.isArray(o)){o.forEach(v=>walk(v,depth+1));return}
+  function walk(o,depth,inheritedCapture=null){if(!o||typeof o!=='object'||depth>18||++visited>50000)return;
+   if(Array.isArray(o)){o.forEach(v=>walk(v,depth+1,inheritedCapture));return}
+   const capturedAt=o.capturedAt==null?inheritedCapture:captureTime(o.capturedAt);
    const title=o.title||o.subject||o.name;
    const product=[o['@type']].flat().includes('Product');
    const advert=product||o.price!=null||o.list_id!=null||o.format==='assay-visible-listings-v1'||!!key(o);
    if(typeof title==='string'&&(!productsOnly||product)&&advert&&(o.price!=null||o.description||o.body||o.text||o.offers||o.availability)){
     const attrs=Array.isArray(o.attributes)?o.attributes.map(a=>[a.key_label||a.key,a.value_label||a.value].filter(Boolean).join(': ')).join('\n'):'';
-    out.push({title,text:[strip(o.description||o.body||o.text||''),attrs].join('\n'),description:strip(o.description||o.body||o.text||''),descriptionSource:product?'structured-product':o.descriptionSource||'supplied-text',price:o.price??o.offers?.price,url:o.url||o.sourceUrl||o.link||o.offers?.url||'',...status(o)});return;
+    out.push({title,capturedAt,text:[strip(o.description||o.body||o.text||''),attrs].join('\n'),description:strip(o.description||o.body||o.text||''),descriptionSource:product?'structured-product':o.descriptionSource||'supplied-text',price:o.price??o.offers?.price,url:o.url||o.sourceUrl||o.link||o.offers?.url||'',...status(o)});return;
    }
-   Object.values(o).forEach(v=>walk(v,depth+1));
+   Object.values(o).forEach(v=>walk(v,depth+1,capturedAt));
   }walk(source,0);return out;
  }
  function batch(source,catalog,existing=[]){const seen=new Set(existing.map(key).filter(Boolean)),out=[];
   for(const record of records(source).slice(0,1000)){const p=parse(record,catalog),k=key(p);if(k&&seen.has(k)){out.push({...p,duplicate:true});continue}if(k)seen.add(k);out.push(p)}return out;
  }
- function availability(source,existing){return records(source).map(r=>({key:key(r),state:r.availability,title:r.title})).filter(r=>r.key&&['available','unavailable'].includes(r.state)&&existing.some(it=>key(it)===r.key));}
+ function availability(source,existing){return records(source).map(r=>({key:key(r),state:r.availability,title:r.title,capturedAt:r.capturedAt})).filter(r=>r.key&&r.capturedAt!==0&&['available','unavailable'].includes(r.state)&&existing.some(it=>key(it)===r.key&&(r.capturedAt==null||r.capturedAt>(it.checkedAt||0))));}
  root.AssayImport={norm,url,key,parse,records,batch,availability,status};
  if(typeof module!=='undefined')module.exports=root.AssayImport;
 })(typeof window==='undefined'?globalThis:window);

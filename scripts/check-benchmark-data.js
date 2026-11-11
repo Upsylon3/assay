@@ -13,11 +13,12 @@ const isoDate = /^\d{4}-\d{2}-\d{2}$/;
 
 if (!data || typeof data !== "object") throw new Error("PVL_BENCHMARKS was not loaded");
 if (!Number.isInteger(data.schemaVersion) || data.schemaVersion < 1) fail("schemaVersion must be a positive integer");
-if (!isoDate.test(data.updatedAt || "") || Number.isNaN(Date.parse(data.updatedAt))) {
+if (!isoDate.test(data.updatedAt || "") || Number.isNaN(Date.parse(data.updatedAt)) || new Date(data.updatedAt).toISOString().slice(0,10) !== data.updatedAt) {
   fail("updatedAt must be a valid YYYY-MM-DD date");
 } else {
   const ageDays = Math.floor((Date.now() - Date.parse(data.updatedAt + "T00:00:00Z")) / 86400000);
-  if (ageDays < 0) fail("updatedAt must not be in the future");
+  // A date-only refresh label may already be tomorrow in the maintainer's timezone.
+  if (ageDays < -1) fail("updatedAt must not be in the future");
   if (ageDays > 180) warn("curated benchmark data is more than 180 days old; manually review source pages");
 }
 

@@ -27,7 +27,7 @@ assert.equal(gamingOld.confidence, "high", "curated CPU and GPU benchmarks shoul
 assert.equal(gamingOld.gpuGamingMeasured, true, "RX 6700 XT should use the sourced gaming benchmark");
 assert.equal(gamingOld.gpuPct, 32.5, "1440p raster score should match the curated source record");
 assert.equal(engine.score({cpuName:"Unknown CPU",cpuScore:10000,gpuName:"Unknown GPU",gpuScore:gpu}, reference, gaming).confidence, "low", "unlisted CPU/GPU must be marked as lower-confidence fallback");
-assert.equal(engine.modelVersion, "performance-v2.5");
+assert.equal(engine.modelVersion, "performance-v2.6");
 assert.ok(Math.abs(gamingOld.gpuSuiteFps - (32.5 / 100 * 167.3)) < 0.001, "FPS estimate should convert the 1440p raster suite index using the published RTX 5090 baseline");
 const cpuGameComparison = engine.score({cpuName:"AMD Ryzen 7 9800X3D",cpuScore:45000,gpuName:"NVIDIA GeForce RTX 5090",gpuScore:38864}, reference, gaming);
 assert.equal(cpuGameComparison.cpuBenchmarkType, "tomCpuGaming", "gaming profile should use the matched Tom's Hardware CPU game suite");
@@ -77,3 +77,41 @@ const synthetic = engine.score({cpuName:"Test CPU", cpuScore:20000}, {cpuName:"T
 assert.equal(synthetic.cpuPct, 75 * .8 + 25 * .2);
 global.BUILTIN.cpuSingleThread = savedSingle;
 console.log("CPU coverage and ranking regression tests passed");
+
+// A collection must use one metric per component, even when curated coverage differs.
+const mark = (kind, name) => global.BUILTIN[kind].find(([model]) => model === name)[1];
+const siblings = ["Intel Core i7-12700KF", "Intel Core i7-12700F"].map(cpuName => ({...cpu5700, cpuName, cpuScore: mark("cpus", cpuName)}));
+const siblingScores = engine.scoreMany(siblings, reference, {...competitive, useGameBenchmarks: false});
+assert.ok(siblingScores[0].cpuPct > siblingScores[1].cpuPct, "faster KF must not lose to F because only KF has a curated game result");
+assert.deepEqual(siblingScores.map(result => result.cpuBenchmarkType), ["passmark", "passmark"]);
+const gpuParts = ["GeForce RTX 3060", "Radeon RX 6700 XT"].map(gpuName => ({...cpu5700, gpuName, gpuScore: mark("gpus", gpuName)}));
+const gpuScores = engine.scoreMany(gpuParts, reference, gaming);
+assert.deepEqual(gpuScores.map(result => result.gpuBenchmarkType), ["passmark", "passmark"]);
+assert.ok(gpuScores[1].gpuPct > gpuScores[0].gpuPct, "GPU suite coverage must not make a slower RTX 3060 beat RX 6700 XT");
+const missingComparison = engine.scoreMany([siblings[0], {...siblings[1], cpuName:"Unmeasured CPU"}], reference, competitive);
+for (const result of missingComparison) {
+  assert.equal(result.cpuPct, result.cpuMultiPct);
+  assert.equal(result.cpuSinglePct, null);
+  assert.equal(result.cpuSingleComparisonAvailable, false);
+  assert.ok(result.cpuWarning.includes("CPU Mark only"));
+}
+assert.equal(missingComparison[0].cpuSingleMeasured, true, "a measured row rating is distinct from usable comparison coverage");
+const allCovered = engine.scoreMany([{...cpu5700, cpuName:"AMD Ryzen 7 9800X3D"}], reference, gaming);
+assert.equal(allCovered[0].cpuBenchmarkType, "tomCpuGaming", "full common coverage should retain the compatible game suite");
+global.PVL_BENCHMARKS.gpuGaming.push({model:"Zero RT test GPU",raster:{"1440p":10},rayTracing:{"1440p":0}});
+const zeroRt = engine.score({...cpu5700,gpuName:"Zero RT test GPU"}, reference, {...gaming,graphicsMode:"rayTracing"});
+assert.equal(zeroRt.gpuSuiteFps, null, "unavailable RT sentinel must not become a false zero-FPS measurement");
+global.PVL_BENCHMARKS.gpuGaming.pop();
+assert.equal(engine.gpuGamingRecord("GeForce RTX 4060 Ti"), null, "unspecified VRAM must not borrow an 8GB variant score");
+assert.equal(engine.cpuGamingRecord("Intel Core i7-14700KF"), null, "K source data must not claim a separately measured KF model");
+assert.equal(engine.cpuGamingRecord("Intel Core i7-14700K").score, 76.4);
+assert.equal(engine.gpuGamingRecord("Radeon RX 6600").rayTracing["1440p"], 7.6);
+const forced = engine.score({...cpu5700,cpuName:"AMD Ryzen 7 9800X3D"}, reference, {...gaming,forcePassmark:true});
+assert.equal(forced.cpuBenchmarkType, "passmark");
+assert.equal(forced.gpuBenchmarkType, "passmark");
+const originalSingle = global.BUILTIN.cpuSingleThread;
+global.BUILTIN.cpuSingleThread = [["Intel Xeon @ 2.20GHz", 1383], ["Intel XEON 2.20GHz", 351]];
+assert.equal(engine.singleThreadRecord("Intel XEON 2.20GHz").score, 351, "exact identity must win over lossy punctuation normalization");
+assert.equal(engine.singleThreadRecord("Xeon 2.20 GHz"), null, "ambiguous aliases must remain unknown");
+global.BUILTIN.cpuSingleThread = originalSingle;
+console.log("Common comparison metric, missing-data and alias-identity tests passed");

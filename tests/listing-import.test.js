@@ -77,3 +77,69 @@ assert.equal(saved.available,false);assert.equal(saved.notes,'Keep my notes');as
 vm.runInNewContext('analyze('+JSON.stringify(JSON.stringify({listings:[ads[0]]}))+');',workflowContext);
 assert.equal(saved.available,false,'Missing evidence must not reactivate a saved listing');
 console.log('Import integration passed: automatic archival preserves specs and notes.');
+
+// Storage descriptions must not borrow a capacity from another component.
+for(const text of ['Sans SSD, HDD 1 To, RAM 16 Go DDR4', 'SSD non fourni, RAM 32 Go DDR4']){
+ const parsed=imp.parse({title:'PC gamer',text},catalog);
+ assert.equal(parsed.ssd,0,text);
+ assert.equal(parsed.hdd,text.includes('HDD')?1000:0,text);
+}
+for(const text of ['SSD 500 Go + SSD 500 Go', 'HDD 1 To et HDD 1 To']){
+ const parsed=imp.parse({title:'PC gamer',text},catalog);
+ assert.equal(parsed.ssd,null,'Repeated listed drives require review rather than silently losing one');
+ assert.ok(parsed.warnings.some(w=>/repeated capacities/.test(w)));
+}
+assert.equal(imp.parse({title:'PC SSD 500 Go',text:'SSD 500 Go'},catalog).ssd,500,'Title/description repetition is not a second drive');
+assert.equal(imp.parse({title:'PC gamer',text:'SSD non fourni, RAM 32 Go DDR4'},catalog).ram,32);
+assert.notEqual(imp.key({url:'https://example.com/ad?id=123'}),imp.key({url:'https://example.com/ad?id=456'}),'Generic advert query IDs are identifying data');
+assert.equal(imp.url('https://example.com/ad?id=123&utm_source=test&fbclid=abc#details'),'https://example.com/ad?id=123');
+assert.equal(imp.key({url:ads[0].url+'?utm_source=test'}),imp.key({url:ads[0].url}),'Leboncoin keeps its stable ID canonicalization');
+const readyLine=workflow.split('\n').find(line=>line.trimStart().startsWith('const ready='));
+const ready=vm.runInNewContext(readyLine+';ready');
+const complete={kind:'pc',cpu:['AMD Ryzen 5 5600',21000],gpu:['GeForce RTX 3060',17000],price:500,ram:16,ssd:500,hdd:0};
+assert.equal(ready(complete),true);
+for(const invalid of [{price:Infinity},{cpu:['CPU',-1]},{gpu:['GPU','17000']},{ram:-16},{ssd:-1},{hdd:Infinity}])assert.equal(ready({...complete,...invalid}),false,'Malformed synced/restored drafts must not enter rankings');
+console.log('Import accuracy safeguards passed: missing/repeated storage, identifying URLs and draft validation.');
+
+// Collector timestamps remain evidence timestamps, not the date of re-import.
+const oldCapture=Date.now()-2*86400000,currentCheck=Date.now()-86400000,newCapture=Date.now()-1000;
+const captured=at=>({format:'assay-visible-listings-v1',capturedAt:at,listings:[{...ads[0],availability:'unavailable'}]});
+assert.equal(imp.records(captured(new Date(oldCapture).toISOString()))[0].capturedAt,oldCapture);
+assert.equal(imp.batch(captured(oldCapture),catalog)[0].capturedAt,oldCapture);
+assert.equal(imp.batch(captured('not a date'),catalog)[0].capturedAt,0);
+assert.equal(imp.batch(captured(Date.now()+86400000),catalog)[0].capturedAt,0,'Future timestamps cannot manufacture new evidence');
+const recentlyChecked={sourceUrl:ads[0].url,available:true,checkedAt:currentCheck};
+assert.equal(imp.availability(captured(oldCapture),[recentlyChecked]).length,0);
+assert.equal(imp.availability(captured(newCapture),[recentlyChecked]).length,1);
+for(const at of [oldCapture,'not a date',Date.now()+86400000]){
+ const item={...recentlyChecked};
+ const ctx={...workflowContext,items:[item],drafts:[]};
+ vm.runInNewContext(analyzeCode+';analyze('+JSON.stringify(JSON.stringify(captured(at)))+');',ctx);
+ assert.equal(item.available,true,'Older or invalid captured unavailability must not override a newer check');
+ assert.equal(item.checkedAt,currentCheck);
+}
+const item={...recentlyChecked};
+vm.runInNewContext(analyzeCode+';analyze('+JSON.stringify(JSON.stringify(captured(newCapture)))+');',{...workflowContext,items:[item],drafts:[]});
+assert.equal(item.available,false);
+assert.equal(item.checkedAt,newCapture,'Store the actual capture date rather than claiming it was checked on import');
+console.log('Captured evidence tests passed: propagation, stale checks, invalid/future timestamps and current archival.');
+
+const reviewStart=workflow.lastIndexOf('(function(){',workflow.indexOf(' let proposals=[];'));
+const reviewCode=workflow.slice(reviewStart);
+const reviewFields=new Map();
+const reviewItem={...recentlyChecked};
+const reviewContext={window:{AssayImport:imp},items:[reviewItem],A:{},esc:String,saveI(){},renderAll(){},rvShow(){},rvQ:[],
+ $:id=>{if(!reviewFields.has(id))reviewFields.set(id,{value:'',innerHTML:'',textContent:''});return reviewFields.get(id)},
+};
+vm.runInNewContext(reviewCode,reviewContext);
+reviewContext.$('rvEvidence').value=JSON.stringify(captured(newCapture));
+reviewContext.A.reviewEvidence();
+reviewContext.A.applyEvidence();
+assert.equal(reviewItem.available,false);
+assert.equal(reviewItem.checkedAt,newCapture,'Confirmed batch status keeps its actual evidence date');
+reviewItem.available=true;reviewItem.checkedAt=currentCheck;
+reviewContext.A.reviewEvidence();
+reviewItem.checkedAt=Date.now();
+reviewContext.A.applyEvidence();
+assert.equal(reviewItem.available,true,'A newer check between Analyze and Confirm wins over an older proposal');
+console.log('Availability review tests passed: capture date preservation and stale-proposal rejection.');

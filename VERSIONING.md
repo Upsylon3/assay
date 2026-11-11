@@ -23,7 +23,7 @@ and they move on their own schedule.
 
 | What | Where | Changes when |
 |---|---|---|
-| Scoring model, `performance-v2.5` today | `MODEL_VERSION` in `scoring-engine.js`, top of [docs/SCORING_MODEL.md](docs/SCORING_MODEL.md) | Scoring behaviour changes |
+| Scoring model, `performance-v2.6` today | `MODEL_VERSION` in `scoring-engine.js`, top of [docs/SCORING_MODEL.md](docs/SCORING_MODEL.md) | Scoring behaviour changes |
 | Benchmark dataset, `schemaVersion` and `updatedAt` | top of `benchmark-data.js` | `updatedAt` on a data refresh; `schemaVersion` when the shape of a record changes |
 | Backup file format, `version` | the JSON export in `index.html` | The exported structure changes in a way import has to handle |
 | "FPS suite estimates v2.4" in the page header | `index.html`, typed by hand | Whenever the model version changes; nothing updates it automatically |
