@@ -4,26 +4,26 @@
    relative to RTX 5090 at 1080p Ultra. No upscaling or frame generation is included.
    Raster table averages 11 games; ray tracing table uses the publication's RT suite.
    Source/methodology: https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html
-   Updated: 2026-10-16. Scores may change when the source retests hardware.
+   Updated: 2026-11-12. Scores may change when the source retests hardware.
 */
 window.PVL_BENCHMARKS = {
   schemaVersion: 4,
-  updatedAt: "2026-10-16",
+  updatedAt: "2026-11-12",
   source: "Tom's Hardware CPU/GPU Hierarchy 2026",
   cpuGaming: [
     { model: "AMD Ryzen 7 9800X3D", aliases: ["Ryzen 7 9800X3D"], score: 97, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 gaming, 1080p, 17-game geometric mean" },
     { model: "AMD Ryzen 9 9950X3D", aliases: ["Ryzen 9 9950X3D"], score: 95.7, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 gaming, 1080p, 17-game geometric mean" },
     { model: "AMD Ryzen 7 7800X3D", aliases: ["Ryzen 7 7800X3D"], score: 85.6, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 gaming, 1080p, 17-game geometric mean" },
-    { model: "Intel Core i7-14700KF", aliases: ["Core i7-14700KF", "Intel Core i7-14700KF", "Core i7-14700K", "Intel Core i7-14700K"], score: 76.4, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 gaming, 1080p, 17-game geometric mean" },
+    { model: "Intel Core i7-14700K", aliases: ["Core i7-14700K"], score: 76.4, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 gaming, 1080p, 17-game geometric mean" },
     { model: "Intel Core i7-13700K", aliases: ["Core i7-13700K", "Intel Core i7-13700K"], score: 75.8, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 gaming, 1080p, 17-game geometric mean" },
     { model: "Intel Core i5-13600K", aliases: ["Core i5-13600K", "Intel Core i5-13600K"], score: 70.9, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 gaming, 1080p, 17-game geometric mean" },
-    { model: "Intel Core i7-12700KF", aliases: ["Core i7-12700KF", "Intel Core i7-12700KF", "Core i7-12700K", "Intel Core i7-12700K"], score: 65.8, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 gaming, 1080p, 17-game geometric mean" }
+    { model: "Intel Core i7-12700K", aliases: ["Core i7-12700K"], score: 65.8, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 gaming, 1080p, 17-game geometric mean" }
   ],
   cpuAppSingleThread: [
     { model: "AMD Ryzen 9 9950X3D", aliases: ["Ryzen 9 9950X3D"], score: 92.8, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 single-threaded application index" },
     { model: "AMD Ryzen 7 9800X3D", aliases: ["Ryzen 7 9800X3D"], score: 87.6, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 single-threaded application index" },
     { model: "AMD Ryzen 7 7800X3D", aliases: ["Ryzen 7 7800X3D"], score: 77.3, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 single-threaded application index" },
-    { model: "Intel Core i7-14700KF", aliases: ["Core i7-14700KF", "Intel Core i7-14700KF", "Core i7-14700K", "Intel Core i7-14700K"], score: 90.1, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 single-threaded application index" },
+    { model: "Intel Core i7-14700K", aliases: ["Core i7-14700K"], score: 90.1, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 single-threaded application index" },
     { model: "Intel Core i7-13700K", aliases: ["Core i7-13700K", "Intel Core i7-13700K"], score: 86.7, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 single-threaded application index" },
     { model: "Intel Core i5-13600K", aliases: ["Core i5-13600K", "Intel Core i5-13600K"], score: 82.4, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 single-threaded application index" },
     { model: "AMD Ryzen 7 5700X", aliases: ["Ryzen 7 5700X", "AMD Ryzen 7 5700X 8-Core Processor"], score: 67, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 single-threaded application index" },
@@ -34,7 +34,7 @@ window.PVL_BENCHMARKS = {
     { model: "AMD Ryzen 9 9950X3D", aliases: ["Ryzen 9 9950X3D"], score: 96.2, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 multi-threaded application index" },
     { model: "AMD Ryzen 7 9800X3D", aliases: ["Ryzen 7 9800X3D"], score: 54.7, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 multi-threaded application index" },
     { model: "AMD Ryzen 7 7800X3D", aliases: ["Ryzen 7 7800X3D"], score: 42.8, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 multi-threaded application index" },
-    { model: "Intel Core i7-14700KF", aliases: ["Core i7-14700KF", "Intel Core i7-14700KF", "Core i7-14700K", "Intel Core i7-14700K"], score: 72.2, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 multi-threaded application index" },
+    { model: "Intel Core i7-14700K", aliases: ["Core i7-14700K"], score: 72.2, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 multi-threaded application index" },
     { model: "Intel Core i7-13700K", aliases: ["Core i7-13700K", "Intel Core i7-13700K"], score: 64.5, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 multi-threaded application index" },
     { model: "Intel Core i5-13600K", aliases: ["Core i5-13600K", "Intel Core i5-13600K"], score: 48.3, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 multi-threaded application index" },
     { model: "AMD Ryzen 7 5700X", aliases: ["Ryzen 7 5700X", "AMD Ryzen 7 5700X 8-Core Processor"], score: 29.5, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 multi-threaded application index" },
@@ -63,7 +63,7 @@ window.PVL_BENCHMARKS = {
     { model: "AMD Radeon RX 7700 XT", aliases: ["Radeon RX 7700 XT","RX 7700 XT"], raster: { "1080p": 50.5, "1440p": 43.4, "4k": 34.3 }, rayTracing: { "1080p": 33.1, "1440p": 25.1, "4k": 15.2 }, source: "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html" },
     { model: "NVIDIA GeForce RTX 3070 Ti", aliases: ["GeForce RTX 3070 Ti","RTX 3070 Ti"], raster: { "1080p": 46.4, "1440p": 40, "4k": 23.5 }, rayTracing: { "1080p": 33.5, "1440p": 27.5, "4k": 13.7 }, source: "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html" },
     { model: "NVIDIA GeForce RTX 3070", aliases: ["GeForce RTX 3070","RTX 3070"], raster: { "1080p": 42.8, "1440p": 34.8, "4k": 23.6 }, rayTracing: { "1080p": 31.6, "1440p": 26, "4k": 12.9 }, source: "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html" },
-    { model: "NVIDIA GeForce RTX 4060 Ti 8GB", aliases: ["GeForce RTX 4060 Ti 8GB","RTX 4060 Ti 8GB","GeForce RTX 4060 Ti"], raster: { "1080p": 43.2, "1440p": 35.2, "4k": 21.5 }, rayTracing: { "1080p": 32.5, "1440p": 25.5, "4k": 12.6 }, source: "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html" },
+    { model: "NVIDIA GeForce RTX 4060 Ti 8GB", aliases: ["GeForce RTX 4060 Ti 8GB","RTX 4060 Ti 8GB"], raster: { "1080p": 43.2, "1440p": 35.2, "4k": 21.5 }, rayTracing: { "1080p": 32.5, "1440p": 25.5, "4k": 12.6 }, source: "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html" },
     { model: "AMD Radeon RX 6750 XT", aliases: ["Radeon RX 6750 XT","RX 6750 XT"], raster: { "1080p": 40.8, "1440p": 34.4, "4k": 26.7 }, rayTracing: { "1080p": 22.6, "1440p": 18.9, "4k": 12.7 }, source: "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html" },
     { model: "AMD Radeon RX 6700 XT", aliases: ["Radeon RX 6700 XT","RX 6700 XT"], raster: { "1080p": 38.9, "1440p": 32.5, "4k": 25.3 }, rayTracing: { "1080p": 21.6, "1440p": 17.9, "4k": 12.3 }, source: "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html" },
     { model: "NVIDIA GeForce RTX 3060 Ti", aliases: ["GeForce RTX 3060 Ti","RTX 3060 Ti"], raster: { "1080p": 36.4, "1440p": 30.5, "4k": 17.5 }, rayTracing: { "1080p": 26.4, "1440p": 22.2, "4k": 11.5 }, source: "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html" },
@@ -71,6 +71,6 @@ window.PVL_BENCHMARKS = {
     { model: "AMD Radeon RX 7600", aliases: ["Radeon RX 7600","RX 7600"], raster: { "1080p": 34.3, "1440p": 27.2, "4k": 16.6 }, rayTracing: { "1080p": 12.7, "1440p": 9.3, "4k": 6.5 }, source: "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html" },
     { model: "NVIDIA GeForce RTX 3060 12GB", aliases: ["GeForce RTX 3060 12GB","RTX 3060 12GB"], raster: { "1080p": 30.2, "1440p": 25, "4k": 20 }, rayTracing: { "1080p": 24.2, "1440p": 20.6, "4k": 14.8 }, source: "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html" },
     { model: "AMD Radeon RX 6600 XT", aliases: ["Radeon RX 6600 XT","RX 6600 XT"], raster: { "1080p": 30.8, "1440p": 24.3, "4k": 15.6 }, rayTracing: { "1080p": 13.7, "1440p": 9, "4k": 5.4 }, source: "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html" },
-    { model: "AMD Radeon RX 6600", aliases: ["Radeon RX 6600","RX 6600"], raster: { "1080p": 25.5, "1440p": 14.9, "4k": 13.1 }, rayTracing: { "1080p": 0, "1440p": 0, "4k": 0 }, source: "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html" }
+    { model: "AMD Radeon RX 6600", aliases: ["Radeon RX 6600","RX 6600"], raster: { "1080p": 25.5, "1440p": 14.9, "4k": 13.1 }, rayTracing: { "1080p": 10.2, "1440p": 7.6, "4k": 4.8 }, source: "https://www.tomshardware.com/reviews/gpu-hierarchy,4388.html" }
   ]
 };

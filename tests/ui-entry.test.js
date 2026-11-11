@@ -46,6 +46,9 @@ assert.equal(invalid.fields.get('memoryDetails').open, true, 'Reveal invalid opt
 assert.match(invalid.fields.get('formErr').textContent, /RAM/);
 assert.equal(submit({f_price: '0'}).saved, 0);
 assert.equal(submit({f_setup: true, f_setupAmt: '500'}).saved, 0);
+for (const values of [{f_price:'Infinity'}, {f_ram:'Infinity'}, {f_ssd:'-1'}, {f_hdd:'-1'}, {f_ssd:'NaN'}, {f_hdd:'Infinity'}]) {
+  assert.equal(submit(values).saved, 0, 'Invalid numbers must not enter rankings: ' + JSON.stringify(values));
+}
 
 const edited = submit({}, {id: 'existing-id', favorite: true});
 assert.equal(edited.items.length, 1);

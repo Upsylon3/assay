@@ -1,7 +1,11 @@
 /* Versioned performance model. Benchmark ratios are only compared within a compatible source/test suite. */
 (function(root){
   "use strict";
-  const MODEL_VERSION = "performance-v2.5";
+  const MODEL_VERSION = "performance-v2.6";
+  const suiteBaselines = {
+    raster: { "1080p": 203.8, "1440p": 167.3, "4k": 110.8 },
+    rayTracing: { "1080p": 125.7, "1440p": 100.8, "4k": 64.1 }
+  };
   const normalize = value => String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
   function findRecord(rows, name) {
     const key = normalize(name);
@@ -14,8 +18,13 @@
       .replace(/\((?:R|TM)\)/gi, "")
       .replace(/\s+(?:\d+-Core|Six-Core|Eight-Core|Twelve-Core) Processor$/i, "")
       .replace(/^(?:AMD|Intel)\s+/i, ""));
-    const key = cpuKey(name);
-    const row = ((root.BUILTIN && root.BUILTIN.cpuSingleThread) || []).find(([model]) => cpuKey(model) === key);
+    const rows = (root.BUILTIN && root.BUILTIN.cpuSingleThread) || [];
+    const exact = String(name || "").trim().toLowerCase();
+    // Distinct PassMark rows can share a normalized spelling. Prefer their exact
+    // identities; an ambiguous alias must not silently borrow the first score.
+    const exactRow = rows.find(([model]) => model.toLowerCase() === exact);
+    const matches = exactRow ? [exactRow] : rows.filter(([model]) => cpuKey(model) === cpuKey(name));
+    const row = matches.length === 1 ? matches[0] : null;
     return row ? { model: row[0], score: row[1], source: "https://www.cpubenchmark.net/singleThread.html" } : null;
   }
   function gpuGamingRecord(name) {
@@ -37,7 +46,7 @@
     const refGpu = Math.max(1, Number(reference.gpu) || 1);
     const record = singleThreadRecord(parts.cpuName);
     const refRecord = singleThreadRecord(reference.cpuName);
-    const useSingleThreadBenchmarks = !!(record && refRecord);
+    const useSingleThreadBenchmarks = !!(!profile.forceCpuMarkOnly && record && refRecord);
     const cpuSingle = record ? record.score : null;
     const cpuMultiPct = cpuMark / refCpu * 100;
     const cpuSinglePct = useSingleThreadBenchmarks ? record.score / refRecord.score * 100 : null;
@@ -50,8 +59,8 @@
     const refCpuAppSingle = cpuAppSingleRecord(reference.cpuName);
     const cpuAppMulti = cpuAppMultiRecord(parts.cpuName);
     const refCpuAppMulti = cpuAppMultiRecord(reference.cpuName);
-    const cpuGamingAvailable = !!(profile.useCpuGamingBenchmarks && cpuGame && refCpuGame && cpuGame.score > 0 && refCpuGame.score > 0);
-    const cpuAppsAvailable = !!(profile.useCpuAppBenchmarks && cpuAppSingle && refCpuAppSingle && cpuAppMulti && refCpuAppMulti &&
+    const cpuGamingAvailable = !!(!profile.forcePassmark && profile.useCpuGamingBenchmarks && cpuGame && refCpuGame && cpuGame.score > 0 && refCpuGame.score > 0);
+    const cpuAppsAvailable = !!(!profile.forcePassmark && profile.useCpuAppBenchmarks && cpuAppSingle && refCpuAppSingle && cpuAppMulti && refCpuAppMulti &&
       cpuAppSingle.score > 0 && refCpuAppSingle.score > 0 && cpuAppMulti.score > 0 && refCpuAppMulti.score > 0);
     const cpuPct = cpuGamingAvailable ? cpuGame.score / refCpuGame.score * 100
       : cpuAppsAvailable ? (cpuAppSingle.score / refCpuAppSingle.score * 100) * singleMix + (cpuAppMulti.score / refCpuAppMulti.score * 100) * (1 - singleMix)
@@ -64,19 +73,15 @@
     const refGameRecord = gpuGamingRecord(reference.gpuName);
     const resolution = ["1080p", "1440p", "4k"].includes(profile.resolution) ? profile.resolution : "1440p";
     const graphicsMode = profile.graphicsMode === "rayTracing" ? "rayTracing" : "raster";
-    const gameScoresAvailable = !!(profile.useGameBenchmarks && gameRecord && refGameRecord &&
+    const gameScoresAvailable = !!(!profile.forcePassmark && profile.useGameBenchmarks && gameRecord && refGameRecord &&
       gameRecord[graphicsMode] && refGameRecord[graphicsMode] &&
       gameRecord[graphicsMode][resolution] > 0 && refGameRecord[graphicsMode][resolution] > 0);
     const gpuPct = gameScoresAvailable
       ? gameRecord[graphicsMode][resolution] / refGameRecord[graphicsMode][resolution] * 100
       : rawGpuPct;
-    const suiteBaselines = {
-      raster: { "1080p": 203.8, "1440p": 167.3, "4k": 110.8 },
-      rayTracing: { "1080p": 125.7, "1440p": 100.8, "4k": 64.1 }
-    };
     // Convert the source suite index into its published geometric-mean FPS baseline.
     // This is a multi-game GPU-suite estimate, not a per-game or full-PC guarantee.
-    const gpuSuiteFps = gameRecord && gameRecord[graphicsMode] && Number.isFinite(gameRecord[graphicsMode][resolution])
+    const gpuSuiteFps = gameRecord && gameRecord[graphicsMode] && Number.isFinite(gameRecord[graphicsMode][resolution]) && gameRecord[graphicsMode][resolution] > 0
       ? gameRecord[graphicsMode][resolution] / 100 * suiteBaselines[graphicsMode][resolution]
       : null;
     const cpuShare = Math.max(0, Number(profile.cpuShare ?? 0.5));
@@ -94,12 +99,32 @@
       gameScoresAvailable ? `Tom's Hardware 2026 ${graphicsMode === "rayTracing" ? "ray-tracing" : "raster"} ${resolution} GPU suite` : "PassMark G3D Mark GPU fallback"
     ].join("; ");
     return {
-      idx, cpuPct, cpuSinglePct, cpuMultiPct, cpuSingleScore: cpuSingle, cpuSingleMeasured: !!record, cpuWarning,
+      idx, cpuPct, cpuSinglePct, cpuMultiPct, cpuSingleScore: cpuSingle, cpuSingleMeasured: !!record, cpuSingleComparisonAvailable: useSingleThreadBenchmarks, cpuWarning,
       cpuPassmarkPct: passmarkCpuPct, cpuBenchmarkType, cpuGamingMeasured: cpuGamingAvailable, cpuAppsMeasured: cpuAppsAvailable,
       gpuPct, gpuPassmarkPct: rawGpuPct, gpuGamingMeasured: gameScoresAvailable,
       gpuBenchmarkType: gameScoresAvailable ? graphicsMode : "passmark",
       gpuResolution: resolution, gpuSuiteFps, confidence, evidence, modelVersion: MODEL_VERSION
     };
   }
-  root.PVL_SCORING = { score, normalize, modelVersion: MODEL_VERSION, singleThreadRecord, gpuGamingRecord, cpuGamingRecord, cpuAppSingleRecord, cpuAppMultiRecord };
+  function scoreMany(partsList, reference, profile) {
+    // Select evidence once for the comparison set. A row's coverage must never
+    // switch its scoring scale relative to its competitors.
+    const cpus = [reference.cpuName, ...partsList.map(parts => parts.cpuName)];
+    const gpus = [reference.gpuName, ...partsList.map(parts => parts.gpuName)];
+    const hasScore = record => !!(record && Number.isFinite(record.score) && record.score > 0);
+    const resolution = ["1080p", "1440p", "4k"].includes(profile.resolution) ? profile.resolution : "1440p";
+    const mode = profile.graphicsMode === "rayTracing" ? "rayTracing" : "raster";
+    const common = {
+      ...profile,
+      useCpuGamingBenchmarks: !!(profile.useCpuGamingBenchmarks && cpus.every(name => hasScore(cpuGamingRecord(name)))),
+      useCpuAppBenchmarks: !!(profile.useCpuAppBenchmarks && cpus.every(name => hasScore(cpuAppSingleRecord(name)) && hasScore(cpuAppMultiRecord(name)))),
+      useGameBenchmarks: !!(profile.useGameBenchmarks && gpus.every(name => {
+        const record = gpuGamingRecord(name);
+        return !!(record && record[mode] && Number.isFinite(record[mode][resolution]) && record[mode][resolution] > 0);
+      })),
+      forceCpuMarkOnly: !!(profile.forceCpuMarkOnly || !cpus.every(name => hasScore(singleThreadRecord(name))))
+    };
+    return partsList.map(parts => score(parts, reference, common));
+  }
+  root.PVL_SCORING = { score, scoreMany, normalize, modelVersion: MODEL_VERSION, suiteBaselines, singleThreadRecord, gpuGamingRecord, cpuGamingRecord, cpuAppSingleRecord, cpuAppMultiRecord };
 })(window);

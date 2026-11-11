@@ -19,7 +19,7 @@
   <div class="welcome-steps"><span><b>01</b> Log the hardware</span><span><b>02</b> Compare the evidence</span><span><b>03</b> Keep the shortlist</span></div>
  </div>
  <div id="cmp" hidden>
-  <div class="goal-toolbar"><span class="control-label">Buying for</span><div class="seg" id="goal"><button data-g="drive">Daily driver</button><button data-g="flip">Resale profit</button><button data-g="both">Both</button></div><button class="btn gh" data-act="review" id="reviewBtn" style="margin-left:auto" hidden></button></div>
+  <div class="goal-toolbar"><span class="control-label">Buying for</span><div class="seg" id="goal"><button data-g="drive">Daily driver</button><button data-g="flip">Resale value</button><button data-g="both">Both</button></div><button class="btn gh" data-act="review" id="reviewBtn" style="margin-left:auto" hidden></button></div>
   <div id="hero" class="card hero"></div>
   <div class="card results-card"><div class="results-heading"><div><p class="eyebrow">The shortlist</p><h2>Your specimens <span id="resultCount" class="count-tag"></span></h2></div><button class="btn" data-act="goadd">+ Add a PC</button></div><div class="results-toolbar">
    <div class="seg" id="filt"><button data-f="all" class="on">All</button><button data-f="fav">★ Favourites</button><button data-f="ddr5">DDR5 only</button></div>
@@ -27,7 +27,7 @@
    <div class="row" style="gap:4px 22px;margin:2px 0 2px"><label class="chk"><input type="checkbox" id="optAvail"> Available only</label><label class="chk" title="Hides any listing that costs more than a more powerful one (same price stays)"><input type="checkbox" id="optWorth"> Hide overpriced alternatives</label></div><div class="hint" id="viewNote" style="margin:2px 0 6px"></div><div id="list"></div><details class="explanation"><summary>What do the scores mean?</summary><p class="hint">Performance compares CPU/GPU power with your reference PC in Settings (100% = equal). The deal score ranks value within your available listings (100 = best for your goal). Prices deduct any included setup. Scores help compare listings; check condition and seller details before buying.</p></details></div>
  </div></section>
 
-<section id="t-table" hidden><div class="card table-card"><div class="table-title-row"><div><h2>Listing spreadsheet</h2><p class="lead">All your listings, side by side. Click a heading to sort. Scroll the table for more detail.</p></div><button class="btn" data-act="tableExport">Export CSV</button></div><div class="table-toolbar"><div class="table-search"><label for="tableSearch">Search listings</label><input id="tableSearch" type="search" placeholder="Name, CPU, GPU, RAM, price…"></div><div class="table-filter"><label for="tableFilter">Show</label><select id="tableFilter"><option value="all">All listings</option><option value="available">Available only</option><option value="unavailable">Unavailable only</option><option value="favorites">Favourites only</option></select></div><div class="table-filter"><label><input type="checkbox" id="tableAll"> Detailed columns</label></div><div id="tableCount" class="hint" aria-live="polite"></div></div><details class="explanation table-method"><summary>Benchmark notes &amp; score definitions</summary><p class="hint">CPU percentages are relative to your yardstick and use PassMark single-/multi-thread evidence. Gaming profiles use resolution- and graphics-mode-specific GPU game-suite indices where available; PassMark is shown separately. GPU suite FPS is an estimated multi-game geometric mean, not an individual-game prediction. “Proxy” means no curated CPU single-thread score is available, so the model falls back to CPU Mark. Evidence quality is shown per row. Value / 100 is normalized against the best available listing.</p></details><div id="tableBody" class="table-viewport"></div></div></section>
+<section id="t-table" hidden><div class="card table-card"><div class="table-title-row"><div><h2>Listing spreadsheet</h2><p class="lead">All your listings, side by side. Click a heading to sort. Scroll the table for more detail.</p></div><button class="btn" data-act="tableExport">Export CSV</button></div><div class="table-toolbar"><div class="table-search"><label for="tableSearch">Search listings</label><input id="tableSearch" type="search" placeholder="Name, CPU, GPU, RAM, price…"></div><div class="table-filter"><label for="tableFilter">Show</label><select id="tableFilter"><option value="all">All listings</option><option value="available">Available only</option><option value="unavailable">Unavailable only</option><option value="favorites">Favourites only</option></select></div><div class="table-filter"><label><input type="checkbox" id="tableAll"> Detailed columns</label></div><div id="tableCount" class="hint" aria-live="polite"></div></div><details class="explanation table-method"><summary>Benchmark notes &amp; score definitions</summary><p class="hint">CPU percentages are relative to your yardstick and use PassMark single-/multi-thread evidence. Gaming profiles use resolution- and graphics-mode-specific GPU game-suite indices where available; PassMark is shown separately. GPU suite FPS is an estimated multi-game geometric mean, not an individual-game prediction. Comparisons use a common benchmark basis for every listing. If single-thread coverage is incomplete, all CPUs use CPU Mark and show a warning. Unknown ratings remain unavailable. Evidence quality is shown per row. Value / 100 is normalized against the best available listing.</p></details><div id="tableBody" class="table-viewport"></div></div></section>
 <section id="t-versus" hidden><div class="card"><h2>Versus</h2><p class="lead">Compare two saved PCs by performance, effective price and performance per euro. Differences within ±5% are treated as roughly equal.</p><div class="g"><div><label for="versusA">First PC</label><select id="versusA"></select></div><div><label for="versusB">Second PC</label><select id="versusB"></select></div></div><div id="versusBody" style="margin-top:14px"></div></div></section>
 <section id="t-add" hidden><div class="card"><h2 id="fTitle">Add a PC</h2><p class="lead">CPU, GPU, price. That’s your starting point. Add the finer details when you know them.</p>
  <form id="form" novalidate><div class="g">
@@ -68,11 +68,11 @@
 
 <footer id="foot"></footer></div>
 <dialog id="review"><h2>Review links</h2><p class="hint">Review stale links below, or analyze explicit status from a saved collector export. Missing favourites are never treated as removed.</p><details class="form-disclosure"><summary>Batch-check saved evidence</summary><label for="rvEvidence">Collector JSON from checked advert pages</label><textarea id="rvEvidence" rows="4"></textarea><div class="row"><label class="btn">Load status files<input id="rvFiles" type="file" accept=".json" multiple hidden></label><button class="btn" data-act="reviewEvidence">Analyze availability</button></div><div id="rvUpdates" role="status"></div></details><div id="rvBody"></div></dialog>
-<dialog id="help"><h2>How scoring works</h2><p class="lead"><b>Performance</b> compares a PC's CPU and GPU with the yardstick PC for the workload you picked in Settings. <b>Value</b> is separate: CPU, GPU, RAM and storage are weighted by what a typical 2026 build spends on each (DDR5 counts for more than DDR4 because it costs more), then divided by the price minus an included setup, so a cheaper PC can beat a stronger one. On the Compare tab, <b>Daily driver</b> ranks by performance per euro for your workload, <b>Resale profit</b> by how much hardware (at market part prices) each euro buys, and <b>Both</b> by a mix that only rewards listings good at both. Assumed RAM/SSD values are marked with <span class="est">~</span>.</p><button class="btn pri" onclick="this.closest('dialog').close()">Got it</button></dialog>
+<dialog id="help"><h2>How scoring works</h2><p class="lead"><b>Performance</b> compares a PC's CPU and GPU with the yardstick PC for the workload you picked in Settings. <b>Value</b> is separate: CPU, GPU, RAM and storage are weighted by what a typical 2026 build spends on each (DDR5 counts for more than DDR4 because it costs more), then divided by the price minus an included setup, so a cheaper PC can beat a stronger one. On the Compare tab, <b>Daily driver</b> ranks by performance per euro for your workload, <b>Resale value</b> by how much hardware (at market part prices) each euro buys, and <b>Both</b> by a mix that only rewards listings good at both. Resale value is a parts-value heuristic, not a predicted selling price or profit. Available listings use a common benchmark basis; adding an available listing with missing coverage can change that basis. Archived listings cannot affect buyable rankings. Versus uses the selected pair’s shared measurements. Assumed RAM/SSD values are marked with <span class="est">~</span>.</p><button class="btn pri" onclick="this.closest('dialog').close()">Got it</button></dialog>
 <div class="toast" id="toast" role="status"></div>
-<script src="listing-import.js"></script><script src="draft-sync.js"></script><script src="browser-collector.js"></script><script src="builtin-parts.js"></script><script src="config.js"></script>
-<script src="benchmark-data.js?v=20261016-fps24"></script>
-<script src="scoring-engine.js?v=20261016-fps24"></script>
+<script src="listing-import.js?v=20261112-audit26"></script><script src="draft-sync.js?v=20261112-audit26"></script><script src="browser-collector.js?v=20261112-audit26"></script><script src="builtin-parts.js?v=20261112-audit26"></script><script src="config.js"></script>
+<script src="benchmark-data.js?v=20261112-audit26"></script>
+<script src="scoring-engine.js?v=20261112-audit26"></script>
 <script>
 const $=id=>document.getElementById(id),C=window.PVL_CONFIG||{},ON=!!(C.supabaseUrl&&C.supabaseKey),LS=localStorage,
  /* The URL is cleaned before use. A trailing slash ("https://x.supabase.co/") makes every request go to "https://x.supabase.co//auth/v1/...",
@@ -96,13 +96,19 @@ const MARKET={asOf:"2026-10-10",
 const COST=(()=>{const b=MARKET.build,c={gpu:b.gpu,cpu:b.cpu,ram:b.ramGB*MARKET.ramPerGB[b.ramType],sto:b.ssdGB*MARKET.ssdPerGB},t=c.gpu+c.cpu+c.ram+c.sto;
  return{c,t,w:{gpu:c.gpu/t,cpu:c.cpu/t,ram:c.ram/t,sto:c.sto/t}}})();
 /* Every listing has a stable id and an updatedAt time. Without them two devices cannot tell "same listing, edited" from "different listing". */
-const uid=()=>crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)+Date.now().toString(36),num=v=>typeof v=="number"&&isFinite(v),
- norm=i=>({...i,ssd:+i.ssd||0,hdd:+i.hdd||0,ramType:i.ramType||"DDR4",favorite:!!i.favorite,id:i.id||uid(),updatedAt:num(i.updatedAt)?i.updatedAt:0}); // updatedAt 0 = "older than any real edit"
-let items=jget("pcvaluelab_items",[]).map(norm),tombs=jget("pvl_tombs",[]).filter(t=>t&&typeof t.id=="string"),localParts={cpu:jget("pcvaluelab_custom_cpus",[]),gpu:jget("pcvaluelab_custom_gpus",[])},
+const uid=()=>crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)+Date.now().toString(36),num=v=>typeof v=="number"&&Number.isFinite(v),
+ sane=e=>e&&typeof e=="object"&&typeof e.id=="string"&&e.id&&(e.deleted===true||(num(e.price)&&e.price>0&&num(e.cpuScore)&&e.cpuScore>0&&num(e.gpuScore)&&e.gpuScore>0&&num(e.ram)&&e.ram>0&&num(e.ssd)&&e.ssd>=0&&num(e.hdd)&&e.hdd>=0&&["DDR3","DDR4","DDR5"].includes(e.ramType)&&typeof e.cpuName=="string"&&e.cpuName.trim()&&typeof e.gpuName=="string"&&e.gpuName.trim()&&(e.setupAmt==null||num(e.setupAmt)&&e.setupAmt>=0))),
+ norm=i=>i&&typeof i=="object"?({...i,name:typeof i.name=="string"?i.name:"",ssd:i.ssd==null?0:Number(i.ssd),hdd:i.hdd==null?0:Number(i.hdd),ramType:i.ramType||"DDR4",favorite:!!i.favorite,id:i.id||uid(),legacyIdentity:!!(i.legacyIdentity||!i.id),updatedAt:num(i.updatedAt)?i.updatedAt:0}):null; // updatedAt 0 = "older than any real edit"
+const savedArray=key=>{const value=jget(key,[]);return Array.isArray(value)?value:[]};
+let items=savedArray("pcvaluelab_items").map(norm).filter(i=>sane(i)&&!i.deleted),tombs=savedArray("pvl_tombs").filter(t=>t&&typeof t.id=="string"),localParts={cpu:savedArray("pcvaluelab_custom_cpus").filter(p=>Array.isArray(p)&&typeof p[0]=="string"&&num(p[1])&&p[1]>0),gpu:savedArray("pcvaluelab_custom_gpus").filter(p=>Array.isArray(p)&&typeof p[0]=="string"&&num(p[1])&&p[1]>0)},
 remote=Object.assign({parts:[],ref:null},jget("pvl_remote",{})),P=Object.assign({aes:0,cur:"EUR",ref:null,theme:null,seen:0,avail:true,worth:false,setup:150,workload:"balanced",goal:"both",versusA:null,versusB:null},jget("pvl_prefs",{})),
 parts={cpu:[],gpu:[]},editIdx=-1,editId="",filt="all",admin=sessionStorage.getItem("pvl_admin")||"",tab="compare";
-if(LS.getItem("pcvaluelab_currency"))P.cur=LS.getItem("pcvaluelab_currency");if(LS.getItem("pcvaluelab_theme")&&!P.theme)P.theme=LS.getItem("pcvaluelab_theme");
+// Legacy preferences migrate once; an old key must not override a later choice.
+const legacyCurrency=LS.getItem("pcvaluelab_currency");if(legacyCurrency){if(!Object.prototype.hasOwnProperty.call(jget("pvl_prefs",{}),"cur")&&["EUR","USD"].includes(legacyCurrency))P.cur=legacyCurrency;jset("pvl_prefs",P);LS.removeItem("pcvaluelab_currency")}if(LS.getItem("pcvaluelab_theme")&&!P.theme)P.theme=LS.getItem("pcvaluelab_theme");
 const saveP=()=>jset("pvl_prefs",P),saveI=()=>{jset("pcvaluelab_items",items);scheduleSync()}; // every local change is also pushed to the account (debounced), when signed in
+P.aes=num(P.aes)?Math.max(0,Math.min(15,P.aes)):0;P.setup=num(P.setup)?Math.max(0,P.setup):150;
+if(!["drive","flip","both"].includes(P.goal))P.goal="both";
+remote.parts=Array.isArray(remote.parts)?remote.parts.filter(p=>p&&["cpu","gpu"].includes(p.kind)&&typeof p.name=="string"&&num(p.score)&&p.score>0):[];
 const tomb=it=>{tombs.push({id:it.id,deleted:true,updatedAt:Date.now()});jset("pvl_tombs",tombs)}; // a deletion has to travel too, so it leaves a small marker
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 const money=v=>(P.cur=="EUR"?"€":"$")+Number(v).toLocaleString(undefined,{maximumFractionDigits:0}),fmt=n=>Number(n).toLocaleString();
@@ -127,17 +133,16 @@ async function adminRpc(name,body){let r;try{r=await rpc(name,body)}catch(e){ret
    Two devices can be edited while apart, so each listing has an id + updatedAt, a deleted listing leaves a tombstone, and merging keeps the
    newest version of every listing. A merge never drops a listing that only one side has. Export / Import backup keeps working with or without an account. */
 const AUTH=BASE+"/auth/v1";
-let sess=jget("pvl_session",null),sy={busy:false,queued:false,at:0,err:"",timer:0};
-const sane=e=>e&&typeof e=="object"&&typeof e.id=="string"&&e.id&&(e.deleted===true||(num(e.price)&&e.price>0&&num(e.cpuScore)&&num(e.gpuScore)&&num(e.ram)&&typeof e.cpuName=="string"&&typeof e.gpuName=="string")),
- fp=i=>[i.name,i.cpuName,i.gpuName,i.ram,i.ramType,i.ssd,i.hdd,i.price].join("|").toLowerCase(); // "same listing" test for lists made before ids existed
+let sess=jget("pvl_session",null),accountEpoch=0,sy={busy:false,queued:false,at:0,err:"",timer:0};
+const fp=i=>window.AssayImport.key(i)||[i.name,i.cpuName,i.gpuName,i.ram,i.ramType,i.ssd,i.hdd,i.price].join("|").toLowerCase(); // advert identity takes precedence over legacy spec fingerprints
 /* Merge two lists: localLive/localTombs (this device) and remote (live listings and tombstones from the account or a backup file).
    Returns the merged live listings, the tombstones worth keeping, and whether the remote copy is out of date. */
 function mergeAll(localLive,localTombs,remote){
  const rIds=new Set(remote.map(e=>e.id)),lIds=new Set(localLive.map(i=>i.id)),rfp=new Map();
  // The same listing created separately on two devices (e.g. both imported the same old backup) gets two ids. Adopt the other side's id so it is not doubled.
- remote.filter(e=>!e.deleted&&!lIds.has(e.id)).forEach(e=>rfp.set(fp(e),e.id));
- const L=localLive.map(i=>{if(!rIds.has(i.id)&&rfp.has(fp(i))){const id=rfp.get(fp(i));rfp.delete(fp(i));return{...i,id}}return i});
- const best=new Map(),take=e=>{const c=best.get(e.id);if(!c||(e.updatedAt||0)>(c.updatedAt||0))best.set(e.id,e)};
+ remote.filter(e=>!e.deleted&&!lIds.has(e.id)).forEach(e=>rfp.set(fp(e),e));
+ const L=localLive.map(i=>{const match=rfp.get(fp(i));if(!rIds.has(i.id)&&match&&(window.AssayImport.key(i)||i.legacyIdentity&&match.legacyIdentity)){rfp.delete(fp(i));return{...i,id:match.id}}return i});
+ const best=new Map(),take=e=>{const c=best.get(e.id);if(!c||(e.updatedAt||0)>(c.updatedAt||0)||(e.updatedAt||0)===(c.updatedAt||0)&&e.deleted&&!c.deleted)best.set(e.id,e)};
  remote.forEach(take);localTombs.forEach(take);L.forEach(take); // remote goes first so that on an exact tie every device settles on the same copy
  const live=[],seen=new Set();
  for(const i of L){const e=best.get(i.id);if(e&&!e.deleted&&!seen.has(e.id)){live.push(e);seen.add(e.id)}} // keep this device's order, new ones after
@@ -148,14 +153,16 @@ function mergeAll(localLive,localTombs,remote){
   stale=entries.some(e=>{const r=rm.get(e.id);return !r||(r.updatedAt||0)!==(e.updatedAt||0)||!!r.deleted!==!!e.deleted});
  return{live,tombs:tb,entries,remoteStale:stale}}
 const authFetch=(path,body,tok)=>fetch(AUTH+path,{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json",...(tok?{Authorization:"Bearer "+tok}:{})},body:JSON.stringify(body)});
-function setSession(d){sess={access:d.access_token,refresh:d.refresh_token,exp:Date.now()+(d.expires_in||3600)*1000,email:(d.user&&d.user.email)||(sess&&sess.email)||"",uid:(d.user&&d.user.id)||(sess&&sess.uid)||""};jset("pvl_session",sess)}
-function dropSession(msg){sess=null;try{LS.removeItem("pvl_session")}catch(e){}sy.err=msg||"";renderAccount()}
+function setSession(d){const uid=d.user?.id||sess?.uid||"";if(uid!==sess?.uid)accountEpoch++;sess={access:d.access_token,refresh:d.refresh_token,exp:Date.now()+(d.expires_in||3600)*1000,email:(d.user&&d.user.email)||(sess&&sess.email)||"",uid};jset("pvl_session",sess)}
+function dropSession(msg){accountEpoch++;sess=null;try{LS.removeItem("pvl_session")}catch(e){}sy.err=msg||"";renderAccount()}
 async function freshToken(){if(!sess)return null;if(sess.exp-Date.now()>60000)return sess.access;
+ const epoch=accountEpoch;
  const r=await authFetch("/token?grant_type=refresh_token",{refresh_token:sess.refresh});
+ if(accountEpoch!==epoch||!sess)throw new Error("signed-out");
  if(!r.ok){if(r.status>=400&&r.status<500){dropSession("Your session ended. Sign in again.");return null}throw new Error("Auth error "+r.status)}
- setSession(await r.json());return sess.access}
-async function userApi(p,o={}){const go=async()=>{const t=await freshToken();if(!t)throw new Error("signed-out");return api(p,{...o,headers:{...(o.headers||{}),Authorization:"Bearer "+t}})};
- let r=await go();if(r.status==401&&sess){sess.exp=0;r=await go()} // token refused (revoked, clock off): refresh once and retry
+ const data=await r.json();if(accountEpoch!==epoch||!sess)throw new Error("signed-out");setSession(data);return sess.access}
+async function userApi(p,o={}){const epoch=accountEpoch,go=async()=>{const t=await freshToken();if(!t||epoch!==accountEpoch)throw new Error("signed-out");return api(p,{...o,headers:{...(o.headers||{}),Authorization:"Bearer "+t}})};
+ let r=await go();if(epoch!==accountEpoch)throw new Error("signed-out");if(r.status==401&&sess){sess.exp=0;r=await go()} // token refused (revoked, clock off): refresh once and retry
  return r}
 async function why(r){let m="";try{const d=await r.json();m=d.message||d.msg||d.error_description||d.hint||""}catch(e){}
  if(r.status==404)return"The account table is missing in Supabase. Run setup.sql there.";
@@ -163,12 +170,14 @@ async function why(r){let m="";try{const d=await r.json();m=d.message||d.msg||d.
  return"Error "+r.status+(m?": "+m:"")}
 function scheduleSync(){if(!ON||!sess)return;clearTimeout(sy.timer);sy.timer=setTimeout(cloudSync,1500)}
 async function cloudSync(){if(!ON||!sess)return;if(!window.AssayWorkflow){scheduleSync();return}if(sy.busy){sy.queued=true;return}
+ const epoch=accountEpoch,currentAccount=()=>!!sess&&accountEpoch===epoch;
  sy.busy=true;sy.err="";renderAccount();
  try{
   for(let n=0;n<4;n++){ // retried because another device may save between our read and our write
    const r=await userApi("user_listings?select=items,rev&limit=1");if(!r.ok)throw new Error(await why(r));
-   const row=(await r.json())[0]||null,
-    remote=row&&Array.isArray(row.items)?row.items.filter(e=>!window.AssayDraftSync.valid(e)&&sane(e)).map(e=>e.deleted?{id:e.id,deleted:true,updatedAt:num(e.updatedAt)?e.updatedAt:0}:norm(e)):[],
+   const payload=await r.json();if(!currentAccount())return;
+   const row=payload[0]||null,
+    remote=row&&Array.isArray(row.items)?row.items.filter(e=>e&&typeof e.id=="string"&&!window.AssayDraftSync.valid(e)).map(e=>e.deleted?{id:e.id,deleted:true,updatedAt:num(e.updatedAt)?e.updatedAt:0}:norm(e)).filter(sane):[],
     m=mergeAll(items,tombs,remote),draftMerge=window.AssayWorkflow.mergeCloud(row&&Array.isArray(row.items)?row.items:[]);
    items=m.live;tombs=m.tombs;jset("pcvaluelab_items",items);jset("pvl_tombs",tombs);
    if(editId)editIdx=items.findIndex(x=>x.id==editId); // the list may have been reshuffled under an open edit form
@@ -177,10 +186,11 @@ async function cloudSync(){if(!ON||!sess)return;if(!window.AssayWorkflow){schedu
     h={Prefer:"return=representation"},
     // rev=eq.<what we read> makes the save atomic: if someone else saved in between, it matches no row and we merge again
     w=row?await userApi("user_listings?rev=eq."+row.rev,{method:"PATCH",headers:h,body}):await userApi("user_listings",{method:"POST",headers:h,body});
-   if(w.ok){const out=await w.json();if(Array.isArray(out)&&out.length){sy.at=Date.now();break}}
+   if(!currentAccount())return;
+   if(w.ok){const out=await w.json();if(!currentAccount())return;if(Array.isArray(out)&&out.length){sy.at=Date.now();break}}
    else if(w.status!=409)throw new Error(await why(w)); // 409 = the first row was created by another device a moment ago
    if(n==3)throw new Error("Another device keeps saving at the same moment. Try again in a bit.")}
- }catch(e){sy.err=e.message=="signed-out"?"":(e.name=="TypeError"?"Can't reach the database. It will retry when you're back online.":e.message)}
+ }catch(e){if(currentAccount())sy.err=e.message=="signed-out"?"":(e.name=="TypeError"?"Can't reach the database. It will retry when you're back online.":e.message)}
  finally{sy.busy=false;build();renderAll();renderAccount();if(sy.queued){sy.queued=false;scheduleSync()}}}
 function authMsg(d,status){const c=d.error_code||d.code||"";
  if(c=="invalid_credentials")return"Wrong email or password.";if(c=="user_already_exists")return"That email already has an account. Sign in instead.";
@@ -261,7 +271,8 @@ const pk={cpu:picker($("pkCpu"),"cpu","Search e.g. Ryzen 5 5600",null,true),gpu:
  rg:picker($("pkRefGpu"),"gpu","Search a GPU…",p=>{if(p){P.ref={...refNow(),gpuName:p[0],gpu:p[1]};saveP();renderAll();pk.rg.set(null)}}),
  ac:picker($("pkAdCpu"),"cpu","Search a CPU…"),ag:picker($("pkAdGpu"),"gpu","Search a GPU…")};
 /* ---------- scoring ---------- */
-const live=(k,n)=>{const q=String(n||"").toLowerCase(),p=parts[k].find(x=>x[0].toLowerCase()==q);return p?p[1]:null},refNow=()=>{const r={...(P.ref||remote.ref||DEF)},c=live("cpu",r.cpuName),g=live("gpu",r.gpuName);if(c!=null)r.cpu=c;if(g!=null)r.gpu=g;return r};
+const validReference=r=>r&&typeof r.cpuName=="string"&&r.cpuName.trim()&&typeof r.gpuName=="string"&&r.gpuName.trim()&&num(r.cpu)&&r.cpu>=1&&num(r.gpu)&&r.gpu>=1;
+const live=(k,n)=>{const q=String(n||"").toLowerCase(),exact=parts[k].find(x=>x[0].toLowerCase()==q);if(exact)return exact[1];const key=v=>v.toLowerCase().replace(/^(?:nvidia|amd)\s+/,""),matches=parts[k].filter(x=>key(x[0])===key(q));return matches.length===1?matches[0][1]:null},refNow=()=>{const r={...([P.ref,remote.ref,DEF].find(validReference))},c=live("cpu",r.cpuName),g=live("gpu",r.gpuName);if(c!=null)r.cpu=c;if(g!=null)r.gpu=g;return r};
 const WORKLOADS={
  balanced:{label:"Balanced / general use",cpuShare:.45,gpuShare:.55,singleMix:.45,useGameBenchmarks:false,useCpuGamingBenchmarks:false,useCpuAppBenchmarks:false,hint:"CPU and GPU performance are scored separately; RAM and storage are shown as capacity/value context, not fake FPS."},
  gaming:{label:"Gaming",cpuShare:.35,gpuShare:.65,singleMix:.75,useGameBenchmarks:true,useCpuGamingBenchmarks:true,useCpuAppBenchmarks:false,hint:"GPU-led gaming profile, with extra weight on CPU single-thread performance as a broad gaming proxy."},
@@ -269,11 +280,11 @@ const WORKLOADS={
 };
 if(!WORKLOADS[P.workload])P.workload="balanced"; // a saved profile that no longer exists falls back
 /* Performance scoring deliberately excludes RAM/storage market prices from performance. Those affect capability/fit, not raw CPU/GPU speed. */
-function score(it,ref){const M=MARKET,W=COST.w,profile=WORKLOADS[P.workload]||WORKLOADS.balanced,
+function score(it,ref,performance){const M=MARKET,W=COST.w,profile=WORKLOADS[P.workload]||WORKLOADS.balanced,
  cpu=it.cpuScore/ref.cpu*100,gpu=it.gpuScore/ref.gpu*100,
  ram=Math.min(100,it.ram*(M.ramPerGB[it.ramType]??M.ramPerGB.DDR4)/(M.ref.ramGB*M.ramPerGB[M.ref.ramType])*100),
  sto=Math.min(100,((it.ssd||0)*M.ssdPerGB+(it.hdd||0)*M.hddPerGB)/(M.ref.ssdGB*M.ssdPerGB)*100),
- perf=window.PVL_SCORING.score({cpuName:it.cpuName,cpuScore:it.cpuScore,gpuName:it.gpuName,gpuScore:it.gpuScore},ref,{...profile,resolution:P.gpuResolution||"1440p",graphicsMode:P.graphicsMode||"raster"}),
+ perf=performance||window.PVL_SCORING.score({cpuName:it.cpuName,cpuScore:it.cpuScore,gpuName:it.gpuName,gpuScore:it.gpuScore},ref,{...profile,resolution:P.gpuResolution||"1440p",graphicsMode:P.graphicsMode||"raster"}),
  valueIdx=Math.max(0,(cpu*W.cpu+gpu*W.gpu+ram*W.ram+sto*W.sto)*(1+(LOOK[it.aesthetic]||0)*P.aes/100)),
  idx=Math.max(0,perf.idx),
  cut=Math.max(0,Math.min(it.setup?(Number.isFinite(it.setupAmt)?it.setupAmt:P.setup):0,it.price-1)),net=it.price-cut;
@@ -286,14 +297,14 @@ const isAvail=it=>it.available!==false;
 function worthOnly(rows){const s=rows.slice().sort((a,b)=>a.net-b.net||b.idx-a.idx),keep=new Set();let best=-Infinity,k=0;
  while(k<s.length){let j=k;while(j<s.length&&s[j].net==s[k].net)j++;
   for(let q=k;q<j;q++)if(s[q].idx>best)keep.add(s[q]);
-  for(let q=k;q<j;q++)best=Math.max(best,s[q].idx);k=j}
+  for(let q=k;q<j;q++)if(isAvail(s[q]))best=Math.max(best,s[q].idx);k=j}
  return rows.filter(r=>keep.has(r))}
 /* Every view ranks through here so they always agree. drv = performance per euro (daily driver), flp = hardware you get per euro at market part prices
    (resale: the more underpriced, the more margin). Both are scaled so the best AVAILABLE listing is 100. "both" is their geometric mean, which only
    rewards listings that are good at both; gs is the selected goal rescaled so the top listing is 100. */
-function ranked(ref){const all=items.map((it,i)=>({...it,i,...score(it,ref)})),av=all.filter(isAvail),
+function ranked(ref){const profile={...(WORKLOADS[P.workload]||WORKLOADS.balanced),resolution:P.gpuResolution||"1440p",graphicsMode:P.graphicsMode||"raster"},available=items.filter(isAvail),activePerformance=window.PVL_SCORING.scoreMany(available,ref,profile),active=new Map(available.map((it,i)=>[it,activePerformance[i]])),diagnostics=available.length===items.length?activePerformance:window.PVL_SCORING.scoreMany(items,ref,profile),all=items.map((it,i)=>({...it,i,...score(it,ref,active.get(it)||diagnostics[i])})),av=all.filter(isAvail),
  bd=Math.max(0,...av.map(r=>r.perfPerEuro)),bf=Math.max(0,...av.map(r=>r.val));
- all.forEach(r=>{r.drv=bd?r.perfPerEuro/bd*100:0;r.flp=bf?r.val/bf*100:0;r.raw=P.goal=="drive"?r.drv:P.goal=="flip"?r.flp:Math.sqrt(r.drv*r.flp)});
+ all.forEach(r=>{r.drv=isAvail(r)&&bd?r.perfPerEuro/bd*100:0;r.flp=isAvail(r)&&bf?r.val/bf*100:0;r.raw=P.goal=="drive"?r.drv:P.goal=="flip"?r.flp:Math.sqrt(r.drv*r.flp)});
  const bg=Math.max(0,...av.map(r=>r.raw));all.forEach(r=>r.gs=bg?r.raw/bg*100:0);return all}
 const GOALTXT={drive:"BEST DAILY-DRIVER DEAL",flip:"BEST RESALE DEAL",both:"BEST ALL-ROUNDER DEAL"},GOALK={drive:"daily driver",flip:"resale",both:"overall"};
 /* Review links: leboncoin blocks scripts, so ads are checked by you in your own browser. Listings whose name is an ad link and that you have not
@@ -330,7 +341,7 @@ function renderList(){const ref=refNow(),mode=$("sortMode").value;
  const top=rows.filter(isAvail).sort((a,b)=>b.gs-a.gs)[0];$("hero").style.display=top?"":"none";
  $("hero").innerHTML=top?`<div class="hero-copy"><p class="eyebrow"><span class="status-dot"></span> ${GOALTXT[P.goal]}</p><h2>${title(top)}</h2><p class="sp">${esc(top.cpuName)} · ${esc(top.gpuName)}</p><p class="decision-reason">${decisionReason(top,all)}</p><div class="hero-readouts"><div><span class="control-label">Effective price</span><strong>${money(top.net)}</strong></div><div><span class="control-label">Performance vs reference</span><strong>${top.idx.toFixed(0)}<small>%</small></strong></div></div><button class="btn" data-act="chooseVersus" data-i="${top.i}">Compare head to head ↗</button></div><div class="score-instrument"><div class="instrument-plate"><span>DEAL INDEX</span><span>01 / ${String(rows.length).padStart(2,"0")}</span></div><div class="score-dial" style="--score:${Math.min(100,Math.max(0,top.gs))}" role="img" aria-label="Deal score ${Math.round(top.gs)} out of 100"><div><strong>${Math.round(top.gs)}</strong><span>/ 100</span></div></div><p class="hint">Relative to your available listings.<br>Best for your selected goal.</p></div>`:"";
  $("list").innerHTML=rows.length?rows.map((r,n)=>{const est=(t,a)=>a?`<span class="est" title="Assumed: you marked this as unknown">~${t}</span>`:t,av=isAvail(r);
-  return`<article class="item${av?"":" off"}"><div class="rk">${String(n+1).padStart(2,"0")}</div><div><div class="nm">${title(r)}${av&&r.gs==best?'<span class="bd">Best deal</span>':""}${av?"":'<span class="bd no">Unavailable</span>'}${r.cpuWarning?'<span class="bd no">Single-thread unknown</span>':""}${r.setup?'<span class="bd su">Setup incl.</span>':""}${r.setupKnown===false?'<span class="bd su">Setup unknown</span>':""}${r.favorite?' <span class="fav">★</span>':""}${availabilityLabel(r)==="Needs checking"?'<span class="bd su">Needs checking</span>':""}</div>
+  return`<article class="item${av?"":" off"}"><div class="rk">${String(n+1).padStart(2,"0")}</div><div><div class="nm">${title(r)}${av&&r.gs==best?'<span class="bd">Best deal</span>':""}${av?"":'<span class="bd no">Unavailable</span>'}${r.cpuWarning?'<span class="bd no">CPU Mark-only comparison</span>':""}${r.setup?'<span class="bd su">Setup incl.</span>':""}${r.setupKnown===false?'<span class="bd su">Setup unknown</span>':""}${r.favorite?' <span class="fav">★</span>':""}${availabilityLabel(r)==="Needs checking"?'<span class="bd su">Needs checking</span>':""}</div>
   <div class="sp">${esc(r.cpuName)} · ${esc(r.gpuName)} · ${est(r.ram+" GB "+r.ramType,r.ramUnknown||r.ramTypeUnknown)} · ${est(stor(r.ssd)+" SSD",r.ssdUnknown)}${r.hdd?" + "+stor(r.hdd)+" HDD":""}</div><div class="sp">Daily driver <b>${r.drv.toFixed(0)}</b> · Resale <b>${r.flp.toFixed(0)}</b></div>${r.gpuSuiteFps!=null?`<div class="sp" title="Tom’s Hardware multi-game GPU suite estimate; not a per-game or full-PC guarantee"><b>~${Math.round(r.gpuSuiteFps)} suite FPS</b> · ${esc(r.gpuResolution)} ${P.graphicsMode==="rayTracing"?"ray tracing":"raster"}</div>`:""}</div>
   <div class="pf"><div class="num">${r.idx.toFixed(0)}%</div><div class="k">performance</div><div class="bar"><i style="width:${Math.min(100,r.idx)}%"></i></div></div>
   <div class="pr"><div class="num">${money(r.net)}</div><div class="k">${r.cut>0?"−"+money(r.cut)+" setup":"price"}</div></div><div class="listing-score"><div class="num">${Math.round(r.gs)}<small>/100</small></div><div class="k">${GOALK[P.goal]} deal</div></div>
@@ -421,7 +432,9 @@ function exportTableCsv(){
  a.href=url;a.download="assay-listings.csv";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
  toast("CSV export ready");
 }
-function renderVersus(){const ref=refNow(),aSel=$("versusA"),bSel=$("versusB");if(!aSel||!bSel)return;const list=ranked(ref);if(!list.length){aSel.innerHTML=bSel.innerHTML='<option value="">No listings yet</option>';$("versusBody").innerHTML='<div class="empty">Add PCs to compare them.</div>';return}const opts=list.map(r=>'<option value="'+esc(r.id)+'">'+esc(r.name||r.cpuName+" + "+r.gpuName)+' · '+money(r.price)+'</option>').join("");aSel.innerHTML=bSel.innerHTML=opts;if(!list.some(r=>r.id===P.versusA))P.versusA=list[0].id;if(!list.some(r=>r.id===P.versusB))P.versusB=(list[1]||list[0]).id;aSel.value=P.versusA;bSel.value=P.versusB;const a=list.find(r=>r.id===aSel.value),b=list.find(r=>r.id===bSel.value);if(!a||!b||a.id===b.id){$("versusBody").innerHTML='<div class="empty">Choose two different listings to compare them.</div>';return}const gl={drive:"daily-driver value",flip:"resale value",both:"overall value"}[P.goal],delta=(a.raw/b.raw-1)*100,abs=Math.abs(delta),winner=abs<=5?"About equal":delta>0?"PC A is the better deal ("+gl+")":"PC B is the better deal ("+gl+")";$("versusBody").innerHTML='<div class="g"><div class="card"><h3>PC A · '+title(a)+'</h3><p>'+esc(a.cpuName)+' · '+esc(a.gpuName)+'</p><h2>'+money(a.net)+'</h2><p>'+a.idx.toFixed(1)+'% workload index</p></div><div class="card"><h3>PC B · '+title(b)+'</h3><p>'+esc(b.cpuName)+' · '+esc(b.gpuName)+'</p><h2>'+money(b.net)+'</h2><p>'+b.idx.toFixed(1)+'% workload index</p></div></div><div class="card"><h2>'+winner+'</h2><p class="lead">Daily-driver score: A '+a.drv.toFixed(0)+' · B '+b.drv.toFixed(0)+'. Resale score: A '+a.flp.toFixed(0)+' · B '+b.flp.toFixed(0)+'. Difference in '+gl+': '+(delta>0?"+":"")+delta.toFixed(1)+'%. Differences within ±5% are considered roughly equal; condition, PSU, warranty and noise may matter more.</p><p>Price-share value indices: '+a.valueIdx.toFixed(1)+' vs '+b.valueIdx.toFixed(1)+'.</p></div>'}
+function versusDelta(a,b,goal){const metric=r=>goal==="drive"?r.perfPerEuro:goal==="flip"?r.val:Math.sqrt(r.perfPerEuro*r.val),av=metric(a),bv=metric(b);return Number.isFinite(av)&&Number.isFinite(bv)&&av>0&&bv>0?(av/bv-1)*100:null}
+function scorePair(a,b,ref){const profile={...(WORKLOADS[P.workload]||WORKLOADS.balanced),resolution:P.gpuResolution||"1440p",graphicsMode:P.graphicsMode||"raster"},pair=[a,b],performance=window.PVL_SCORING.scoreMany(pair,ref,profile),scored=pair.map((r,i)=>({...r,...score(r,ref,performance[i])})),bd=Math.max(0,...scored.map(r=>r.perfPerEuro)),bf=Math.max(0,...scored.map(r=>r.val));return scored.map(r=>({...r,drv:bd?r.perfPerEuro/bd*100:0,flp:bf?r.val/bf*100:0}))}
+function renderVersus(){const ref=refNow(),aSel=$("versusA"),bSel=$("versusB");if(!aSel||!bSel)return;const list=ranked(ref);if(!list.length){aSel.innerHTML=bSel.innerHTML='<option value="">No listings yet</option>';$("versusBody").innerHTML='<div class="empty">Add PCs to compare them.</div>';return}const opts=list.map(r=>'<option value="'+esc(r.id)+'">'+esc(r.name||r.cpuName+" + "+r.gpuName)+' · '+money(r.price)+'</option>').join("");aSel.innerHTML=bSel.innerHTML=opts;if(!list.some(r=>r.id===P.versusA))P.versusA=list[0].id;if(!list.some(r=>r.id===P.versusB))P.versusB=(list[1]||list[0]).id;aSel.value=P.versusA;bSel.value=P.versusB;let a=list.find(r=>r.id===aSel.value),b=list.find(r=>r.id===bSel.value);if(!a||!b||a.id===b.id){$("versusBody").innerHTML='<div class="empty">Choose two different listings to compare them.</div>';return}[a,b]=scorePair(a,b,ref);const gl={drive:"daily-driver value",flip:"resale value",both:"overall value"}[P.goal],delta=versusDelta(a,b,P.goal),abs=Math.abs(delta),winner=delta===null?"Comparison unavailable":abs<=5?"About equal":delta>0?"PC A is the better deal ("+gl+")":"PC B is the better deal ("+gl+")";$("versusBody").innerHTML='<div class="g"><div class="card"><h3>PC A · '+title(a)+'</h3><p>'+esc(a.cpuName)+' · '+esc(a.gpuName)+'</p><h2>'+money(a.net)+'</h2><p>'+a.idx.toFixed(1)+'% workload index</p></div><div class="card"><h3>PC B · '+title(b)+'</h3><p>'+esc(b.cpuName)+' · '+esc(b.gpuName)+'</p><h2>'+money(b.net)+'</h2><p>'+b.idx.toFixed(1)+'% workload index</p></div></div><div class="card"><h2>'+winner+'</h2><p class="lead">Pair-relative daily-driver score: A '+a.drv.toFixed(0)+' · B '+b.drv.toFixed(0)+'. Resale score: A '+a.flp.toFixed(0)+' · B '+b.flp.toFixed(0)+'. Difference in '+gl+': '+(delta===null?"Unavailable":(delta>0?"+":"")+delta.toFixed(1)+"%")+'. This pair uses its shared benchmark coverage; scores can differ from the full collection. Differences within ±5% are considered roughly equal; condition, PSU, warranty and noise may matter more.</p><p>Price-share value indices: '+a.valueIdx.toFixed(1)+' vs '+b.valueIdx.toFixed(1)+'.</p></div>'}
 function renderSettings(){const r=refNow();$("refNow").innerHTML=`<span><b>${esc(r.cpuName)}</b> ${fmt(r.cpu)} · <b>${esc(r.gpuName)}</b> ${fmt(r.gpu)} ${P.ref?"(yours)":"(default)"}</span>`;
  const b=MARKET.build,R=MARKET.ramPerGB,L={gpu:"Graphics card",cpu:"Processor",ram:`RAM (${b.ramGB} GB ${b.ramType})`,sto:`Storage (${b.ssdGB>=1000?b.ssdGB/1000+" TB":b.ssdGB+" GB"} SSD)`};
  $("mktBody").innerHTML=["gpu","cpu","ram","sto"].map(k=>`<div style="margin-bottom:10px"><div class="rh"><span>${L[k]} <span style="font-weight:400;color:var(--muted)">· about $${Math.round(COST.c[k])}</span></span><span>${Math.round(COST.w[k]*100)}%</span></div><div class="bar"><i style="width:${COST.w[k]*100}%"></i></div></div>`).join("")+
@@ -448,12 +461,23 @@ function go(t){tab=t;document.body.dataset.view=t;["compare","table","versus","a
 function unk(cb,inp,val,sel){cb.onchange=()=>{inp.disabled=cb.checked;if(sel){sel.disabled=cb.checked;if(cb.checked)sel.value="DDR4"}inp.value=cb.checked?val:""}}
 unk($("f_ramU"),$("f_ram"),16,$("f_ramType"));unk($("f_ssdU"),$("f_ssd"),1000);
 /* setup toggle: ticking it fills in the default value (Settings); the hint always shows what the PC itself is priced at */
+function backupData(){return{version:5,exportedAt:new Date().toISOString(),items,customCPUs:localParts.cpu,customGPUs:localParts.gpu,draftListings:window.AssayWorkflow?.getDrafts()||[],settings:{setupDefault:P.setup,aestheticWeight:P.aes,reference:{...refNow()},currency:P.cur,workload:P.workload,goal:P.goal,gpuResolution:P.gpuResolution||"1440p",graphicsMode:P.graphicsMode||"raster"}}}
+function backupExtras(d){
+ const settings=d.settings??{};if(!settings||typeof settings!=="object"||Array.isArray(settings))throw new Error("Invalid backup settings");
+ const prefs={},restore=(key,target,valid)=>{if(Object.prototype.hasOwnProperty.call(settings,key)){if(!valid(settings[key]))throw new Error("Invalid backup "+key);prefs[target]=settings[key]}};
+ restore("setupDefault","setup",v=>Number.isFinite(v)&&v>=0);restore("aestheticWeight","aes",v=>Number.isFinite(v)&&v>=0&&v<=15);
+ restore("currency","cur",v=>["EUR","USD"].includes(v));restore("workload","workload",v=>Object.prototype.hasOwnProperty.call(WORKLOADS,v));restore("goal","goal",v=>["drive","flip","both"].includes(v));
+ restore("gpuResolution","gpuResolution",v=>["1080p","1440p","4k"].includes(v));restore("graphicsMode","graphicsMode",v=>["raster","rayTracing"].includes(v));
+ if(Object.prototype.hasOwnProperty.call(settings,"reference")){const r=settings.reference;if(!r||typeof r.cpuName!=="string"||!r.cpuName.trim()||typeof r.gpuName!=="string"||!r.gpuName.trim()||!Number.isFinite(r.cpu)||r.cpu<=0||!Number.isFinite(r.gpu)||r.gpu<=0)throw new Error("Invalid backup reference");prefs.ref={cpuName:r.cpuName,cpu:r.cpu,gpuName:r.gpuName,gpu:r.gpu}}
+ const merged={};for(const [kind,key] of [["cpu","customCPUs"],["gpu","customGPUs"]]){const rows=d[key]??[];if(!Array.isArray(rows)||rows.some(r=>!Array.isArray(r)||typeof r[0]!=="string"||!r[0].trim()||!Number.isFinite(r[1])||r[1]<=0||r[1]>400000))throw new Error("Invalid backup custom parts");const seen=new Map();for(const [n,s] of [...localParts[kind],...rows])if(!seen.has(n.trim().toLowerCase()))seen.set(n.trim().toLowerCase(),[n.trim(),s]);merged[kind]=[...seen.values()]}
+ return{prefs,parts:merged};
+}
 function setupHint(){const on=$("f_setup").checked,p=+$("f_price").value,a=+$("f_setupAmt").value;$("setupHint").textContent=on&&p>0&&a>=0?(a<p?`Ranked as a ${money(p-a)} PC.`:"The setup can't be worth the whole price."):""}
 $("f_setup").onchange=()=>{const on=$("f_setup").checked;$("setupBox").hidden=!on;if(on&&$("f_setupAmt").value==="")$("f_setupAmt").value=P.setup;setupHint()};
 $("f_price").addEventListener("input",setupHint);$("f_setupAmt").addEventListener("input",setupHint);
 function resetForm(){$("form").reset();$("memoryDetails").open=false;$("setupBox").hidden=true;$("setupHint").textContent="";pk.cpu.set(null);pk.gpu.set(null);["f_ram","f_ssd","f_ramType"].forEach(i=>$(i).disabled=false);editIdx=-1;editId="";$("fTitle").textContent="Add a PC";$("addBtn").textContent="Add to comparison";$("cancelBtn").hidden=true;$("formErr").textContent=""}
-$("form").onsubmit=e=>{e.preventDefault();const ramU=$("f_ramU").checked||$("f_ram").value.trim()==="",ssdU=$("f_ssdU").checked||$("f_ssd").value.trim()==="",price=+$("f_price").value,ram=ramU?16:+$("f_ram").value,ssd=ssdU?1000:+$("f_ssd").value||0,setupOn=$("f_setup").checked,setupAmt=+$("f_setupAmt").value,er=[];
- if(!pk.cpu.val)er.push("choose a CPU");if(!pk.gpu.val)er.push("choose a GPU");if(!(price>0))er.push("enter the price");if(!(ram>0))er.push("enter the RAM, or tick “I don't know”");if(setupOn&&!(setupAmt>=0&&setupAmt<price))er.push("enter a setup value below the price");
+$("form").onsubmit=e=>{e.preventDefault();const ramU=$("f_ramU").checked||$("f_ram").value.trim()==="",ssdU=$("f_ssdU").checked||$("f_ssd").value.trim()==="",price=+$("f_price").value,ram=ramU?16:+$("f_ram").value,ssd=ssdU?1000:+$("f_ssd").value,setupOn=$("f_setup").checked,setupAmt=+$("f_setupAmt").value,er=[];
+ if(!pk.cpu.val)er.push("choose a CPU");if(!pk.gpu.val)er.push("choose a GPU");if(!(Number.isFinite(price)&&price>0))er.push("enter a finite positive price");if(!(Number.isFinite(ram)&&ram>0))er.push("enter the RAM, or tick “I don't know”");if(!Number.isFinite(ssd)||ssd<0||!Number.isFinite(+$("f_hdd").value)||+$("f_hdd").value<0)er.push("enter non-negative finite storage capacities");if(setupOn&&!(Number.isFinite(setupAmt)&&setupAmt>=0&&setupAmt<price))er.push("enter a setup value below the price");
  const sourceUrl=window.AssayImport.url($("f_url").value),sourceKey=window.AssayImport.key({sourceUrl});
  if($("f_url").value.trim()&&!sourceUrl)er.push("enter a valid HTTP(S) advert URL");
  if(sourceKey&&items.some((it,i)=>i!==editIdx&&window.AssayImport.key(it)===sourceKey))er.push("use the existing listing: this advert URL is already saved");
@@ -466,11 +490,11 @@ function edit(i){const it=items[i];go("add");resetForm();editIdx=i;editId=it.id;
 /* ---------- actions ---------- */
 const A={...A_rv,bulkImport:()=>window.AssayWorkflow.open(),review:rvStart,help:()=>$("help").showModal(),theme:()=>{P.theme=document.documentElement.dataset.theme=="dark"?"light":"dark";document.documentElement.dataset.theme=P.theme;saveP()},
  goadd:()=>{window.AssayWorkflow?.cancelDraft();go("add")},cancel:()=>{window.AssayWorkflow?.cancelDraft();resetForm()},refReset:()=>{P.ref=null;saveP();renderAll()},
- sample:()=>{items=[["Ryzen 5 5600 + RTX 3060","AMD Ryzen 5 5600",21000,"NVIDIA GeForce RTX 3060",17000,16,"DDR4",500,450],["Core i7-12700 + RX 6700 XT","Intel Core i7-12700",30000,"Radeon RX 6700 XT",19840,32,"DDR4",1000,600],["Ryzen 7 7800X3D + RX 7800 XT","AMD Ryzen 7 7800X3D",34280,"Radeon RX 7800 XT",24226,32,"DDR5",1000,1100]].map(a=>({name:a[0],cpuName:a[1],cpuScore:a[2],gpuName:a[3],gpuScore:a[4],ram:a[5],ramType:a[6],ssd:a[7],hdd:0,price:a[8],aesthetic:"neutral",favorite:false,id:uid(),updatedAt:Date.now()}));saveI();renderAll()},
+ sample:()=>{items=[["Ryzen 5 5600 + RTX 3060","AMD Ryzen 5 5600",21000,"GeForce RTX 3060",17000,16,"DDR4",500,450],["Core i7-12700 + RX 6700 XT","Intel Core i7-12700",30000,"Radeon RX 6700 XT",19840,32,"DDR4",1000,600],["Ryzen 7 7800X3D + RX 7800 XT","AMD Ryzen 7 7800X3D",34280,"Radeon RX 7800 XT",24226,32,"DDR5",1000,1100]].map(a=>({name:a[0],cpuName:a[1],cpuScore:a[2],gpuName:a[3],gpuScore:a[4],ram:a[5],ramType:a[6],ssd:a[7],hdd:0,price:a[8],aesthetic:"neutral",favorite:false,id:uid(),updatedAt:Date.now()}));build();saveI();renderAll()},
  fav:i=>{items[i].favorite=!items[i].favorite;items[i].updatedAt=Date.now();saveI();renderAll()},chooseVersus:i=>{const id=items[i]&&items[i].id;if(!id)return;if(!P.versusA||P.versusA===id){P.versusA=id;P.versusB=items.find(x=>x.id!==id)?.id||id}else P.versusB=id;saveP();go("versus")},avail:i=>{items[i].available=items[i].available===false;items[i].updatedAt=Date.now();saveI();renderAll()},
  useReference:i=>{const it=items[i];P.ref={cpuName:it.cpuName,cpu:it.cpuScore,gpuName:it.gpuName,gpu:it.gpuScore};saveP();renderAll();toast("Reference PC updated: 100% means equal to this PC")},signup:()=>authSubmit("up"),syncNow:()=>cloudSync(),signout:signOut,edit,
  del:i=>{if(confirm("Delete this PC?")){tomb(items[i]);items.splice(i,1);saveI();renderAll()}},clear:()=>{if(items.length&&confirm("Delete all "+items.length+" listings?")){items.forEach(tomb);items=[];saveI();renderAll()}},
- export:()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({version:4,exportedAt:new Date().toISOString(),items,customCPUs:localParts.cpu,customGPUs:localParts.gpu,draftListings:window.AssayWorkflow?.getDrafts()||[],settings:{setupDefault:P.setup,aestheticWeight:P.aes,refCpuScore:refNow().cpu,refGpuScore:refNow().gpu}},null,2)],{type:"application/json"}));a.download="assay-backup.json";a.click()},
+ export:()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(backupData(),null,2)],{type:"application/json"}));a.download="assay-backup.json";a.click()},
  import:()=>$("impFile").click(),tableExport:exportTableCsv,
  unlock:async()=>{const p=$("adPass").value;if(!ON)return toast("Connect Supabase first (config.js)");if(!p)return toast("Enter the passphrase");
   const x=await adminRpc("admin_check",{p});if(!x.ok)return toast(x.why);
@@ -491,14 +515,14 @@ document.addEventListener("input",e=>{const t=e.target;if(t.dataset.k){P[t.datas
 $("sortMode").onchange=renderList;$("tableSearch").addEventListener("input",renderTable);$("tableFilter").onchange=renderTable;$("workloadMode").onchange=e=>{P.workload=e.target.value;saveP();renderAll()};$("gpuResolution").onchange=e=>{P.gpuResolution=e.target.value;saveP();renderAll()};$("graphicsMode").onchange=e=>{P.graphicsMode=e.target.value;saveP();renderAll()};$("versusA").onchange=e=>{P.versusA=e.target.value;saveP();renderVersus()};$("versusB").onchange=e=>{P.versusB=e.target.value;saveP();renderVersus()};$("adPass").addEventListener("keydown",e=>{if(e.key=="Enter")A.unlock()});$("optAvail").onchange=e=>{P.avail=e.target.checked;saveP();renderList()};$("tableAll").onchange=e=>{P.allCols=e.target.checked;saveP();renderTable()};$("optWorth").onchange=e=>{P.worth=e.target.checked;saveP();renderList()};
 /* Import ADDS to what you have and never deletes. Replacing would be dangerous now: with an account, a replaced list would delete listings
    everywhere, and a backup sent by a friend would wipe yours. To start clean, use "Delete all listings" first. */
-$("impFile").onchange=e=>{const f=e.target.files[0];e.target.value="";if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.items))throw 0;
- let inc=d.items.map(norm).filter(sane);const bad=d.items.length-inc.length;if(!inc.length&&!d.draftListings?.length)throw 0;
+$("impFile").onchange=e=>{const f=e.target.files[0];e.target.value="";if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d.items))throw 0;const extras=backupExtras(d);
+ let inc=d.items.map(norm).filter(sane);const bad=d.items.length-inc.length;if(d.items.length&&!inc.length&&!d.draftListings?.length)throw 0;
  const lfp=new Set(items.map(fp)),have=new Set(items.map(i=>i.id));inc=inc.filter(x=>have.has(x.id)||!lfp.has(fp(x))); // already have it (same listing, older backup): skip
- if(items.length&&!confirm("Add "+inc.length+" listing"+(inc.length==1?"":"s")+" from this backup to your list? Nothing you already have is deleted."))return;
+ if(items.length&&!confirm("Add "+inc.length+" listing"+(inc.length==1?"":"s")+" from this backup to your list? Nothing you already have is deleted. Saved scoring settings in the backup will also be restored."))return;
  inc=inc.map(x=>have.has(x.id)?x:{...x,updatedAt:Date.now()}); // restored on purpose: newer than any deletion marker, local or in the account
  const before=items.length,ids=new Set(inc.map(x=>x.id));tombs=tombs.filter(t=>!ids.has(t.id)); // a backup restores a listing you deleted earlier
  const m=mergeAll(items,tombs,inc);items=m.live;tombs=m.tombs;jset("pvl_tombs",tombs);saveI();
- window.AssayWorkflow?.restoreDrafts(d.draftListings);const s=d.settings||{};if(Number.isFinite(s.setupDefault))P.setup=s.setupDefault;saveP();build();renderAll();
+ localParts=extras.parts;for(const kind of ["cpu","gpu"])jset("pcvaluelab_custom_"+kind+"s",localParts[kind]);Object.assign(P,extras.prefs);saveP();build();window.AssayWorkflow?.restoreDrafts(d.draftListings);renderAll();
  toast("Backup imported ✓ "+(items.length-before)+" added"+(bad?", "+bad+" skipped":""))}catch(x){toast("That file isn't an Assay backup")}};r.readAsText(f)};
 if(P.theme)document.documentElement.dataset.theme=P.theme;
 build();renderAll();go(["compare","table","versus","add","settings","admin"].includes(location.hash.slice(1))?location.hash.slice(1):"compare");sync();
@@ -507,4 +531,4 @@ renderAccount();if(sess)cloudSync();
 document.addEventListener("submit",e=>{if(e.target.id=="acForm"){e.preventDefault();authSubmit("in")}});
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&sess&&Date.now()-sy.at>6e4)cloudSync()}); // pick up edits made on another device
 addEventListener("online",scheduleSync);
-</script><script src="listing-workflow.js"></script></body></html>
+</script><script src="listing-workflow.js?v=20261112-audit26"></script></body></html>

@@ -1,11 +1,11 @@
 # Assay scoring model
 
-**Current performance model:** `performance-v2.5`
+**Current performance model:** `performance-v2.6`
 
 ## Two scores, two questions
 
 - **Performance index** asks how the CPU and GPU compare with the selected reference PC for the selected workload.
-- **Value index** retains the app's market-price-share model and adjusts for RAM/storage market value and the optional aesthetics setting. It is not used as a proxy for raw performance.
+- **Value index** is a parts-value heuristic, not a predicted selling price or profit. It retains the app's market-price-share model and adjusts for RAM/storage market value and the optional aesthetics setting. It is not used as a proxy for raw performance.
 - **Value per currency** divides the value index by effective price.
 - **Performance per currency** divides the workload performance index by effective price.
 
@@ -13,21 +13,21 @@ An included setup deduction is capped so effective price never falls below 1 cur
 
 ## Performance formula
 
-For each listing:
+The collection selects its benchmark basis once through `scoreMany`, before scoring individual rows. Available listings select the common basis for buyable rankings in Compare and Table. Adding/removing an available listing can change that basis; filters, display order and archived listings cannot. Archived listings are non-ranking diagnostics with zero deal scores. Versus rescores its selected pair on their common evidence and displays pair-relative scores, so it never mixes an archived fallback with an active suite result. A pair’s index can differ from the full collection when their shared coverage is more specific.
 
-1. CPU single-thread percentage uses the weekly synced PassMark single-thread catalog in `builtin-parts.js` when both the listing and reference CPU have records. Each ratio compares the same metric with the reference. If either record is missing, the single-thread percentage is unavailable; the CPU score uses CPU Mark only and shows a visible warning that workload ranking may be understated or overstated. CPU Mark is never labeled as a measured single-thread result.
-2. CPU multi-thread percentage uses PassMark CPU Mark relative to the reference CPU Mark.
-3. For Gaming and CPU-heavy / competitive gaming, CPU percentage uses Tom’s Hardware’s 2026 17-game 1080p CPU suite when both listing and reference CPUs are covered. For CPU-heavy productivity, the model uses the matched Tom’s Hardware single-threaded and multi-threaded application indices, blended using `singleMix`. If both CPUs do not have the required records, it falls back to PassMark-based CPU percentages for both sides. Other profiles blend PassMark CPU single-thread and multi-thread percentages using `singleMix`.
-4. GPU percentage uses Tom's Hardware's GPU gaming suite only for the Gaming and CPU-heavy/competitive-gaming profiles, and only when both the listing GPU and reference GPU are in the curated suite. The selected resolution and raster/ray-tracing mode are used. Otherwise, GPU percentage falls back to PassMark G3D Mark relative to the reference.
-5. CPU and GPU percentages are combined using the selected profile's CPU/GPU shares.
+1. CPU gaming/application suites are used only if the reference and **every compared listing** have the required exact compatible records. Otherwise the entire collection uses PassMark CPU metrics.
+2. PassMark CPU single-thread percentage is the listing's measured single-thread rating divided by the reference rating. Multi-thread percentage uses CPU Mark divided by reference CPU Mark. The profile blends these percentages using `singleMix` only when all CPUs have single-thread coverage. If coverage is incomplete, all rows use CPU Mark only and show an explicit warning; single-thread comparison percentages remain unavailable. A known raw single-thread rating may still be displayed.
+3. GPU gaming-suite percentages are used only if the reference and every listing have a positive record at the selected resolution/rendering mode. Otherwise every GPU uses G3D Mark. Missing or zero suite values never become zero-FPS claims.
+4. CPU/GPU percentages are combined using the selected profile's shares. Benchmarks from different sources are never chosen independently for competing rows of the same component.
+5. Exact benchmark model identity takes precedence over aliases. Ambiguous normalized names, unspecified VRAM variants, and K/F/KF suffixes do not borrow another model's measured evidence.
+
+The interface currently exposes the three profiles below. The engine also supports a matched application-suite profile for programmatic consumers, but it is not an additional selectable workload.
 
 | Profile | CPU share | GPU share | Single-thread mix |
 | --- | ---: | ---: | ---: |
 | Balanced / general use | 45% | 55% | 45% |
 | Gaming | 35% | 65% | 75% |
 | CPU-heavy / competitive gaming | 60% | 40% | 80% |
-| GPU-heavy workloads | 20% | 80% | 20% |
-| CPU-heavy productivity | 75% | 25% | 15% |
 
 These profiles are useful relative estimates, not a substitute for exact game- or application-specific benchmark results. The app also reports an **estimated GPU-suite FPS** when a GPU has a curated record: it multiplies the GPU’s suite percentage by the source’s published RTX 5090 geometric-mean FPS at the chosen resolution and rendering mode. This is a multi-game suite aggregate, not an estimate for any one title and not a guarantee for the whole PC. The published GPU testbed uses a Ryzen 7 9800X3D, so slower CPUs can bottleneck more strongly, especially at 1080p. RAM/VRAM capacity, power limits, cooling, drivers and game settings can also change real outcomes. Unsupported GPUs deliberately show no FPS estimate rather than an invented or interpolated value.
 
@@ -70,3 +70,7 @@ Tom’s Hardware suite records are curated. PassMark CPU Mark, single-thread rat
 ## Regression coverage
 
 The tests check the Ryzen 5 2600X to Ryzen 7 5700X upgrade with the same GPU, CPU gaming suite selection, productivity app-suite blending, resolution-specific raster scores, separate ray-tracing scores, unknown hardware fallback, custom reference fallback, minimum dataset coverage, and the i7-12700F versus Ryzen 7 5700X daily-driver regression. Offline sync tests cover chart parsing, category deduplication, repeatable generation, missing pages, suspicious score changes and preservation of unknown fields.
+
+## Audit and ongoing source checks
+
+See [BENCHMARK_AUDIT.md](BENCHMARK_AUDIT.md) for the source review and known limits. A separate Monday/manual workflow runs `node scripts/check-curated-sources.mjs` to detect upstream score, model, FPS-baseline or page-layout changes. Failures appear in GitHub Actions; the check does not silently replace curated evidence. Ordinary pull-request CI uses deterministic offline fixtures instead of requiring a live third-party site.

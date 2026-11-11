@@ -25,7 +25,7 @@ The diagram describes the current division of responsibilities, not an isolated 
 1. The browser loads `index.html` and its script dependencies.
 2. The app reads listings, preferences, tombstones and cached data from `localStorage`.
 3. The part picker combines built-in hardware records with local/custom or remote shared entries as available.
-4. For each listing, the app resolves CPU/GPU scores, applies the selected profile and reference PC, and calculates performance/value fields for ranking and display.
+4. The app resolves CPU/GPU scores, selects a common benchmark basis across the collection/reference through `scoreMany`, and calculates performance/value fields for ranking and display.
 5. UI views (Compare, Table, Versus, Add a PC, Settings, Admin) display the same saved listing collection with different sorting, filtering, or comparison functions.
 6. If Supabase is configured, background sync can load shared data and, when signed in, reconcile the account's collection with local changes. Without Supabase, local listing workflows and backups still work.
 
@@ -50,7 +50,7 @@ Stores versioned, curated benchmark data with model names, aliases, scores, sour
 
 ### `scoring-engine.js`
 
-Exposes `window.PVL_SCORING`, including `score(parts, reference, profile)`, a normalization helper, the current model version, and lookup helpers for supported datasets. It only compares scores within matching benchmark methods where source coverage permits. When the data does not support a curated comparison, it uses a consistent fallback rather than mixing incompatible scales.
+Exposes `window.PVL_SCORING`, including `scoreMany(partsList, reference, profile)` for collection comparisons and `score(parts, reference, profile)` for individual consumers, a normalization helper, the current model version, and lookup helpers for supported datasets. It only compares scores within matching benchmark methods where source coverage permits. When the data does not support a curated comparison, it uses a consistent fallback rather than mixing incompatible scales.
 
 The implementation returns component percentages, the blended workload index, benchmark method labels, evidence text, confidence, resolution/mode metadata, and an optional GPU-suite FPS estimate.
 
