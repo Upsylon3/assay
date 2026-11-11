@@ -52,3 +52,13 @@ assert.equal(edited.items.length, 1);
 assert.equal(edited.items[0].id, 'existing-id');
 assert.equal(edited.items[0].favorite, true);
 console.log('UI entry tests passed: assumptions, explicit capacities, validation, and edit identity.');
+
+// Exercise the real table/CSV renderers when a CPU or its reference lacks a rating.
+for (const key of ['cpuSingleScore', 'cpuSinglePct']) {
+  const line = html.split('\n').find(line => line.trimStart().startsWith('{key:"' + key + '"'));
+  const column = vm.runInNewContext('(' + line.trim().replace(/,$/, '') + ')', {fmt: String});
+  const missing = {cpuSingleScore: null, cpuSinglePct: null, cpuSingleMeasured: false};
+  assert.match(column.cell(missing), /Unknown|Unavailable/);
+  assert.match(column.csv(missing), /Unknown|Unavailable/);
+}
+console.log('Missing single-thread table and CSV checks passed.');

@@ -103,8 +103,8 @@ The app is a static client, so `config.js` is visible to every visitor. A Supaba
 
 There are two different component datasets:
 
-- `builtin-parts.js` is the broad PassMark CPU Mark / G3D Mark list used to select and score hardware. The GitHub Actions workflow attempts to refresh it every Monday.
-- `benchmark-data.js` contains curated, explicitly sourced CPU single-thread, CPU gaming/application, and GPU gaming-suite records. It is versioned and maintained separately; it is **not** silently rewritten by the weekly PassMark sync.
+- `builtin-parts.js` is the broad PassMark CPU Mark / single-thread / G3D Mark catalog used to select and score hardware. The GitHub Actions workflow attempts to refresh it every Monday.
+- `benchmark-data.js` contains curated, explicitly sourced CPU gaming/application and GPU gaming-suite records. It is versioned and maintained separately; it is **not** silently rewritten by the weekly PassMark sync.
 
 When changing curated data, verify the exact hardware model, preserve aliases and source URLs, and compare values only inside the same benchmark suite, test bench, resolution, and graphics mode. Do not invent or interpolate missing FPS results. The [scoring model documentation](docs/SCORING_MODEL.md) has the full rules.
 

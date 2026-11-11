@@ -1,6 +1,6 @@
 # Assay scoring model
 
-**Current performance model:** `performance-v2.4`
+**Current performance model:** `performance-v2.5`
 
 ## Two scores, two questions
 
@@ -15,7 +15,7 @@ An included setup deduction is capped so effective price never falls below 1 cur
 
 For each listing:
 
-1. CPU single-thread percentage is taken from the curated PassMark single-thread table when both the listing CPU and reference CPU have entries. If either CPU is missing, the model uses the CPU Mark ratio for both sides, avoiding a mixed benchmark scale.
+1. CPU single-thread percentage uses the weekly synced PassMark single-thread catalog in `builtin-parts.js` when both the listing and reference CPU have records. Each ratio compares the same metric with the reference. If either record is missing, the single-thread percentage is unavailable; the CPU score uses CPU Mark only and shows a visible warning that workload ranking may be understated or overstated. CPU Mark is never labeled as a measured single-thread result.
 2. CPU multi-thread percentage uses PassMark CPU Mark relative to the reference CPU Mark.
 3. For Gaming and CPU-heavy / competitive gaming, CPU percentage uses Tom’s Hardware’s 2026 17-game 1080p CPU suite when both listing and reference CPUs are covered. For CPU-heavy productivity, the model uses the matched Tom’s Hardware single-threaded and multi-threaded application indices, blended using `singleMix`. If both CPUs do not have the required records, it falls back to PassMark-based CPU percentages for both sides. Other profiles blend PassMark CPU single-thread and multi-thread percentages using `singleMix`.
 4. GPU percentage uses Tom's Hardware's GPU gaming suite only for the Gaming and CPU-heavy/competitive-gaming profiles, and only when both the listing GPU and reference GPU are in the curated suite. The selected resolution and raster/ray-tracing mode are used. Otherwise, GPU percentage falls back to PassMark G3D Mark relative to the reference.
@@ -35,7 +35,7 @@ These profiles are useful relative estimates, not a substitute for exact game- o
 
 ### CPU single-thread
 
-`benchmark-data.js` contains explicitly sourced PassMark PerformanceTest single-thread ratings and a subset of Tom’s Hardware CPU Hierarchy 2026 gaming, single-threaded application and multi-threaded application scores. Each record includes aliases and a source URL. Tom’s CPU gaming suite tests 17 games at 1080p with an RTX 5090 FE; it is a CPU-limited comparison suite, not a prediction of a user’s exact FPS. The application suite uses a separate test bench and must not be mixed with PassMark scores. PassMark CPU Mark and G3D Mark remain the broad fallback and are refreshed by the existing generator.
+`builtin-parts.js` contains automatically refreshed PassMark PerformanceTest single-thread ratings from all rows embedded in https://www.cpubenchmark.net/singleThread.html, alongside CPU Mark and G3D Mark. The chart currently embeds thousands of rows across categories, including rows hidden by its display filters. The sync checks minimum coverage, shrinkage and score changes before writing anything; a blocked or truncated page preserves the entire previous catalog. It makes one request per page (two CPU pages and one GPU page), with no per-CPU requests. `benchmark-data.js` contains a curated subset of Tom’s Hardware CPU Hierarchy 2026 gaming, single-threaded application and multi-threaded application scores. Each record includes aliases and a source URL. Tom’s CPU gaming suite tests 17 games at 1080p with an RTX 5090 FE; it is a CPU-limited comparison suite, not a prediction of a user’s exact FPS. The application suite uses a separate test bench and must not be mixed with PassMark scores. PassMark CPU Mark and G3D Mark remain the broad fallback and are refreshed by the existing generator.
 
 ### GPU gaming
 
@@ -58,7 +58,7 @@ Confidence describes benchmark coverage, not certainty about a particular PC's r
 
 ## Adding or refreshing data
 
-The benchmark dataset is curated, not silently auto-updated. A data validation script checks source URLs, numeric ranges, duplicate model aliases and the update date on every CI run. This catches malformed edits, not changed values at the source; a human still needs to refresh the records when the source methodology or rankings change.
+Tom’s Hardware suite records are curated. PassMark CPU Mark, single-thread ratings and G3D Mark are refreshed together by the weekly sync; single-thread coverage is also validated in CI. A data validation script checks source URLs, numeric ranges, duplicate model aliases and the update date on every CI run. This catches malformed edits, not changed values at the source; a human still needs to refresh the records when the source methodology or rankings change.
 
 1. Verify the exact model and benchmark value on the linked source page.
 2. Preserve the source URL, aliases and benchmark suite/methodology.
@@ -69,4 +69,4 @@ The benchmark dataset is curated, not silently auto-updated. A data validation s
 
 ## Regression coverage
 
-The tests check the Ryzen 5 2600X to Ryzen 7 5700X upgrade with the same GPU, CPU gaming suite selection, productivity app-suite blending, resolution-specific raster scores, separate ray-tracing scores, unknown hardware fallback, custom reference fallback, and minimum dataset coverage.
+The tests check the Ryzen 5 2600X to Ryzen 7 5700X upgrade with the same GPU, CPU gaming suite selection, productivity app-suite blending, resolution-specific raster scores, separate ray-tracing scores, unknown hardware fallback, custom reference fallback, minimum dataset coverage, and the i7-12700F versus Ryzen 7 5700X daily-driver regression. Offline sync tests cover chart parsing, category deduplication, repeatable generation, missing pages, suspicious score changes and preservation of unknown fields.
