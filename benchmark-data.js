@@ -1,5 +1,5 @@
 /* Curated, versioned benchmark data. Do not mix unlike test suites.
-   CPU single-thread values are PassMark PerformanceTest ratings; CPU gaming and application indices are Tom's Hardware 2026 suite scores.
+   CPU gaming and application indices are Tom's Hardware 2026 suite scores.
    GPU gaming values are Tom's Hardware 2026 native-resolution geometric-mean FPS indices
    relative to RTX 5090 at 1080p Ultra. No upscaling or frame generation is included.
    Raster table averages 11 games; ray tracing table uses the publication's RT suite.
@@ -7,30 +7,9 @@
    Updated: 2026-10-16. Scores may change when the source retests hardware.
 */
 window.PVL_BENCHMARKS = {
-  schemaVersion: 3,
+  schemaVersion: 4,
   updatedAt: "2026-10-16",
-  source: "PassMark CPU single-thread; Tom's Hardware GPU Hierarchy 2026",
-  cpuSingleThread: [
-    { model: "AMD Ryzen 5 2600X", aliases: ["Ryzen 5 2600X", "AMD Ryzen 5 2600X Six-Core Processor"], score: 2377, source: "https://www.cpubenchmark.net/cpu.php?cpu=AMD+Ryzen+5+2600X&id=3235", confidence: "measured" },
-    { model: "AMD Ryzen 5 5600", aliases: ["Ryzen 5 5600", "AMD Ryzen 5 5600 6-Core Processor"], score: 3253, source: "https://www.cpubenchmark.net/cpu.php?cpu=AMD+Ryzen+5+5600&id=4811", confidence: "measured" },
-    { model: "AMD Ryzen 5 5600X", aliases: ["Ryzen 5 5600X", "AMD Ryzen 5 5600X 6-Core Processor"], score: 3366, source: "https://www.cpubenchmark.net/cpu.php?cpu=AMD+Ryzen+5+5600X", confidence: "measured" },
-    { model: "AMD Ryzen 7 5700X", aliases: ["Ryzen 7 5700X", "AMD Ryzen 7 5700X 8-Core Processor"], score: 3385, source: "https://www.cpubenchmark.net/cpu.php?cpu=AMD+Ryzen+7+5700X&id=4814", confidence: "measured" },
-    { model: "AMD Ryzen 7 7800X3D", aliases: ["Ryzen 7 7800X3D", "AMD Ryzen 7 7800X3D 8-Core Processor"], score: 3759, source: "https://www.cpubenchmark.net/cpu.php?cpu=AMD+Ryzen+7+7800X3D&id=5299", confidence: "measured" },
-    { model: "AMD Ryzen 9 5900X", aliases: ["Ryzen 9 5900X", "AMD Ryzen 9 5900X 12-Core Processor"], score: 3465, source: "https://www.cpubenchmark.net/cpu.php?cpu=AMD+Ryzen+9+5900X&id=3870", confidence: "measured" },
-    { model: "AMD Ryzen 5 7500F", aliases: ["Ryzen 5 7500F", "AMD Ryzen 5 7500F 6-Core Processor"], score: 3824, source: "https://www.cpubenchmark.net/cpu.php?cpu=AMD+Ryzen+5+7500F", confidence: "measured" },
-    { model: "AMD Ryzen 5 7600", aliases: ["Ryzen 5 7600", "AMD Ryzen 5 7600 6-Core Processor"], score: 3907, source: "https://www.cpubenchmark.net/cpu.php?cpu=AMD+Ryzen+5+7600&id=5172", confidence: "measured" },
-    { model: "AMD Ryzen 7 5800X", aliases: ["Ryzen 7 5800X", "AMD Ryzen 7 5800X 8-Core Processor"], score: 3448, source: "https://www.cpubenchmark.net/cpu.php?cpu=AMD+Ryzen+7+5800X&id=3869", confidence: "measured" },
-    { model: "AMD Ryzen 7 9800X3D", aliases: ["Ryzen 7 9800X3D", "AMD Ryzen 7 9800X3D 8-Core Processor"], score: 4420, source: "https://www.cpubenchmark.net/cpu.php?cpu=AMD+Ryzen+7+9800X3D", confidence: "measured" },
-    { model: "Intel Core i5-13500T", aliases: ["Core i5-13500T", "Intel Core i5-13500T", "13th Gen Intel(R) Core(TM) i5-13500T"], score: 3577, source: "https://www.cpubenchmark.net/cpu.php?cpu=Intel+Core+i5-13500T&id=5239", confidence: "measured" },
-    { model: "Intel Core i7-12700KF", aliases: ["Core i7-12700KF", "Intel Core i7-12700KF", "12th Gen Intel(R) Core(TM) i7-12700KF"], score: 3979, source: "https://www.cpubenchmark.net/cpu.php?cpu=Intel+Core+i7-12700KF&id=4608", confidence: "measured" },
-    { model: "Intel Core i7-14700KF", aliases: ["Core i7-14700KF", "Intel Core i7-14700KF", "Intel(R) Core(TM) i7-14700KF"], score: 4466, source: "https://www.cpubenchmark.net/cpu.php?cpu=Intel+Core+i7-14700KF&id=5723", confidence: "measured" },
-    { model: "AMD Ryzen 5 3600", aliases: ["Ryzen 5 3600", "AMD Ryzen 5 3600 6-Core Processor"], score: 2557, source: "https://www.cpubenchmark.net/cpu.php?cpu=AMD+Ryzen+5+3600&id=3481", confidence: "measured" },
-    { model: "AMD Ryzen 7 5800X3D", aliases: ["Ryzen 7 5800X3D", "AMD Ryzen 7 5800X3D 8-Core Processor"], score: 3233, source: "https://www.cpubenchmark.net/cpu.php?cpu=AMD+Ryzen+7+5800X3D&id=4823", confidence: "measured" },
-    { model: "Intel Core i5-12400F", aliases: ["Core i5-12400F", "Intel Core i5-12400F", "12th Gen Intel(R) Core(TM) i5-12400F"], score: 3484, source: "https://www.cpubenchmark.net/cpu.php?cpu=Intel+Core+i5-12400F&id=4681", confidence: "measured" },
-    { model: "Intel Core i5-13600K", aliases: ["Core i5-13600K", "Intel Core i5-13600K", "13th Gen Intel(R) Core(TM) i5-13600K"], score: 4110, source: "https://www.cpubenchmark.net/cpu.php?cpu=Intel+Core+i5-13600K&id=5008", confidence: "measured" },
-    { model: "Intel Core i7-13700K", aliases: ["Core i7-13700K", "Intel Core i7-13700K", "13th Gen Intel(R) Core(TM) i7-13700K"], score: 4326, source: "https://www.cpubenchmark.net/cpu.php?cpu=Intel+Core+i7-13700K", confidence: "measured" },
-    { model: "AMD Ryzen 9 9950X3D", aliases: ["Ryzen 9 9950X3D", "AMD Ryzen 9 9950X3D 16-Core Processor"], score: 4737, source: "https://www.cpubenchmark.net/cpu.php?cpu=AMD+Ryzen+9+9950X3D&id=6549", confidence: "measured" }
-  ],
+  source: "Tom's Hardware CPU/GPU Hierarchy 2026",
   cpuGaming: [
     { model: "AMD Ryzen 7 9800X3D", aliases: ["Ryzen 7 9800X3D"], score: 97, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 gaming, 1080p, 17-game geometric mean" },
     { model: "AMD Ryzen 9 9950X3D", aliases: ["Ryzen 9 9950X3D"], score: 95.7, source: "https://www.tomshardware.com/reviews/cpu-hierarchy,4312.html", suite: "Tom's Hardware CPU Hierarchy 2026 gaming, 1080p, 17-game geometric mean" },

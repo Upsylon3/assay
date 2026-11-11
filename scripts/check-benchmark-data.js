@@ -3,6 +3,7 @@
 
 global.window = global;
 require("../benchmark-data.js");
+require("../builtin-parts.js");
 
 const data = global.PVL_BENCHMARKS;
 const errors = [];
@@ -20,8 +21,15 @@ if (!isoDate.test(data.updatedAt || "") || Number.isNaN(Date.parse(data.updatedA
   if (ageDays > 180) warn("curated benchmark data is more than 180 days old; manually review source pages");
 }
 
+const singleRows = global.BUILTIN.cpuSingleThread;
+if (!Array.isArray(singleRows) || singleRows.length < 3000) fail("synced CPU single-thread coverage is incomplete");
+const singleNames = new Set();
+for (const row of singleRows || []) {
+  if (!Array.isArray(row) || typeof row[0] !== "string" || !row[0].trim() || !Number.isFinite(row[1]) || row[1] <= 0) fail("invalid synced single-thread row");
+  if (singleNames.has(row[0])) fail("duplicate synced single-thread model: " + row[0]);
+  singleNames.add(row[0]);
+}
 const collections = [
-  ["cpuSingleThread", data.cpuSingleThread, "score"],
   ["cpuGaming", data.cpuGaming, "score"],
   ["cpuAppSingleThread", data.cpuAppSingleThread, "score"],
   ["cpuAppMultiThread", data.cpuAppMultiThread, "score"]
@@ -77,6 +85,6 @@ if (errors.length) {
   process.exitCode = 1;
 } else {
   console.log("Benchmark data validation passed: schema v" + data.schemaVersion +
-    ", updated " + data.updatedAt + ", " + data.cpuSingleThread.length + " PassMark CPU records, " +
+    ", updated " + data.updatedAt + ", " + global.BUILTIN.cpuSingleThread.length + " synced PassMark single-thread records, " +
     data.cpuGaming.length + " CPU gaming records, " + data.gpuGaming.length + " GPU gaming records.");
 }

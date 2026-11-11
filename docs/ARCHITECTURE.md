@@ -46,7 +46,7 @@ Provides a broad, searchable set of CPU Mark and G3D Mark values used when users
 
 ### `benchmark-data.js`
 
-Stores versioned, curated benchmark data with model names, aliases, scores, source URLs, and suite details. The current dataset includes PassMark CPU single-thread records and selected Tom's Hardware CPU gaming/application and GPU gaming suite data. Curated data is not the same thing as the broad weekly PassMark list.
+Stores versioned, curated benchmark data with model names, aliases, scores, source URLs, and suite details. The current dataset includes selected Tom's Hardware CPU gaming/application and GPU gaming suite data. PassMark CPU Mark, single-thread ratings and G3D Mark live in the weekly generated `builtin-parts.js` catalog. Curated data is not the same thing as the broad weekly PassMark list.
 
 ### `scoring-engine.js`
 
