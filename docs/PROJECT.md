@@ -40,8 +40,8 @@ Assay currently compares details entered by the user. It does not automatically 
 - **Application:** static HTML, CSS, and JavaScript.
 - **Hosting:** GitHub Pages.
 - **Optional shared backend:** Supabase.
-- **Broad part lookup:** PassMark CPU Mark and G3D Mark values.
-- **Curated evidence:** PassMark CPU single-thread data and Tom's Hardware CPU/GPU suite records where available.
+- **Broad part lookup:** PassMark CPU Mark, single-thread and G3D Mark values, refreshed weekly.
+- **Curated evidence:** Tom's Hardware CPU/GPU suite records where available.
 - **Local development:** open `index.html`; Node.js is needed for validation tests and maintenance scripts.
 - **Live site:** https://upsylon3.github.io/assay/
 - **Source:** https://github.com/Upsylon3/assay

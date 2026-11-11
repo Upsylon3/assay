@@ -33,12 +33,13 @@ git config core.hooksPath .githooks
 | Command | What it covers |
 |---|---|
 | `node scripts/check-benchmark-data.js` | The curated benchmark data: missing fields, invalid values, alias collisions. It does not prove a source page is accurate. |
+| `node tests/update-parts.test.mjs` | Offline PassMark generation, single-thread parsing and safe failure without overwriting data. |
 | `node tests/scoring-engine.test.js` | The scoring engine: profiles, fallbacks, GPU suites, coverage minimums, aggregate FPS and the unsupported-GPU path. |
 | `node tests/ui-entry.test.js` | Listing entry: assumptions, explicit capacities, validation and stable identity on edit. |
 | `node tests/conventions.test.js` | The repository's own tooling: the commit and branch rules and the release validator (29 checks). |
 | `node scripts/validate-release.mjs vX.Y.Z .` | That `VERSION`, the tag and the newest changelog heading agree. Prints the release notes. |
 
-CI runs the first four, plus a syntax check of the inline script in
+CI runs the regression checks above, plus a syntax check of the inline script in
 `index.html`, on every push and pull request to `main`.
 
 ## What CI runs
@@ -53,9 +54,9 @@ CI runs the first four, plus a syntax check of the inline script in
 
 ## Working on the maintenance scripts
 
-`scripts/update-parts.mjs` reads PassMark's two lists. For offline testing it
+`scripts/update-parts.mjs` reads PassMark's CPU Mark, single-thread and GPU lists. For offline testing it
 can read saved copies of those pages through the `CPU_HTML_FILE` and
-`GPU_HTML_FILE` environment variables, so you do not need to hit PassMark to
+`GPU_HTML_FILE` environment variables, plus `CPU_SINGLE_HTML_FILE` for the single-thread chart, so you do not need to hit PassMark to
 try a change. If anything looks wrong it stops and leaves `builtin-parts.js`
 untouched; `FORCE=true` skips those safety checks and is only for a change
 you have checked by hand.

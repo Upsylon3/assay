@@ -1,14 +1,22 @@
 /* Versioned performance model. Benchmark ratios are only compared within a compatible source/test suite. */
 (function(root){
   "use strict";
-  const MODEL_VERSION = "performance-v2.4";
+  const MODEL_VERSION = "performance-v2.5";
   const normalize = value => String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
   function findRecord(rows, name) {
     const key = normalize(name);
     return (rows || []).find(row => [row.model, ...(row.aliases || [])].some(alias => normalize(alias) === key)) || null;
   }
   function singleThreadRecord(name) {
-    return findRecord((root.PVL_BENCHMARKS && root.PVL_BENCHMARKS.cpuSingleThread) || [], name);
+    // Strip vendor boilerplate only; retain model suffixes such as F, KF and X3D.
+    const cpuKey = value => normalize(String(value || "")
+      .replace(/^\d+(?:st|nd|rd|th) Gen\s+/i, "")
+      .replace(/\((?:R|TM)\)/gi, "")
+      .replace(/\s+(?:\d+-Core|Six-Core|Eight-Core|Twelve-Core) Processor$/i, "")
+      .replace(/^(?:AMD|Intel)\s+/i, ""));
+    const key = cpuKey(name);
+    const row = ((root.BUILTIN && root.BUILTIN.cpuSingleThread) || []).find(([model]) => cpuKey(model) === key);
+    return row ? { model: row[0], score: row[1], source: "https://www.cpubenchmark.net/singleThread.html" } : null;
   }
   function gpuGamingRecord(name) {
     return findRecord((root.PVL_BENCHMARKS && root.PVL_BENCHMARKS.gpuGaming) || [], name);
@@ -30,12 +38,12 @@
     const record = singleThreadRecord(parts.cpuName);
     const refRecord = singleThreadRecord(reference.cpuName);
     const useSingleThreadBenchmarks = !!(record && refRecord);
-    const cpuSingle = useSingleThreadBenchmarks ? record.score : cpuMark;
-    const refSingle = useSingleThreadBenchmarks ? refRecord.score : refCpu;
+    const cpuSingle = record ? record.score : null;
     const cpuMultiPct = cpuMark / refCpu * 100;
-    const cpuSinglePct = cpuSingle / refSingle * 100;
+    const cpuSinglePct = useSingleThreadBenchmarks ? record.score / refRecord.score * 100 : null;
     const singleMix = Math.max(0, Math.min(1, Number(profile.singleMix ?? 0.5)));
-    const passmarkCpuPct = cpuSinglePct * singleMix + cpuMultiPct * (1 - singleMix);
+    const passmarkCpuPct = useSingleThreadBenchmarks
+      ? cpuSinglePct * singleMix + cpuMultiPct * (1 - singleMix) : cpuMultiPct;
     const cpuGame = cpuGamingRecord(parts.cpuName);
     const refCpuGame = cpuGamingRecord(reference.cpuName);
     const cpuAppSingle = cpuAppSingleRecord(parts.cpuName);
@@ -49,6 +57,8 @@
       : cpuAppsAvailable ? (cpuAppSingle.score / refCpuAppSingle.score * 100) * singleMix + (cpuAppMulti.score / refCpuAppMulti.score * 100) * (1 - singleMix)
       : passmarkCpuPct;
     const cpuBenchmarkType = cpuGamingAvailable ? "tomCpuGaming" : cpuAppsAvailable ? "tomCpuApps" : "passmark";
+    const cpuWarning = cpuBenchmarkType === "passmark" && !useSingleThreadBenchmarks && singleMix > 0
+      ? "Single-thread comparison unavailable: CPU Mark only; workload ranking may be understated or overstated." : "";
     const rawGpuPct = gpuMark / refGpu * 100;
     const gameRecord = gpuGamingRecord(parts.gpuName);
     const refGameRecord = gpuGamingRecord(reference.gpuName);
@@ -80,11 +90,11 @@
       cpuGamingAvailable ? "Tom's Hardware 2026 17-game CPU suite"
         : cpuAppsAvailable ? "Tom's Hardware 2026 single-/multi-thread application suites"
         : useSingleThreadBenchmarks ? "PassMark CPU single-thread + CPU Mark multi-thread"
-        : "PassMark CPU Mark fallback for single-thread",
+        : "PassMark CPU Mark only (single-thread comparison unavailable)",
       gameScoresAvailable ? `Tom's Hardware 2026 ${graphicsMode === "rayTracing" ? "ray-tracing" : "raster"} ${resolution} GPU suite` : "PassMark G3D Mark GPU fallback"
     ].join("; ");
     return {
-      idx, cpuPct, cpuSinglePct, cpuMultiPct, cpuSingleScore: cpuSingle, cpuSingleMeasured: !!record,
+      idx, cpuPct, cpuSinglePct, cpuMultiPct, cpuSingleScore: cpuSingle, cpuSingleMeasured: !!record, cpuWarning,
       cpuPassmarkPct: passmarkCpuPct, cpuBenchmarkType, cpuGamingMeasured: cpuGamingAvailable, cpuAppsMeasured: cpuAppsAvailable,
       gpuPct, gpuPassmarkPct: rawGpuPct, gpuGamingMeasured: gameScoresAvailable,
       gpuBenchmarkType: gameScoresAvailable ? graphicsMode : "passmark",

@@ -37,7 +37,9 @@ jobs:
       - name: Validate curated benchmark data
         run: node scripts/check-benchmark-data.js
       - name: Run scoring engine regression tests
-        run: node tests/scoring-engine.test.js
+        run: |
+          node tests/scoring-engine.test.js
+          node tests/update-parts.test.mjs
       - name: Validate listing tools
         run: |
           node --check listing-import.js
