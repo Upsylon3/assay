@@ -5,12 +5,9 @@ explicitly **not** committed, and the gaps the project already knows about.
 
 ## Committed
 
-1. **Cut the first tagged release, 0.8.0.** Rename the repository, merge the
-   release process and tag it; the steps are in
-   [RELEASING.md](RELEASING.md#the-first-release-080).
-2. **Review content and information architecture** after the Home-aligned visual
+1. **Review content and information architecture** after the Home-aligned visual
    pass documented in [DESIGN.md](DESIGN.md).
-3. **Keep widening benchmark coverage** without presenting guesses as
+2. **Keep widening benchmark coverage** without presenting guesses as
    measurements. Unsupported hardware keeps its explicit fallback; missing
    FPS results are never interpolated.
 
@@ -25,6 +22,7 @@ explicitly **not** committed, and the gaps the project already knows about.
 ## Known gaps
 
 - Password reset is not implemented. Keep a JSON backup.
-- Rendering/navigation and the sync/merge logic have no automated tests
+- Browser checks cover rendering, navigation and live account sync. Automated
+  tests cover application logic and merge behavior
   ([DEVELOPMENT.md](DEVELOPMENT.md#what-is-not-covered)).
 - Shared CPU/GPU entries and the shared reference PC are readable by every visitor by design. The security policy asks for validation and abuse resistance to be considered whenever the code that allows shared writes changes ([SECURITY.md](SECURITY.md)); there is no standing work on it.

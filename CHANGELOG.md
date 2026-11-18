@@ -5,20 +5,25 @@ All notable changes to this project are documented here. Format follows
 [SemVer](https://semver.org/): one version number for the whole project
 (see the `VERSION` file), bumped on any meaningful release.
 
-Entries for 0.1.0 to 0.7.0 were written afterwards, from the Git history,
-when the release process below was introduced. Those versions were never
-tagged; see [VERSIONING.md](VERSIONING.md) for which commit each one stands for.
+Versions 0.1.0 to 0.8.0 describe untagged milestones. See
+[VERSIONING.md](VERSIONING.md) for their Git history.
 
 ## [Unreleased]
+
+## [0.9.0] — Reviewed imports and workload comparisons
+
+Import used-PC adverts as drafts, review the detected specs, and compare saved PCs on a shared benchmark basis.
 
 ### Added
 - Full curated benchmark provenance checker and separate weekly/manual source audit, with deterministic source-drift tests. The 12 November 2026 audit verified all 211 curated CPU/GPU score values and FPS baselines against the source tables; methodology and limits are recorded in `docs/BENCHMARK_AUDIT.md`.
 - Local bulk intake from pasted text, JSON, saved HTML, or multiple files, with hardware matching, French RAM/storage parsing, source evidence, editable drafts, reviewed batch addition and duplicate advert detection. A user-triggered bookmarklet exports already-loaded Leboncoin cards without fetching pages or reading credentials. Missing details remain drafts; no live Leboncoin integration is claimed.
 - Availability review buttons and explicit saved-evidence status proposals. Confirmed removals are archived rather than deleted; blocked checks and absent favourites never establish unavailability.
-- Inspection notes, separate advert URLs, one-click reference-PC selection, and comparison explanations derived from existing scores. Drafts are local and included in backups; notes and URLs travel with saved listings.
-
+- Inspection notes, separate advert URLs, one-click reference-PC selection, and comparison explanations derived from existing scores. Backups include drafts, and notes and URLs travel with saved listings.
+- Optional account sync now carries import drafts across devices, including incomplete specs and full descriptions. Refresh Assay on each device before syncing drafts. The existing database schema supports this payload.
+- Saved advert evidence can archive listings when a purchase is in progress or the seller has explicitly been inactive for more than 30 days. Archived listings remain available in backups.
 
 ### Changed
+- Give the import dialog a more compact header and a keyboard-accessible file picker.
 - Make the comparison bench more expressive with an illustrated laboratory welcome panel and a deal-index dial. Simplify listing actions and benchmark explanations with expandable details, keep prices visible on mobile, and wrap mobile navigation.
 - Streamline PC entry to CPU, GPU and price; blank memory/storage use marked assumptions. Add keyboard navigation to hardware pickers. Consolidate the stylesheet, remove obsolete UI code, and render only the active view. Reduce default table columns while retaining full details and CSV exports.
 - Align the interface with Home: warm paper/green-black themes, bench-green console controls, bundled Inter/Fredoka/IBM Plex Mono fonts, sage-to-forest stripe header, clearer panel hierarchy, and responsive forms, tables and dialogs. Scoring, content and saved data are unchanged.

@@ -38,6 +38,8 @@ git config core.hooksPath .githooks
 | `node tests/curated-sources.test.mjs` | Offline source checker: score/FPS drift, blocked layouts and read-only behavior. |
 | `node tests/app-logic.test.js` | Actual ranking integration, available-only dominance, backups, currency and archived comparisons. |
 | `node tests/listing-validation.test.js` | Numeric boundaries, legacy data, reference validation and conservative catalog refresh. |
+| `node tests/listing-import.test.js` | Bulk intake, advert deduplication, the loaded-page collector and availability evidence. |
+| `node tests/draft-sync.test.js` | Listing and draft merges, tombstones, account payloads and stale responses. |
 | `node tests/ui-entry.test.js` | Listing entry: assumptions, explicit capacities, validation and stable identity on edit. |
 | `node tests/conventions.test.js` | The repository's own tooling: the commit and branch rules and the release validator (29 checks). |
 | `node scripts/validate-release.mjs vX.Y.Z .` | That `VERSION`, the tag and the newest changelog heading agree. Prints the release notes. |
