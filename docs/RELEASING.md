@@ -7,16 +7,15 @@ authority and the increment rules are in [VERSIONING.md](../VERSIONING.md).
 
 1. Merge release-bound pull requests into `main`. Do not release from an
    unreviewed feature branch.
-2. Wait for `Validate static app` and `Repository conventions` to pass on the
-   exact commit you intend to tag.
-3. Update the version in the `VERSION` file only.
-4. Move the completed entries from `[Unreleased]` in `CHANGELOG.md` into a
+2. Set the target version in `VERSION`.
+3. Move the completed entries from `[Unreleased]` in `CHANGELOG.md` into a
    new heading matching `VERSION`: `## [X.Y.Z] — Short release summary`.
    Leave an empty `[Unreleased]` above it.
-5. Commit the preparation with a Conventional Commit subject, for example
+4. Commit the preparation with a Conventional Commit subject, for example
    `chore(release): prepare v0.9.0`, through a pull request.
-6. Run the checks locally, or confirm the equivalent CI checks on the
-   resulting `main` commit:
+5. Run the regression checks in [Development](DEVELOPMENT.md) and smoke-test
+   affected workflows on desktop and mobile. At minimum, check the benchmark
+   data, scoring, repository tooling and release metadata locally:
 
    ```bash
    node scripts/check-benchmark-data.js
@@ -25,13 +24,15 @@ authority and the increment rules are in [VERSIONING.md](../VERSIONING.md).
    node scripts/validate-release.mjs vX.Y.Z .   # prints the release notes
    ```
 
-   The syntax check of the inline script in `index.html` only runs in CI.
+6. Merge the PR after its checks pass. Wait for `Validate static app` and
+   `Repository conventions` to pass on the exact resulting `main` commit.
 
 ## 2. Tag and publish
 
 ```bash
-git switch main && git pull
-git tag -a vX.Y.Z -m "Assay vX.Y.Z"
+git fetch origin main
+# Set release_sha to the exact main commit that passed CI.
+git tag -a vX.Y.Z "$release_sha" -m "Assay vX.Y.Z"
 git push origin vX.Y.Z
 ```
 
@@ -54,15 +55,3 @@ right commit. Once a Release is published, correct it with the next version.
   site already has the change; the tag only marks which commit it was.
 - Weekly PassMark syncs keep landing on `main` between releases. They are
   data refreshes and do not need a release.
-
-## The first release, 0.8.0
-
-0.8.0 comes with the rename, so do these once, in this order:
-
-1. Rename the repository to `assay` (**Settings → General → Repository
-   name**). GitHub redirects the old repository address; GitHub Pages does
-   not redirect the old live address, so the site now lives at
-   `https://upsylon3.github.io/assay/`.
-2. Update any local clone: `git remote set-url origin https://github.com/Upsylon3/assay.git`.
-3. Merge the change that carries this file, then tag that merge commit as
-   `v0.8.0` as above.

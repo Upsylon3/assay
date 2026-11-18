@@ -8,18 +8,18 @@ Assay is a lightweight, browser-based tool for deciding whether a second-hand PC
 
 It is a static HTML/CSS/JavaScript app: there is no build step or frontend framework. Listings are stored locally by default; optional Supabase integration adds shared part data and account-based sync across devices.
 
-Current release: **0.8.0** (see [VERSIONING.md](VERSIONING.md)). The project was called Scam or Steal until 0.8.0, and PC Value Lab before that.
+See [GitHub Releases](https://github.com/Upsylon3/assay/releases) for tagged versions and [the changelog](CHANGELOG.md) for release notes. The project was previously called Scam or Steal and PC Value Lab.
 
 ## What's here
 
 | Part | What it does | Status |
 |---|---|---|
-| Scoring engine | Workload-aware CPU/GPU performance, kept separate from value | Covered by regression tests; the model is versioned (`performance-v2.4`) |
-| Benchmark data | Curated, sourced CPU and GPU suite records | Validated for structure; a human has to check each source and its methodology |
+| Scoring engine | Workload-aware CPU/GPU performance, kept separate from value | Covered by regression tests; the model is versioned (`performance-v2.6`) |
+| Benchmark data | Curated, sourced CPU and GPU suite records | Validated in CI and checked against upstream tables by a weekly source audit |
 | Interface | Compare, Table and Versus views, filters, goal toggle, link review, CSV and JSON export | Syntax and entry-handler regression checks in CI; rendering and navigation checked in a browser |
-| Accounts and sync | Optional cross-device sync of your own listings through Supabase | Row-level security is intended to isolate each account; no automated tests for merge behaviour, and no independent review on record |
+| Accounts and sync | Optional cross-device sync of listings and import drafts through Supabase | Merge behavior has automated regression coverage. Live authentication and device sync require browser checks |
 | Weekly PassMark sync | Refreshes the broad part list every Monday, with safety checks | Runs on a schedule; leaves the file untouched if anything looks wrong |
-| Release process | One version, a changelog, tagged releases, enforced commit conventions | New in 0.8.0; the workflows have not run on GitHub yet |
+| Release process | One version, a changelog, tagged releases, enforced commit conventions | GitHub Actions checks release metadata and validates the tagged commit |
 
 ## Features
 
@@ -27,17 +27,17 @@ Current release: **0.8.0** (see [VERSIONING.md](VERSIONING.md)). The project was
 - **Review availability.** Archive confirmed removals, keep inconclusive checks unresolved, and preserve inspection notes and advert URLs.
 
 - **Rank listings.** Sort PCs by performance, value, price, CPU, GPU, RAM, or storage.
-- **Choose a workload.** Compare balanced use, gaming, CPU-heavy/competitive gaming, GPU-heavy workloads, or CPU-heavy productivity.
-- **Choose a goal.** Daily driver, resale profit, or both. The ranking, the top-pick banner and the goal score follow it.
-- **Tune gaming comparisons.** Select 1080p, 1440p, or 4K and rasterization or ray tracing. Curated GPU results are used only when both GPUs have compatible source data.
+- **Choose a workload.** Choose balanced use, gaming or CPU-heavy gaming.
+- **Choose a goal.** Daily driver, resale value, or both. The ranking, the top-pick banner and the goal score follow it.
+- **Tune gaming comparisons.** Select 1080p, 1440p, or 4K and rasterization or ray tracing. A curated GPU comparison requires compatible records for the reference and all PCs in the comparison.
 - **See the evidence.** The table exposes CPU/GPU benchmark percentages, the method used, and evidence confidence. A GPU-suite FPS estimate is shown only when supported data exists.
 - **Use a spreadsheet-style table.** Search listings, sort columns, filter by availability or favourites, show a basic or full set of columns, and export the visible rows to CSV.
 - **Compare two PCs directly.** The Versus view compares performance, effective price, and performance per currency unit.
 - **Track listings.** Favourite options, mark sold/offline listings unavailable, filter to available listings, and optionally hide listings that are dominated by a more powerful option at a lower price.
-- **Review your links.** If a listing's name is an advert URL, the app remembers when you last checked it and offers a review pass over the ones you have not looked at for two days.
+- **Review your links.** Assay tracks when linked adverts were last checked and queues them for review after two days.
 - **Account for the extras.** Enter RAM type/capacity, SSD/HDD storage, appearance, and the value of an included monitor/peripheral setup. Unknown RAM and SSD details can be marked as assumptions.
 - **Back up your data.** Export and import JSON backups. Import adds listings to the current collection; it does not replace or wipe it.
-- **Keep data across devices (optional).** A Supabase account can sync your own listings. Shared component data and the default reference PC are also backed by Supabase when configured.
+- **Keep data across devices (optional).** A Supabase account can sync your listings and import drafts. Shared component data and the default reference PC are also backed by Supabase when configured.
 
 Advert URLs can be kept separately from listing names. Local intake parses supplied text/HTML/JSON; Assay does not fetch marketplace pages or synchronize Leboncoin favourites automatically.
 

@@ -268,6 +268,8 @@ footer a { color: inherit; }
 textarea { width:100%; padding:12px; border:1px solid var(--line); border-radius:6px; background:var(--bg); color:var(--text); font:13px/1.6 var(--font-sans); resize:vertical; }
 textarea:focus-visible { outline:2px solid var(--acc); outline-offset:2px; }
 #bulkImport { max-width:1000px; }
+.import-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+.import-header h2 { margin:0; }
 .import-draft { padding:20px 0; border-top:1px solid var(--line); }
 .import-draft pre { white-space:pre-wrap; overflow-wrap:anywhere; max-height:240px; overflow:auto; font:11px/1.7 var(--font-mono); color:var(--muted); }
 .inspection-note { white-space:pre-wrap; border-left:3px solid var(--acc); padding-left:12px; }

@@ -1,8 +1,8 @@
 # Assay versioning policy
 
 Assay uses **one Semantic Versioning number for the whole project**. The
-`VERSION` file at the repository root is the sole release authority. The
-current release baseline is **`0.8.0`**.
+`VERSION` file at the repository root is the sole release authority.
+[GitHub Releases](https://github.com/Upsylon3/assay/releases) lists published versions.
 
 ## The authoritative version
 
@@ -26,7 +26,6 @@ and they move on their own schedule.
 | Scoring model, `performance-v2.6` today | `MODEL_VERSION` in `scoring-engine.js`, top of [docs/SCORING_MODEL.md](docs/SCORING_MODEL.md) | Scoring behaviour changes |
 | Benchmark dataset, `schemaVersion` and `updatedAt` | top of `benchmark-data.js` | `updatedAt` on a data refresh; `schemaVersion` when the shape of a record changes |
 | Backup file format, `version` | the JSON export in `index.html` | The exported structure changes in a way import has to handle |
-| "FPS suite estimates v2.4" in the page header | `index.html`, typed by hand | Whenever the model version changes; nothing updates it automatically |
 
 A change to scoring behaviour bumps the model version and normally earns a
 MINOR release, because it can change which listing looks like the best deal.
@@ -53,10 +52,9 @@ milestone it actually completes.
 
 ## Release history
 
-Before 0.8.0 nothing was versioned or tagged, and the commits do not carry
-a version label. The changelog's 0.1.0 to 0.7.0 entries group the history
-into the milestones below. The hashes are **historical source anchors**, not
-tags: nothing is tagged retroactively, and no commit is rewritten.
+The changelog groups versions 0.1.0 through 0.8.0 into untagged milestones.
+The hashes below identify the source commits. v0.9.0 is the first version
+prepared for a GitHub Release.
 
 | Version | Milestone | Historical source commit |
 |---|---|---|
@@ -67,7 +65,7 @@ tags: nothing is tagged retroactively, and no commit is rewritten.
 | `0.5.0` | Workload profiles, a separate performance score, table and Versus | `f5169f7` |
 | `0.6.0` | Benchmark-backed scoring | `bad878c` |
 | `0.7.0` | Goal toggle and link review | `7e92984` |
-| `0.8.0` | A name, a release process and a documentation set | the first tagged release |
+| `0.8.0` | A name, a release process and a documentation set | `466090d` |
 
 ## Changelog
 
