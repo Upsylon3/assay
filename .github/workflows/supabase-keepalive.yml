@@ -1,11 +1,10 @@
-# Pings the Supabase project once a day so the free tier never pauses it (it pauses after about a week without
-# API calls). If the project is paused anyway and a SUPABASE_ACCESS_TOKEN secret exists, it restores it.
-# If something cannot be fixed, the run fails on purpose: GitHub then emails you.
+# Checks the Supabase database throughout the day to reduce the chance of inactivity pausing.
+# If Supabase reports the project is paused, an optional token lets the script request a restore.
 name: Supabase keep-alive
 
 on:
   schedule:
-    - cron: "23 5 * * *"      # every day, 05:23 UTC. Daily (not weekly) so one skipped run cannot let it pause.
+    - cron: "23 5,13,21 * * *"
   workflow_dispatch:           # also lets you run it by hand from the Actions tab
 
 permissions:

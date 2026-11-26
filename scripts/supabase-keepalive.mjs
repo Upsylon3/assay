@@ -1,15 +1,5 @@
-// Keeps the free Supabase project from pausing, and wakes it up if it paused anyway.
-//
-// WHY it works this way:
-//  - Supabase pauses free projects after about a week with no API calls. Any API call resets that timer, so a daily
-//    request is enough. It uses the public URL + key already in config.js, so no secret is needed for this part.
-//  - Any HTTP answer below 500 counts as "alive" (even a 401 or 404 is the project answering, and it still counts as
-//    activity). Only silence or a 5xx means "probably paused", because a paused project does not answer normally.
-//  - If it does look paused, the Management API can restore it, but that needs a personal access token. It is optional:
-//    without SUPABASE_ACCESS_TOKEN the run just fails, and GitHub emails you that it failed.
-//  - A paused project can only be restored for 90 days, so a failure here is worth acting on the same week.
-//
-// Exit code 0 = project is up. Anything else = the run is marked failed on purpose so that GitHub notifies you.
+// Check the public settings read used by Assay. A gateway response alone does not
+// establish database activity. A restore requires the Management API to report INACTIVE.
 
 import { readFileSync } from "node:fs";
 
@@ -43,19 +33,18 @@ async function ping() {
   } catch { return 0; }
 }
 
-const alive = (s) => s > 0 && s < 500;
+const describeRead = status => status ? `HTTP ${status}` : "no response";
 const first = await ping();
-if (alive(first)) {
-  log(`Project ${ref} answered (HTTP ${first}). Inactivity timer reset.`);
-  if (first !== 200) log("Note: it did not answer 200. Not a pause problem, but check that setup.sql has been run.");
+if (first === 200) {
+  log(`Project ${ref}: database read succeeded (HTTP 200).`);
   process.exit(0);
 }
-log(`No normal answer from ${ref} (${first || "no response"}). It may be paused.`);
+log(`Project ${ref}: database read failed (${describeRead(first)}).`);
 
 // ---- 2. it may be paused: try to restore it
 if (!TOKEN) {
-  fail("the project looks paused and no SUPABASE_ACCESS_TOKEN is set, so it cannot be restored automatically. " +
-       "Restore it from the Supabase dashboard (Restore project), or add the token as a repository secret.");
+  fail("Check project status in Supabase. If it is active, check the public key and app_settings access. " +
+       "If it is paused, resume it from the dashboard or configure SUPABASE_ACCESS_TOKEN for automatic restore.");
 }
 const mgmt = async (method, path) => {
   const r = await fetch(API_BASE + path, {
@@ -78,13 +67,15 @@ while (Date.now() < deadline) {
   if (status === "ACTIVE_HEALTHY") {
     // up according to the platform: the first ping may just have been unlucky. Check again properly.
     const again = await ping();
-    if (alive(again)) { log(`Project ${ref} is up (HTTP ${again}).`); process.exit(0); }
+    if (again === 200) { log(`Project ${ref}: database read succeeded (HTTP 200).`); process.exit(0); }
+    if (again >= 400 && again < 500 && again !== 429) {
+      fail(`Project is active, but the settings read returned HTTP ${again}. Check the public key and app_settings access.`);
+    }
     await sleep(POLL_MS); continue;
   }
   if (status === "INACTIVE" && !restoreSent) {
     const r = await mgmt("POST", `/v1/projects/${ref}/restore`);
-    if (r.status >= 300) fail(`restore request refused (HTTP ${r.status}) ${JSON.stringify(r.body)}. ` +
-                              "If it has been paused for more than 90 days, it can no longer be restored this way.");
+    if (r.status >= 300) fail(`restore request refused (HTTP ${r.status}) ${JSON.stringify(r.body)}. Check the Supabase dashboard for recovery options.`);
     restoreSent = true; log("Restore requested."); await sleep(POLL_MS); continue;
   }
   if (["COMING_UP", "RESTORING", "UPGRADING", "PAUSING", "GOING_DOWN", "INACTIVE", "ACTIVE_UNHEALTHY"].includes(status)) {
@@ -92,4 +83,4 @@ while (Date.now() < deadline) {
   }
   fail(`unexpected project status "${status}". Look at the project in the Supabase dashboard.`);
 }
-fail("the project did not come back within " + Math.round(MAX_WAIT_MS / 60000) + " minutes. Check the dashboard.");
+fail("no successful database read within " + Math.round(MAX_WAIT_MS / 60000) + " minutes. Check the dashboard.");
