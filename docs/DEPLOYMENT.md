@@ -85,7 +85,7 @@ This workflow updates the broad built-in PassMark list. It does not refresh the 
 
 ### Supabase keep-alive
 
-`.github/workflows/supabase-keepalive.yml` sends a daily request so the configured Supabase project is less likely to pause from inactivity. It can also be run manually. If the project has been paused and needs restoration, the script can use an access token supplied through a GitHub Actions secret.
+`.github/workflows/supabase-keepalive.yml` reads public app settings three times a day to reduce inactivity pauses. A run succeeds when the database read returns HTTP 200. Check Supabase if a run fails or you get an inactivity notice. The workflow can also be run manually. If Supabase reports the project as paused, the script can request a restore using an optional GitHub Actions secret. See [Supabase’s project pausing guide](https://supabase.com/docs/guides/platform/free-project-pausing) for current restore options.
 
 Only when restore capability is needed:
 1. Generate an access token in Supabase under **Account → Access Tokens**.

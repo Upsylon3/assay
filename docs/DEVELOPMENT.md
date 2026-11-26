@@ -56,7 +56,7 @@ CI runs the regression checks above, plus a syntax check of the inline script in
 | `release.yml` | A `v*` tag, or by hand | Validates the tag and publishes the GitHub Release ([RELEASING.md](RELEASING.md)) |
 | `update-parts.yml` | Mondays 06:00 UTC, or by hand | Rebuilds `builtin-parts.js` from PassMark and commits it if it changed |
 | `audit-benchmarks.yml` | Mondays 06:30 UTC, or by hand | Read-only verification of all curated scores and six FPS baselines against the live source tables |
-| `supabase-keepalive.yml` | Daily | Keeps the free Supabase project from pausing |
+| `supabase-keepalive.yml` | Three times daily or manually | Checks that the public settings read succeeds and reduces inactivity pauses |
 
 ## Working on the maintenance scripts
 
